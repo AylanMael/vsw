@@ -1,0 +1,6 @@
+{
+  "name": "VSW Digital",
+  "description": "Site officiel de l'agence digitale VSW Digital spécialisée dans le développement web, SEO, et solutions cloud pour PME.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

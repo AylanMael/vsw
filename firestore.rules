@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /leads/{lead} {
+      // Allow anyone to submit a contact lead (create only)
+      allow create: if true;
+      
+      // Prevent public read, update, or deletion for privacy & security
+      allow read, update, delete: if false;
+    }
+  }
+}
