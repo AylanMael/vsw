@@ -3,7 +3,18 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const getCurrentDirname = () => {
+  try {
+    if (typeof __dirname !== "undefined") {
+      return __dirname;
+    }
+    return path.dirname(fileURLToPath(import.meta.url));
+  } catch (e) {
+    return process.cwd();
+  }
+};
+
+const __dirname = getCurrentDirname();
 
 async function startServer() {
   const app = express();
