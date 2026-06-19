@@ -1,45 +1,79 @@
-
-import { motion } from 'motion/react';
+import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 
 export function HeroSection() {
   return (
-    <section className="relative py-24 md:py-32 overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50/50 to-white">
-      <div className="container mx-auto px-6 text-center">
-        <motion.span 
+    <section className="relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50/70 via-white to-white py-24 md:py-32">
+      {/* Décor visuel */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 rounded-full bg-electric-blue/10 blur-3xl" />
+        <div className="absolute right-10 top-24 h-56 w-56 rounded-full bg-violet-500/10 blur-3xl" />
+      </div>
+
+      <div className="container relative mx-auto px-6 text-center">
+        <motion.span
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="inline-block text-electric-blue font-semibold tracking-wider uppercase text-xs mb-6 px-4 py-1.5 rounded-full bg-electric-blue/10"
+          className="mb-6 inline-flex items-center rounded-full bg-electric-blue/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-electric-blue"
         >
-          Agence Digitale Premium
+          Agence web, SEO & applications sur mesure
         </motion.span>
-        <motion.h1 
+
+        <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-5xl md:text-7xl font-display font-bold text-navy-900 mb-8 leading-[1.1] max-w-4xl mx-auto"
+          className="mx-auto mb-8 max-w-5xl font-display text-4xl font-bold leading-[1.1] text-navy-900 md:text-6xl lg:text-7xl"
         >
-          Transformez votre présence digitale <span className="text-electric-blue">en levier de croissance.</span>
+          Création de sites web, SEO et applications digitales pour{" "}
+          <span className="text-electric-blue">
+            développer votre activité.
+          </span>
         </motion.h1>
-        <motion.p 
+
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-lg md:text-xl text-navy-900/70 max-w-2xl mx-auto mb-12"
+          className="mx-auto mb-10 max-w-3xl text-lg leading-8 text-navy-900/70 md:text-xl"
         >
-          Développement web sur mesure, automatisation et SEO pour dirigeants exigeants orientés résultats.
+          VSW Digital accompagne les PME, artisans, commerçants et entreprises
+          de services dans la création de sites performants, le référencement
+          SEO, Google Ads et le développement d’outils web sur mesure.
         </motion.p>
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex flex-col justify-center gap-4 sm:flex-row"
         >
-          <button className="px-8 py-4 bg-navy-900 text-white rounded-xl font-medium hover:bg-electric-blue transition-all shadow-xl shadow-navy-900/20 hover:shadow-electric-blue/40">
+          <Link
+            href="/contact"
+            className="rounded-xl bg-navy-900 px-8 py-4 font-medium text-white shadow-xl shadow-navy-900/20 transition-all hover:bg-electric-blue hover:shadow-electric-blue/40"
+          >
             Demander un audit gratuit
-          </button>
-          <button className="px-8 py-4 bg-white border border-navy-900/10 text-navy-900 rounded-xl font-medium hover:bg-gray-50 transition-all shadow-sm">
+          </Link>
+
+          <Link
+            href="/services"
+            className="rounded-xl border border-navy-900/10 bg-white px-8 py-4 font-medium text-navy-900 shadow-sm transition-all hover:bg-gray-50"
+          >
             Découvrir nos services
-          </button>
+          </Link>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-navy-900/60"
+        >
+          <span>Sites rapides & responsives</span>
+          <span className="hidden h-1 w-1 rounded-full bg-navy-900/30 sm:block" />
+          <span>SEO pensé dès la création</span>
+          <span className="hidden h-1 w-1 rounded-full bg-navy-900/30 sm:block" />
+          <span>Solutions évolutives cloud</span>
         </motion.div>
       </div>
     </section>
