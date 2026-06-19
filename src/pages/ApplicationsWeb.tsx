@@ -1,546 +1,631 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Link } from 'react-router-dom';
-import { 
-  Code, 
-  Settings, 
-  Database, 
-  Zap, 
-  Users, 
-  Lock, 
-  BarChart, 
-  Layers, 
-  ShieldAlert, 
-  FileText, 
-  CheckCircle, 
-  ArrowRight, 
-  Search, 
-  Smartphone, 
-  Activity, 
-  FileCheck, 
-  TrendingUp, 
-  Cpu, 
-  Server, 
-  Bot, 
-  Clock, 
-  Sparkles, 
-  ChevronDown, 
-  AlertTriangle,
-  ChevronRight,
+import { useEffect, useState } from "react";
+import type { ComponentType } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Link } from "react-router-dom";
+import {
+  ArrowRight,
+  BarChart3,
+  Bot,
   Check,
-  MousePointerClick,
-  Calendar,
-  DollarSign
-} from 'lucide-react';
+  CheckCircle2,
+  ChevronDown,
+  Clock,
+  Database,
+  FileCheck,
+  FileText,
+  Layers,
+  Lock,
+  Server,
+  Settings,
+  Sparkles,
+  Users,
+  Workflow,
+  AlertTriangle,
+} from "lucide-react";
 
-const problemsBeforeAfter = [
+type TabKey = "docs" | "workflow" | "analytics";
+
+interface BeforeAfterItem {
+  before: {
+    title: string;
+    desc: string;
+  };
+  after: {
+    title: string;
+    desc: string;
+  };
+}
+
+interface CardItem {
+  icon: ComponentType<{ className?: string }>;
+  title: string;
+  desc: string;
+}
+
+interface AppTypeItem {
+  icon: ComponentType<{ className?: string }>;
+  tag: string;
+  title: string;
+  desc: string;
+  useCase: string;
+}
+
+interface MethodStep {
+  step: string;
+  title: string;
+  desc: string;
+}
+
+interface StackItem {
+  name: string;
+  desc: string;
+}
+
+interface FaqItem {
+  q: string;
+  a: string;
+}
+
+const problemsBeforeAfter: BeforeAfterItem[] = [
   {
     before: {
-      title: "Excel et e-mails éparpillés",
-      desc: "Vos chantiers, fichiers clients et commandes sont dispatchés entre 12 fichiers différents, provoquant des erreurs de saisie quotidiennes."
+      title: "Fichiers Excel et e-mails dispersés",
+      desc: "Les informations clients, documents, suivis et tâches sont répartis entre plusieurs fichiers, ce qui augmente les oublis et les ressaisies.",
     },
     after: {
-      title: "Base de données centralisée",
-      desc: "Une source unique de vérité. Vos équipes partagent le statut en temps réel, sur smartphone, tablette et bureau."
-    }
+      title: "Données centralisées",
+      desc: "Vos informations importantes sont regroupées dans un espace unique, accessible selon les rôles de chaque utilisateur.",
+    },
   },
   {
     before: {
-      title: "Envoi de pièces sensibles par e-mail",
-      desc: "Vos clients envoient leurs pièces d'identité ou RIB par e-mail. C'est lent, non sécurisé et souvent perdu dans les spams."
+      title: "Documents sensibles envoyés par e-mail",
+      desc: "Les clients transmettent parfois des pièces importantes par e-mail, avec un suivi difficile et un risque de perte d’information.",
     },
     after: {
-      title: "Espace client hautement sécurisé",
-      desc: "Un portail privatisé chiffré AES-256 où le client dépose ses documents en un clic, directement validés et stockés."
-    }
+      title: "Portail client sécurisé",
+      desc: "Les clients déposent leurs documents dans un espace privé, avec un suivi clair du statut : reçu, en attente, validé ou à compléter.",
+    },
   },
   {
     before: {
-      title: "Tâches à répétition manuelles",
-      desc: "Votre secrétariat perd 10 heures par semaine à copier-coller des données, générer des PDF de devis et relancer par SMS."
+      title: "Tâches répétitives manuelles",
+      desc: "Relances, confirmations, exports, notifications ou génération de documents prennent du temps à vos équipes.",
     },
     after: {
-      title: "Automatisation via Webhooks",
-      desc: "Génération automatique de documents signables, notifications SMS de rappel de paiement et synchronisation bancaire automatique."
-    }
+      title: "Automatisations utiles",
+      desc: "Certaines actions peuvent être déclenchées automatiquement : notification, relance, changement de statut ou génération de document.",
+    },
   },
   {
     before: {
-      title: "Logiciels rigides du commerce",
-      desc: "Vous payez des abonnements hors de prix pour des CRM ultra-complexes que vos équipes n'utilisent qu'à 15%."
+      title: "Logiciels trop rigides",
+      desc: "Les outils du marché sont parfois trop complexes, trop coûteux ou mal adaptés à votre manière réelle de travailler.",
     },
     after: {
-      title: "Outil métier 100% sur mesure",
-      desc: "Chaque bouton, tableau et indicateur correspond à votre quotidien exact. Zéro bruit visuel, adoption immédiate."
-    }
-  }
+      title: "Outil métier sur mesure",
+      desc: "L’interface est pensée autour de vos processus : les écrans, les boutons et les rôles correspondent à votre organisation.",
+    },
+  },
 ];
 
-const benefits = [
-  { 
-    icon: Database, 
-    title: "Centralisation & Source unique", 
-    desc: "Fini les fichiers Excel obsolètes ou les post-its éparpillés. Regroupez l'ensemble de votre savoir-faire de manière ordonnée : clients, chantiers, contrats et factures sur le même outil." 
+const benefits: CardItem[] = [
+  {
+    icon: Database,
+    title: "Centralisation des données",
+    desc: "Regroupez vos clients, documents, demandes, statuts, contrats ou dossiers dans un outil clair et structuré.",
   },
-  { 
-    icon: Users, 
-    title: "Suivi opérationnel infaillible", 
-    desc: "Visualisez en un coup d'œil l'état d'avancement de chaque commande ou dossier en cours, assignez des tâches à vos collaborateurs et réduisez les délais de traitement." 
+  {
+    icon: Users,
+    title: "Suivi opérationnel",
+    desc: "Visualisez l’état d’avancement des dossiers, assignez des tâches et facilitez le suivi interne.",
   },
-  { 
-    icon: Bot, 
-    title: "Automatisation de vos process", 
-    desc: "Faites faire le travail pénible par votre application : relances automatiques de documents manquants, génération de devis normalisés et alertes intelligentes." 
+  {
+    icon: Bot,
+    title: "Automatisation progressive",
+    desc: "Automatisez les relances, notifications, confirmations, exports ou traitements récurrents selon vos besoins.",
   },
-  { 
-    icon: Lock, 
-    title: "Sécurité & RGPD au repos", 
-    desc: "Bénéficiez du chiffrement des fichiers au repos et en transit. Contrôlez finement la visibilité des fichiers confidentiels selon le niveau de chaque employé." 
+  {
+    icon: Lock,
+    title: "Accès sécurisés",
+    desc: "Mettez en place des rôles utilisateurs pour limiter l’accès aux données selon les profils : admin, client, équipe ou manager.",
   },
-  { 
-    icon: Layers, 
-    title: "Image de marque haut de gamme", 
-    desc: "Proposez à vos propres partenaires et clients finaux un portail professionnel pour stocker leurs factures, consulter des plannings et signer leurs PV de chantiers." 
+  {
+    icon: Layers,
+    title: "Image professionnelle",
+    desc: "Offrez à vos clients un espace moderne pour suivre leurs demandes, déposer des documents ou consulter leur dossier.",
   },
-  { 
-    icon: TrendingUp, 
-    title: "Évolutivité sans limites", 
-    desc: "Vous êtes propriétaire total de votre code (pas d'abonnement captif). Ajoutez de nouveaux écrans au fur et à mesure de votre croissance réelle." 
-  }
+  {
+    icon: Workflow,
+    title: "Évolutivité",
+    desc: "Commencez par une première version utile, puis ajoutez progressivement de nouveaux modules selon vos priorités.",
+  },
 ];
 
-const appTypes = [
-  { 
-    icon: Users, 
-    tag: "Sécurité & Validation",
-    title: "Portail client & Dépôt sécurisé", 
-    desc: "Un espace privé vérifié par mot de passe ou lien magique. Vos clients y complètent leurs formulaires, règlent leurs factures et déposent leurs justificatifs confidentiels.",
-    useCase: "Idéal pour : Cabinets comptables, assureurs, promoteurs de chantiers, prestataires B2B."
+const appTypes: AppTypeItem[] = [
+  {
+    icon: Users,
+    tag: "Portail client",
+    title: "Espace client & dépôt sécurisé",
+    desc: "Un espace privé où vos clients peuvent déposer des documents, suivre un dossier, compléter un formulaire ou consulter des informations.",
+    useCase: "Idéal pour : cabinets comptables, domiciliation, services B2B, formations, gestion administrative.",
   },
-  { 
-    icon: BarChart, 
-    tag: "Pilotage en temps réel",
-    title: "Tableau de bord de pilotage (KPIs)", 
-    desc: "Toutes vos données d'activité transformées en graphes automatiques interactifs. Exportez des analyses en PDF/Excel en un instant pour piloter vos liquidités.",
-    useCase: "Idéal pour : Dirigeants, directeurs commerciaux, franchisés."
+  {
+    icon: BarChart3,
+    tag: "Pilotage",
+    title: "Tableau de bord métier",
+    desc: "Des indicateurs clairs pour suivre vos clients, demandes, documents, paiements, interventions ou performances commerciales.",
+    useCase: "Idéal pour : dirigeants, équipes commerciales, responsables opérationnels.",
   },
-  { 
-    icon: Settings, 
-    tag: "Efficacité terrain",
-    title: "Outil de gestion interne", 
-    desc: "Dispatch de tâches pour les équipes terrain ou d'ateliers. Validation étape par étape avec upload de photos géolocalisées, fiches de suivi et gestion de stocks.",
-    useCase: "Idéal pour : Artisans du BTP, logisticiens, entreprises de nettoyage, techniciens."
+  {
+    icon: Settings,
+    tag: "Gestion interne",
+    title: "Outil de suivi opérationnel",
+    desc: "Un outil pour organiser vos tâches, suivre vos équipes, gérer des interventions, des dossiers ou des étapes de validation.",
+    useCase: "Idéal pour : BTP, déménagement, sécurité privée, maintenance, services terrain.",
   },
-  { 
-    icon: Bot, 
-    tag: "Connectivité & Flux",
-    title: "Automatisation de workflows & connecteurs APIs", 
-    desc: "L'application prend le relais : synchronisation automatique avec vos passerelles bancaires (Stripe, banques), envois de notifications SMS/e-mails précis.",
-    useCase: "Idéal pour : Sociétés de services B2B, courtiers, e-commerce."
-  }
+  {
+    icon: Bot,
+    tag: "Automatisation",
+    title: "Workflows & connexions API",
+    desc: "Connexion entre vos formulaires, bases de données, emails, SMS, paiements, documents ou outils existants.",
+    useCase: "Idéal pour : sociétés de services, plateformes, SaaS métier, automatisation administrative.",
+  },
 ];
 
-const concreteCases = [
-  { 
-    badge: "Expertise Comptable", 
-    title: "Collecte mensuelle de pièces", 
-    desc: "Relance hebdomadaire par SMS automatisée pour les clients en retard, upload direct depuis smartphone du client final, lecteur intelligent OCR de factures.",
-    roi: "-70% de temps d'administration"
+const methodSteps: MethodStep[] = [
+  {
+    step: "01",
+    title: "Audit métier",
+    desc: "Nous analysons votre manière de travailler : fichiers utilisés, tâches répétitives, données importantes et points de blocage.",
   },
-  { 
-    badge: "BTP & Toiture", 
-    title: "PV de réception de travaux numérique", 
-    desc: "Le poseur prend des photos de fin de chantier sur sa tablette, fait signer électroniquement le client final sur l'écran. Notification instantanée avec facture de solde générée.",
-    roi: "Paiement de solde accéléré de 11 jours"
+  {
+    step: "02",
+    title: "Définition du MVP",
+    desc: "Nous identifions la première version utile de l’application, avec les fonctionnalités prioritaires à développer en premier.",
   },
-  { 
-    badge: "Service Client B2B", 
-    title: "Portail collaboratif de projets", 
-    desc: "Visualisation partagée en temps réel de chaque étape. Les dossiers d'agrément technique sont validés par validation hiérarchique avec historiques des modifications.",
-    roi: "+40% de satisfaction client constatée"
-  }
+  {
+    step: "03",
+    title: "Maquette fonctionnelle",
+    desc: "Vous visualisez les écrans avant le développement : parcours utilisateur, formulaires, tableaux, statuts et rôles.",
+  },
+  {
+    step: "04",
+    title: "Développement",
+    desc: "Nous développons l’application avec une architecture moderne, responsive et adaptée aux usages bureau, tablette et mobile.",
+  },
+  {
+    step: "05",
+    title: "Sécurité & accès",
+    desc: "Nous configurons les rôles, les règles d’accès, l’authentification et les bonnes pratiques de protection des données.",
+  },
+  {
+    step: "06",
+    title: "Mise en ligne & évolution",
+    desc: "Nous lançons l’outil, formons les utilisateurs et faisons évoluer l’application selon les retours du terrain.",
+  },
 ];
 
-const methodSteps = [
-  { 
-    step: "01", 
-    title: "Audit Métier & Cartographie", 
-    desc: "Nous étudions votre façon de travailler : chaque fichier de données existant, chaque action de secrétariat manuelle et chaque goulot d'étranglement de votre organisation." 
+const stackTechnologies: StackItem[] = [
+  {
+    name: "React & Next.js",
+    desc: "Pour créer des interfaces modernes, rapides, responsives et adaptées aux applications web évolutives.",
   },
-  { 
-    step: "02", 
-    title: "Définition du MVP (Produit Minimal)", 
-    desc: "Nous trions les fonctions prioritaires pour concevoir une première version opérationnelle sous 30 jours, optimisant les coûts et évitant le surplus inutile." 
+  {
+    name: "Firebase",
+    desc: "Pour l’authentification, la base de données, le stockage de documents et les notifications liées aux actions utilisateurs.",
   },
-  { 
-    step: "03", 
-    title: "Maquette UI Haute Fidélité", 
-    desc: "Vous visualisez l'expérience finale avant d'investir dans le développement. Nous validons l'ergonomie, les champs et l'affichage mobile ensemble." 
+  {
+    name: "Google Cloud",
+    desc: "Pour structurer des traitements cloud, automatiser certains flux et faire évoluer progressivement l’architecture.",
   },
-  { 
-    step: "04", 
-    title: "Développement robuste Next.js & React", 
-    desc: "Nous développons votre solution sur une architecture rapide et moderne, garantissant des interfaces instantanées, des micro-animations de guidage et un typage TypeScript strict." 
+  {
+    name: "APIs & outils externes",
+    desc: "Pour connecter l’application à Stripe, emails, SMS, outils métier, CRM ou services de génération de documents.",
   },
-  { 
-    step: "05", 
-    title: "Sécurisation & Cloud Firestore Rules", 
-    desc: "Authentification par double facteur en option, et verrous absolus au niveau du stockage cloud Google Cloud. Vos fichiers clients sont invulnerables." 
-  },
-  { 
-    step: "06", 
-    title: "Lancement & Propriété Totale", 
-    desc: "Nous formons vos équipes de manière intuitive, mettons l'outil en ligne sous votre propre nom de domaine. Le code source vous appartient intégralement." 
-  }
 ];
 
-const stackTechnologies = [
-  { name: "Next.js & React 19", desc: "La référence mondiale du web interactif. Chargement quasi-instantané, transition fluide et zéro rafraîchissement d'écran fastidieux." },
-  { name: "Firebase (Auth & Firestore)", desc: "L'infrastructure de Google qui gère l'authentification sécurisée des utilisateurs et les données en temps réel avec des coûts de serveurs quasi nuls au lancement." },
-  { name: "Google Cloud Storage & AWS", desc: "Stockage cloud ultra-résistant de documents confidentiels. Chaque fichier est chiffré et n'est accessible que via signatures URL temporaires." },
-  { name: "Passerelles Tierces & APIs", desc: "Connexion naturelle de vos outils : Stripe (paiements récurrents), Resend (e-mails fiables), Twilio (alertes SMS) ou vos logiciels métiers." }
-];
-
-const faqs = [
-  { q: "Quelle est la différence entre un site internet et une application web ?", a: "Un site web vitrine a pour but de vous faire connaître et de rassurer vos prospects (coordonnées, services, références). Une application web est un véritable outil interactif sécurisé par un portail de connexion. Elle permet d'effectuer des tâches complexes en direct : uploader des documents, générer des rapports dynamiques, calculer des devis automates, piloter des plannings d'interventions chantiers et interagir avec d'autres bases de données." },
-  { q: "Qu'est-ce qu'un MVP et pourquoi est-ce la meilleure option ?", a: "Un MVP (Minimum Viable Product) est la version la plus pragmatique et rapide de votre outil. Au lieu de payer pour un cahier des charges massif pendant 12 mois sans tester, nous isolons ses 3 briques indispensables. Vous la mettez sur le terrain en 4 à 8 semaines, commencez à faire travailler vos équipes et à économiser. Nous complétons ensuite les fonctionnalités secondaires à partir des retours concrets." },
-  { q: "Suis-je propriétaire de mon application et du code source ?", a: "Oui, à 100%. Chez VSW Digital, pas d'engagement ou de forfait captif de développement. Le code source est déposé sur votre compte GitHub privé. Vous êtes totalement indépendant et possédez l'intégralité de la propriété intellectuelle de votre outil." },
-  { q: "Combien coûte le développement d'une application sur mesure ?", a: "Chaque application est calibrée selon son nombre d'écrans techniques et d'intégrations nécessaires. En utilisant la philosophie progressive du MVP, nous démarrons souvent sur des budgets pragmatiques et adaptés aux PMEs, d'autant que l'infrastructure de départ (Firebase) est quasi-gratuite pour les volumes initiaux. Contactez-nous pour recevoir une estimation budgétaire précise sans engagement." },
-  { q: "L'outil sera-t-il fluide sur smartphone et tablette ?", a: "Absolument. Toutes nos applications intègrent un design responsive de pointe. Vos techniciens sur le terrain peuvent l'utiliser facilement pour prendre des photos ou valider une étape, tandis que vous pilotez l'activité sur grand écran depuis votre bureau." }
+const faqs: FaqItem[] = [
+  {
+    q: "Quelle est la différence entre un site internet et une application web ?",
+    a: "Un site internet présente votre activité et génère des contacts. Une application web permet d’interagir avec des données : espace client, tableau de bord, dépôt de documents, suivi de dossier, gestion interne ou automatisation.",
+  },
+  {
+    q: "Qu’est-ce qu’un MVP ?",
+    a: "Un MVP est une première version utile de votre application. L’objectif est de développer d’abord les fonctionnalités essentielles, puis d’améliorer l’outil progressivement avec les retours réels des utilisateurs.",
+  },
+  {
+    q: "Puis-je commencer avec une petite version ?",
+    a: "Oui, c’est même souvent la meilleure approche. Vous pouvez commencer avec un module simple : dépôt de documents, suivi client, tableau de bord ou formulaire avancé, puis faire évoluer l’application.",
+  },
+  {
+    q: "Combien coûte une application web sur mesure ?",
+    a: "Le budget dépend du nombre d’écrans, des rôles utilisateurs, des automatisations, du stockage, des intégrations externes et du niveau de design. Une analyse permet d’estimer précisément le périmètre.",
+  },
+  {
+    q: "L’application sera-t-elle utilisable sur mobile ?",
+    a: "Oui. Les interfaces sont pensées pour fonctionner sur ordinateur, tablette et smartphone, surtout si vos équipes ou clients doivent utiliser l’outil en déplacement.",
+  },
+  {
+    q: "Est-ce que mes données seront protégées ?",
+    a: "Nous mettons en place des règles d’accès, une authentification, une séparation des rôles et de bonnes pratiques de sécurité. Le niveau de protection est défini selon la nature des données traitées.",
+  },
 ];
 
 export function ApplicationsWeb() {
-  const [activeTab, setActiveTab] = useState<'docs' | 'workflow' | 'analytics'>('docs');
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<TabKey>("docs");
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  // Quick Calculator state
   const [estimatedUsers, setEstimatedUsers] = useState<number>(5);
   const [hasClientPortal, setHasClientPortal] = useState<boolean>(true);
   const [needAutomatisation, setNeedAutomatisation] = useState<boolean>(true);
 
+  const estimatedDelay =
+    hasClientPortal && needAutomatisation
+      ? "6 à 8 semaines"
+      : hasClientPortal || needAutomatisation
+        ? "4 à 6 semaines"
+        : "3 à 5 semaines";
+
   useEffect(() => {
-    document.title = "Application Web Sur Mesure & Portails Clients | VSW Digital";
+    document.title =
+      "Application web sur mesure, portail client et automatisation | VSW Digital";
+
     const metaDescription = document.querySelector('meta[name="description"]');
+
     if (metaDescription) {
-      metaDescription.setAttribute("content", "VSW Digital conçoit des applications web sur mesure, portails clients sécurisés et CRM légers. Boostez l'efficacité de votre PME avec Next.js et Firebase.");
+      metaDescription.setAttribute(
+        "content",
+        "VSW Digital conçoit des applications web sur mesure, portails clients, tableaux de bord et outils métier pour PME, avec React, Firebase et Google Cloud."
+      );
     }
   }, []);
 
   return (
-    <div className="flex flex-col bg-slate-50 min-h-screen text-slate-900 leading-relaxed font-sans mt-16 scroll-smooth">
-      
-      {/* 1. HERO SECTION - High-tech, Premium & Immersive */}
-      <section className="relative py-28 md:py-36 overflow-hidden bg-slate-950 text-white">
-        {/* Deep ambient glow effects */}
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-electric-blue/20 rounded-full filter blur-[100px] pointer-events-none"></div>
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-modern-purple/15 rounded-full filter blur-[120px] pointer-events-none"></div>
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20 pointer-events-none"></div>
-
-        <div className="container relative mx-auto px-6 max-w-7xl">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Hero text */}
-            <motion.div 
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="lg:col-span-7 space-y-8"
-            >
-              <div className="inline-flex items-center gap-2 text-electric-blue font-semibold tracking-wider uppercase text-xs px-3.5 py-1.5 rounded-full bg-electric-blue/10 border border-electric-blue/20">
-                <span className="w-2 h-2 rounded-full bg-electric-blue animate-pulse"></span>
-                Next.js, React & Cloud Solutions
-              </div>
-
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold leading-[1.08] text-white tracking-tight">
-                Application web sur mesure pour <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-blue via-cyan-400 to-modern-purple">digitaliser votre activité</span>
-              </h1>
-
-              <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl">
-                VSW Digital développe vos outils métiers, portails clients sécurisés et applications de gestion cloud. Gagnez en productivité immédiate et offrez à vos clients l'expérience premium qu'ils attendent.
-              </p>
-
-              {/* Technologies logos pill */}
-              <div className="flex flex-wrap items-center gap-3.5 pt-2">
-                <span className="text-xs text-slate-400 uppercase tracking-widest font-mono mr-2">Propulsé par :</span>
-                <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-xs font-medium text-slate-300">Next.js 19</span>
-                <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-xs font-medium text-slate-300">React & TS</span>
-                <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-xs font-medium text-slate-300">Firebase Auth</span>
-                <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-xs font-medium text-slate-300">Google Cloud</span>
-              </div>
-
-              {/* Trust signals & Call to actions */}
-              <div className="space-y-4 pt-4 border-t border-white/5">
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link 
-                    to="/contact" 
-                    className="group px-8 py-4 bg-electric-blue text-white rounded-xl font-bold hover:bg-white hover:text-navy-900 transition-all shadow-xl shadow-electric-blue/30 hover:-translate-y-0.5 active:translate-y-0 text-center flex items-center justify-center gap-2"
-                  >
-                    Estimer le coût de mon application
-                    <ArrowRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                  <a 
-                    href="#solutions" 
-                    className="px-8 py-4 bg-white/5 border border-white/10 text-white rounded-xl font-bold hover:bg-white/10 transition-all text-center backdrop-blur-sm"
-                  >
-                    Découvrir nos cas d'usage
-                  </a>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs text-slate-400 font-medium">
-                  <div className="flex items-center gap-1.5 justify-center sm:justify-start">
-                    <Check className="h-4 w-4 text-electric-blue" /> Diagnostic gratuit
-                  </div>
-                  <div className="flex items-center gap-1.5 justify-center sm:justify-start">
-                    <Check className="h-4 w-4 text-electric-blue" /> Code 100% votre propriété
-                  </div>
-                  <div className="flex items-center gap-1.5 justify-center sm:justify-start">
-                    <Check className="h-4 w-4 text-electric-blue" /> Hébergement européen sécurisé
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* High-fidelity Interactive Mockup Card Panel */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="lg:col-span-5 relative"
-            >
-              <div className="absolute -inset-4 bg-gradient-to-tr from-electric-blue/20 to-modern-purple/20 rounded-[2.5rem] blur-2xl pointer-events-none"></div>
-              
-              <div className="relative bg-slate-900/90 border border-white/10 backdrop-blur-xl rounded-[2rem] p-6 shadow-2xl overflow-hidden">
-                {/* Simulated window header */}
-                <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-rose-500/80"></span>
-                    <span className="w-3 h-3 rounded-full bg-amber-500/80"></span>
-                    <span className="w-3 h-3 rounded-full bg-emerald-500/80"></span>
-                  </div>
-                  <div className="flex items-center gap-1 text-[10px] text-slate-400 bg-white/5 px-3 py-1 rounded-full border border-white/5">
-                    <Lock className="h-3 w-3 text-emerald-400 inline" /> Chiffré en continu (AES-256)
-                  </div>
-                </div>
-
-                {/* Simulated Interactive Tab selectors */}
-                <div className="flex gap-2 mb-5 bg-slate-950 p-1.5 rounded-xl border border-white/5">
-                  <button 
-                    onClick={() => setActiveTab('docs')}
-                    className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-1 rounded-lg font-semibold transition-all ${activeTab === 'docs' ? 'bg-electric-blue text-white font-bold' : 'text-slate-400 hover:text-white'}`}
-                  >
-                    <FileText className="h-3.5 w-3.5" /> Client Portal
-                  </button>
-                  <button 
-                    onClick={() => setActiveTab('workflow')}
-                    className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-1 rounded-lg font-semibold transition-all ${activeTab === 'workflow' ? 'bg-electric-blue text-white font-bold' : 'text-slate-400 hover:text-white'}`}
-                  >
-                    <CheckCircle className="h-3.5 w-3.5" /> Workflow
-                  </button>
-                  <button 
-                    onClick={() => setActiveTab('analytics')}
-                    className={`flex-1 flex items-center justify-center gap-1.5 text-xs py-2 px-1 rounded-lg font-semibold transition-all ${activeTab === 'analytics' ? 'bg-electric-blue text-white font-bold' : 'text-slate-400 hover:text-white'}`}
-                  >
-                    <BarChart className="h-3.5 w-3.5" /> Analytics
-                  </button>
-                </div>
-
-                {/* Interactive Dynamic Content view */}
-                <div className="min-h-[220px]">
-                  <AnimatePresence mode="wait">
-                    {activeTab === 'docs' && (
-                      <motion.div 
-                        key="docs"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        className="space-y-4"
-                      >
-                        <div className="bg-slate-950 p-4 rounded-xl border border-white/5">
-                          <div className="flex justify-between items-center text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                            <span>Dépôt de pièces</span>
-                            <span className="text-emerald-400 flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                              En attente de validation
-                            </span>
-                          </div>
-                          
-                          <div className="mt-3 p-2.5 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between text-xs">
-                            <span className="text-slate-200 flex items-center gap-2">
-                              <FileText className="h-4 w-4 text-electric-blue" /> IBAN_Dupont_Sarl.pdf
-                            </span>
-                            <span className="text-emerald-400 font-semibold bg-emerald-400/10 px-2 py-0.5 rounded text-[10px]">Valider</span>
-                          </div>
-                          <div className="mt-2 p-2.5 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between text-xs">
-                            <span className="text-slate-200 flex items-center gap-2">
-                              <FileCheck className="h-4 w-4 text-emerald-400" /> KBIS_Valide_2026.pdf
-                            </span>
-                            <span className="text-slate-400 text-[10px]">Déjà validé</span>
-                          </div>
-                        </div>
-
-                        <div className="p-3 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between">
-                          <div className="flex items-center gap-2.5">
-                            <Users className="h-4 w-4 text-cyan-400" />
-                            <div>
-                              <p className="text-[11px] text-slate-400">Dernier accès client</p>
-                              <p className="text-xs text-white font-semibold">Dupont Sarl - Il y a 5 min</p>
-                            </div>
-                          </div>
-                          <span className="text-[10px] text-slate-500">IP: 92.154.*.*</span>
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {activeTab === 'workflow' && (
-                      <motion.div 
-                        key="workflow"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        className="space-y-3"
-                      >
-                        <div className="flex items-center justify-between p-3 bg-slate-950 border border-white/5 rounded-xl">
-                          <div className="flex items-center gap-3">
-                            <div className="w-7 h-7 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center font-bold text-xs">
-                              ✓
-                            </div>
-                            <div>
-                              <p className="text-xs font-bold text-white">Étape 1: Planification</p>
-                              <p className="text-[10px] text-slate-400">Validé par technicien #01</p>
-                            </div>
-                          </div>
-                          <span className="text-[10.5px] text-slate-500">14 Juin</span>
-                        </div>
-
-                        <div className="flex items-center justify-between p-3 bg-slate-950 border border-white/5 rounded-xl">
-                          <div className="flex items-center gap-3">
-                            <div className="w-7 h-7 bg-electric-blue/10 border border-electric-blue/20 text-electric-blue rounded-lg flex items-center justify-center font-bold text-xs animate-pulse">
-                              →
-                            </div>
-                            <div>
-                              <p className="text-xs font-bold text-white">Étape 2: Intervention site</p>
-                              <p className="text-[10px] text-slate-300 font-medium">En cours - Photo requise</p>
-                            </div>
-                          </div>
-                          <span className="text-[10.5px] text-electric-blue bg-electric-blue/10 px-2 py-0.5 rounded font-mono font-bold text-[9px]">Aujourd'hui</span>
-                        </div>
-
-                        <div className="flex items-center gap-3 p-2.5 bg-slate-900 border border-dashed border-white/10 rounded-xl text-[11px] text-slate-400">
-                          <Clock className="w-3.5 h-3.5 text-slate-500" />
-                          <span>Étape 3: Clôture & Facture de solde Stripe</span>
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {activeTab === 'analytics' && (
-                      <motion.div 
-                        key="analytics"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        className="space-y-4"
-                      >
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="bg-slate-950 p-3 rounded-xl border border-white/5">
-                            <span className="text-[10px] text-slate-400 block font-mono">DÉLAI MOYEN</span>
-                            <span className="text-xl font-display font-extrabold text-white">2.4 jours</span>
-                            <span className="text-[9px] text-emerald-400 block mt-0.5 font-semibold">↓ -4.1 jours (Excel)</span>
-                          </div>
-                          <div className="bg-slate-950 p-3 rounded-xl border border-white/5">
-                            <span className="text-[10px] text-slate-400 block font-mono">SAUVEGARDÉ</span>
-                            <span className="text-xl font-display font-extrabold text-white">41 heures / mois</span>
-                            <span className="text-[9px] text-purple-400 block mt-0.5 font-semibold">Gain de marge directe</span>
-                          </div>
-                        </div>
-
-                        {/* Custom visual CSS mini chart */}
-                        <div className="bg-slate-950 p-3.5 rounded-xl border border-white/5 space-y-2">
-                          <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                            <span>Marge d'Efficacité Interne</span>
-                            <span className="text-white font-bold">94% d'amélioration</span>
-                          </div>
-                          <div className="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
-                            <div className="w-[94%] bg-gradient-to-r from-electric-blue to-cyan-400 h-full rounded-full"></div>
-                          </div>
-                          <span className="text-[10px] text-slate-500 block">Données consolidées Next.js/Firestore</span>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-              </div>
-            </motion.div>
-
-          </div>
+    <main className="flex min-h-screen flex-col overflow-hidden bg-white text-slate-900">
+      {/* HERO */}
+      <section className="relative isolate overflow-hidden bg-[#0f172a] py-24 text-white md:py-32">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.35),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.18),_transparent_30%),linear-gradient(180deg,_#0f172a_0%,_#111827_55%,_#020617_100%)]" />
+          <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#3b82f6]/20 blur-[120px]" />
+          <div className="absolute -bottom-32 right-0 h-[420px] w-[420px] rounded-full bg-cyan-400/10 blur-[110px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20" />
         </div>
-      </section>
 
-      {/* 2. PROOF STRIP - Realism & Trust */}
-      <section className="bg-slate-900 text-white/80 py-6 border-y border-white/5 relative z-10">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="flex flex-wrap items-center justify-around gap-y-6 gap-x-12 text-center">
-            <div>
-              <p className="text-2xl font-display font-black text-white">Next.js</p>
-              <p className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-bold mt-1">Vitesse maximale</p>
-            </div>
-            <div className="h-8 w-px bg-white/10 hidden md:block"></div>
-            <div>
-              <p className="text-2xl font-display font-black text-white">Firebase</p>
-              <p className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-bold mt-1">Données 100% sécurisées</p>
-            </div>
-            <div className="h-8 w-px bg-white/10 hidden md:block"></div>
-            <div>
-              <p className="text-2xl font-display font-black text-white">0% Captif</p>
-              <p className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-bold mt-1">Propriété totale</p>
-            </div>
-            <div className="h-8 w-px bg-white/10 hidden md:block"></div>
-            <div>
-              <p className="text-2xl font-display font-black text-white">RGPD</p>
-              <p className="text-[10px] text-slate-400 uppercase tracking-widest font-mono font-bold mt-1">Hébergement Souverain</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. SECTION PAIN POINTS COMPARATOR - "Avant vs Après" - Deep Persuasive Psychology */}
-      <section className="py-28 px-6 bg-white relative">
-        <div className="container mx-auto max-w-7xl">
-          
-          <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-            <span className="inline-block text-rose-500 font-bold uppercase tracking-wider text-xs px-3.5 py-1.5 bg-rose-50 border border-rose-100 rounded-full">
-              L'enjeu réel
+        <div className="container mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-[1.05fr_0.95fr]">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mx-auto max-w-4xl text-center lg:mx-0 lg:text-left"
+          >
+            <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-blue-200 shadow-2xl shadow-blue-500/10 backdrop-blur">
+              <Sparkles className="h-4 w-4 text-[#3b82f6]" />
+              Applications web sur mesure
             </span>
-            <h2 className="text-3xl md:text-5xl font-display font-black text-slate-900 leading-tight">
+
+            <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-white md:text-6xl lg:text-7xl">
+              Des outils métier pour{" "}
+              <span className="bg-gradient-to-r from-[#3b82f6] via-sky-300 to-cyan-300 bg-clip-text text-transparent">
+                digitaliser votre activité
+              </span>
+            </h1>
+
+            <p className="mt-7 max-w-3xl text-lg leading-8 text-slate-300 md:text-xl lg:mx-0">
+              VSW Digital conçoit des portails clients, tableaux de bord,
+              espaces de dépôt de documents, outils internes et automatisations
+              pour simplifier votre organisation.
+            </p>
+
+            <div className="mt-7 flex flex-wrap justify-center gap-3 lg:justify-start">
+              {["Portail client", "Tableau de bord", "Automatisation", "Dépôt sécurisé"].map(
+                (item) => (
+                  <span
+                    key={item}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm text-slate-200 backdrop-blur"
+                  >
+                    <Check className="h-4 w-4 text-[#3b82f6]" />
+                    {item}
+                  </span>
+                )
+              )}
+            </div>
+
+            <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+              <Link
+                to="/contact"
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-8 py-4 font-semibold text-white shadow-2xl shadow-blue-500/30 transition-all hover:-translate-y-0.5 hover:bg-blue-400 hover:shadow-blue-400/40"
+              >
+                Estimer mon application
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Link>
+
+              <a
+                href="#solutions"
+                className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/15"
+              >
+                Découvrir les cas d’usage
+              </a>
+            </div>
+          </motion.div>
+
+          {/* Mockup */}
+          <motion.div
+            initial={{ opacity: 0, x: 28, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ delay: 0.15, duration: 0.75 }}
+            className="relative mx-auto w-full max-w-xl"
+          >
+            <div className="absolute -inset-6 rounded-[2rem] bg-[#3b82f6]/20 blur-3xl" />
+
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.07] p-4 shadow-2xl shadow-black/30 backdrop-blur-xl">
+              <div className="mb-4 flex items-center justify-between rounded-2xl border border-white/10 bg-[#020617]/70 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <span className="h-3 w-3 rounded-full bg-red-400/80" />
+                  <span className="h-3 w-3 rounded-full bg-amber-300/80" />
+                  <span className="h-3 w-3 rounded-full bg-emerald-400/80" />
+                </div>
+
+                <div className="flex items-center gap-1 rounded-full bg-white/8 px-4 py-1 text-xs text-slate-300">
+                  <Lock className="h-3 w-3 text-emerald-400" />
+                  Accès sécurisé
+                </div>
+              </div>
+
+              <div className="mb-5 grid grid-cols-3 gap-2 rounded-2xl border border-white/5 bg-[#020617] p-1.5">
+                {[
+                  { key: "docs" as const, label: "Documents", icon: FileText },
+                  { key: "workflow" as const, label: "Workflow", icon: CheckCircle2 },
+                  { key: "analytics" as const, label: "Pilotage", icon: BarChart3 },
+                ].map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.key;
+
+                  return (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      onClick={() => setActiveTab(tab.key)}
+                      className={`flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-xs font-semibold transition-all ${
+                        isActive
+                          ? "bg-[#3b82f6] text-white"
+                          : "text-slate-400 hover:bg-white/5 hover:text-white"
+                      }`}
+                    >
+                      <Icon className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="min-h-[230px]">
+                <AnimatePresence mode="wait">
+                  {activeTab === "docs" && (
+                    <motion.div
+                      key="docs"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      className="space-y-4"
+                    >
+                      <div className="rounded-2xl border border-white/5 bg-[#020617] p-4">
+                        <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                          <span>Dépôt de pièces</span>
+                          <span className="text-emerald-400">
+                            En attente de validation
+                          </span>
+                        </div>
+
+                        <div className="mt-4 space-y-2">
+                          <div className="flex items-center justify-between rounded-xl border border-white/5 bg-white/5 p-3 text-xs">
+                            <span className="flex items-center gap-2 text-slate-200">
+                              <FileText className="h-4 w-4 text-[#3b82f6]" />
+                              justificatif-client.pdf
+                            </span>
+                            <span className="rounded-lg bg-emerald-400/10 px-2 py-1 text-[10px] font-semibold text-emerald-400">
+                              Reçu
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between rounded-xl border border-white/5 bg-white/5 p-3 text-xs">
+                            <span className="flex items-center gap-2 text-slate-200">
+                              <FileCheck className="h-4 w-4 text-emerald-400" />
+                              contrat-signe.pdf
+                            </span>
+                            <span className="text-[10px] text-slate-400">
+                              Validé
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/5 p-4">
+                        <div className="flex items-center gap-3">
+                          <Users className="h-5 w-5 text-cyan-400" />
+                          <div>
+                            <p className="text-xs text-slate-400">
+                              Dernière activité
+                            </p>
+                            <p className="text-sm font-semibold text-white">
+                              Client connecté récemment
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {activeTab === "workflow" && (
+                    <motion.div
+                      key="workflow"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      className="space-y-3"
+                    >
+                      {[
+                        {
+                          title: "Demande reçue",
+                          desc: "Formulaire client complété",
+                          status: "Validé",
+                        },
+                        {
+                          title: "Traitement interne",
+                          desc: "Assigné à un collaborateur",
+                          status: "En cours",
+                        },
+                        {
+                          title: "Notification client",
+                          desc: "Message envoyé automatiquement",
+                          status: "Planifié",
+                        },
+                      ].map((item, index) => (
+                        <div
+                          key={item.title}
+                          className="flex items-center justify-between rounded-2xl border border-white/5 bg-[#020617] p-4"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-bold ${
+                                index === 0
+                                  ? "bg-emerald-400/10 text-emerald-400"
+                                  : index === 1
+                                    ? "bg-blue-400/10 text-blue-300"
+                                    : "bg-slate-700 text-slate-300"
+                              }`}
+                            >
+                              {index === 0 ? "✓" : index === 1 ? "→" : <Clock className="h-4 w-4" />}
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-white">
+                                {item.title}
+                              </p>
+                              <p className="text-xs text-slate-400">
+                                {item.desc}
+                              </p>
+                            </div>
+                          </div>
+
+                          <span className="rounded-full bg-white/5 px-3 py-1 text-[10px] font-semibold text-slate-300">
+                            {item.status}
+                          </span>
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+
+                  {activeTab === "analytics" && (
+                    <motion.div
+                      key="analytics"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      className="space-y-4"
+                    >
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="rounded-2xl border border-white/5 bg-[#020617] p-4">
+                          <span className="block text-[10px] uppercase tracking-wider text-slate-400">
+                            Dossiers
+                          </span>
+                          <span className="mt-1 block text-2xl font-bold text-white">
+                            128
+                          </span>
+                          <span className="text-xs text-emerald-400">
+                            Suivi centralisé
+                          </span>
+                        </div>
+
+                        <div className="rounded-2xl border border-white/5 bg-[#020617] p-4">
+                          <span className="block text-[10px] uppercase tracking-wider text-slate-400">
+                            Actions
+                          </span>
+                          <span className="mt-1 block text-2xl font-bold text-white">
+                            42
+                          </span>
+                          <span className="text-xs text-cyan-400">
+                            Automatisées
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl border border-white/5 bg-[#020617] p-4">
+                        <div className="mb-2 flex justify-between text-xs text-slate-400">
+                          <span>Avancement des traitements</span>
+                          <span className="font-semibold text-white">74%</span>
+                        </div>
+                        <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+                          <div className="h-full w-[74%] rounded-full bg-gradient-to-r from-[#3b82f6] to-cyan-400" />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* STRIP */}
+      <section className="border-y border-white/5 bg-[#020617] py-6 text-white">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="grid gap-6 text-center sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              ["React / Next.js", "Interfaces modernes"],
+              ["Firebase", "Auth & données"],
+              ["Google Cloud", "Automatisation"],
+              ["RGPD", "Bonnes pratiques"],
+            ].map(([title, desc]) => (
+              <div key={title}>
+                <p className="font-display text-2xl font-black text-white">
+                  {title}
+                </p>
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  {desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* AVANT APRES */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-rose-100 bg-rose-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-rose-500">
+              L’enjeu réel
+            </span>
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
               Pourquoi remplacer vos processus manuels par un outil sur mesure ?
             </h2>
-            <div className="h-1 w-20 bg-rose-500 mx-auto rounded-full"></div>
-            <p className="text-slate-500 text-base md:text-lg">
-              De nombreuses PME et commerces perdent des opportunités de vente et un temps précieux à cause d'outils rigides ou de processus éparpillés.
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              De nombreuses entreprises perdent du temps parce que leurs données,
+              documents et suivis sont dispersés dans trop d’outils différents.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-            
-            {/* Chaotic Before Column */}
-            <div className="bg-rose-50/40 border border-rose-100 rounded-3xl p-8 lg:p-10 space-y-8 relative">
-              <div className="absolute top-6 right-6 text-xs text-rose-500 bg-rose-100 px-3 py-1 rounded-full font-bold uppercase tracking-wider">
-                Avant VSW Digital
-              </div>
-              
-              <h3 className="text-2xl font-display font-extrabold text-slate-900 flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-sm">✕</span>
-                L'enfer de l'administration manuelle
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div className="rounded-[2rem] border border-rose-100 bg-rose-50/50 p-8">
+              <h3 className="mb-8 flex items-center gap-3 font-display text-2xl font-bold text-[#0f172a]">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+                  ✕
+                </span>
+                Avant
               </h3>
 
               <div className="space-y-6">
-                {problemsBeforeAfter.map((item, idx) => (
-                  <div key={idx} className="pb-6 border-b border-rose-100 last:border-0 last:pb-0">
-                    <h4 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                {problemsBeforeAfter.map((item) => (
+                  <div
+                    key={item.before.title}
+                    className="border-b border-rose-100 pb-5 last:border-0 last:pb-0"
+                  >
+                    <h4 className="flex items-center gap-2 font-bold text-[#0f172a]">
                       <AlertTriangle className="h-4 w-4 text-rose-500" />
                       {item.before.title}
                     </h4>
-                    <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">
+                    <p className="mt-2 text-sm leading-7 text-slate-600">
                       {item.before.desc}
                     </p>
                   </div>
@@ -548,418 +633,465 @@ export function ApplicationsWeb() {
               </div>
             </div>
 
-            {/* Premium Optimized After Column */}
-            <div className="bg-slate-900 border border-slate-800 text-white rounded-3xl p-8 lg:p-10 space-y-8 relative shadow-xl overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
-              <div className="absolute top-6 right-6 text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full font-bold uppercase tracking-wider border border-emerald-500/20">
-                La Solution Sur Mesure
-              </div>
-              
-              <h3 className="text-2xl font-display font-extrabold text-white flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center font-bold text-sm">✓</span>
-                L'efficacité cloud instantanée
+            <div className="relative overflow-hidden rounded-[2rem] border border-slate-800 bg-[#0f172a] p-8 text-white shadow-2xl shadow-slate-900/20">
+              <div className="absolute right-0 top-0 h-56 w-56 translate-x-1/3 -translate-y-1/3 rounded-full bg-emerald-400/10 blur-3xl" />
+
+              <h3 className="relative mb-8 flex items-center gap-3 font-display text-2xl font-bold text-white">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-400 text-[#0f172a]">
+                  ✓
+                </span>
+                Après
               </h3>
 
-              <div className="space-y-6">
-                {problemsBeforeAfter.map((item, idx) => (
-                  <div key={idx} className="pb-6 border-b border-white/5 last:border-0 last:pb-0">
-                    <h4 className="font-bold text-base text-white flex items-center gap-2">
+              <div className="relative space-y-6">
+                {problemsBeforeAfter.map((item) => (
+                  <div
+                    key={item.after.title}
+                    className="border-b border-white/10 pb-5 last:border-0 last:pb-0"
+                  >
+                    <h4 className="flex items-center gap-2 font-bold text-white">
                       <Sparkles className="h-4 w-4 text-emerald-400" />
                       {item.after.title}
                     </h4>
-                    <p className="text-sm text-slate-300 mt-1.5 leading-relaxed">
+                    <p className="mt-2 text-sm leading-7 text-slate-300">
                       {item.after.desc}
                     </p>
                   </div>
                 ))}
               </div>
             </div>
-
           </div>
-
-          <div className="text-center pt-12">
-            <Link 
-              to="/contact" 
-              className="inline-flex items-center gap-2 px-8 py-4 bg-slate-950 text-white rounded-xl font-bold hover:bg-electric-blue transition-colors shadow-lg shadow-slate-900/10"
-            >
-              Remplacer mes fichiers Excel compliqués
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
         </div>
       </section>
 
-      {/* 4. SECTION BENEFITS - Six pillars of custom engineering */}
-      <section className="py-28 px-6 bg-slate-50 border-t border-slate-100">
-        <div className="container mx-auto max-w-7xl">
-          
-          <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-            <span className="inline-block text-electric-blue font-bold uppercase tracking-wider text-xs px-3.5 py-1.5 bg-blue-50 border border-blue-100 rounded-full">
-              Vos Bénéfices métier
+      {/* BENEFITS */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Bénéfices métier
             </span>
-            <h2 className="text-3xl md:text-5xl font-display font-black text-slate-900">
-              Des gains de marge opérationnelle mesurables
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Des outils pensés pour votre organisation réelle
             </h2>
-            <div className="h-1 w-20 bg-electric-blue mx-auto rounded-full"></div>
-            <p className="text-slate-500 text-base md:text-lg">
-              Parce que chaque écran est pensé pour vos processus de travail réels, et non l'inverse.
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              L’objectif n’est pas d’ajouter un logiciel de plus, mais de créer
+              un outil réellement utile pour vos équipes et vos clients.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {benefits.map((b, i) => (
-              <div key={i} className="group p-8 bg-white border border-slate-100/80 rounded-[2rem] hover:border-electric-blue/30 hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
-                <div>
-                  <div className="p-4 bg-slate-50 rounded-2xl inline-block group-hover:bg-electric-blue/10 transition-colors duration-300 mb-6 border border-slate-100">
-                    <b.icon className="h-6 w-6 text-electric-blue" />
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {benefits.map((benefit, index) => {
+              const Icon = benefit.icon;
+
+              return (
+                <motion.article
+                  key={benefit.title}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
+                  className="group rounded-[1.6rem] border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-500/10"
+                >
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-[#3b82f6] ring-1 ring-blue-100 transition-all group-hover:bg-[#3b82f6] group-hover:text-white">
+                    <Icon className="h-7 w-7" />
                   </div>
-                  <h3 className="text-xl font-bold font-display text-slate-900 mb-3 group-hover:text-electric-blue transition-colors duration-300">
-                    {b.title}
+                  <h3 className="font-display text-xl font-bold text-[#0f172a]">
+                    {benefit.title}
                   </h3>
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    {b.desc}
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {benefit.desc}
                   </p>
-                </div>
-              </div>
-            ))}
+                </motion.article>
+              );
+            })}
           </div>
-
         </div>
       </section>
 
-      {/* 5. SECTION TYPES D'APPLICATIONS (Sleek High-End Presentation) */}
-      <section id="solutions" className="py-28 bg-slate-950 text-white px-6 relative">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-electric-blue/5 rounded-full filter blur-[150px] pointer-events-none"></div>
+      {/* SOLUTIONS */}
+      <section
+        id="solutions"
+        className="relative isolate overflow-hidden bg-[#0f172a] py-24 text-white md:py-32"
+      >
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#3b82f6]/15 blur-[120px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20" />
+        </div>
 
-        <div className="container relative mx-auto px-6 max-w-7xl">
-          
-          <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-            <span className="inline-block text-cyan-400 font-bold uppercase tracking-wider text-xs px-3.5 py-1.5 bg-white/5 border border-white/10 rounded-full">
-              Notre domaine d'intervention
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-300">
+              Types d’applications
             </span>
-            <h2 className="text-3xl md:text-5xl font-display font-black text-white">
-              Quel type de solution pouvons-nous bâtir ?
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-white md:text-5xl">
+              Quel type de solution pouvons-nous construire ?
             </h2>
-            <div className="h-1 w-20 bg-cyan-400 mx-auto rounded-full"></div>
-            <p className="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-              Du simple portail client hautement chiffré aux interfaces de planification d'équipes complexes connectées en temps réel.
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-300">
+              Du portail client simple à l’outil métier plus avancé, nous
+              adaptons le périmètre à votre priorité du moment.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {appTypes.map((app, idx) => (
-              <div key={idx} className="p-8 bg-slate-900 border border-white/5 hover:border-white/10 rounded-[2rem] transition-all flex flex-col justify-between space-y-6 shadow-lg group">
-                <div className="space-y-4">
-                  <div className="flex justify-between items-start">
-                    <div className="p-3 bg-white/5 rounded-xl border border-white/5 group-hover:bg-electric-blue/10 transition-colors">
-                      <app.icon className="h-6 w-6 text-cyan-400 group-hover:text-electric-blue" />
+          <div className="grid gap-6 md:grid-cols-2">
+            {appTypes.map((app, index) => {
+              const Icon = app.icon;
+
+              return (
+                <motion.article
+                  key={app.title}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.06 }}
+                  className="rounded-[1.7rem] border border-white/10 bg-white/[0.06] p-7 backdrop-blur transition-all hover:-translate-y-1 hover:bg-white/[0.09]"
+                >
+                  <div className="mb-6 flex items-start justify-between gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-cyan-300 ring-1 ring-white/10">
+                      <Icon className="h-7 w-7" />
                     </div>
-                    <span className="text-[10px] uppercase font-mono tracking-wider font-extrabold text-cyan-400/80 bg-cyan-400/5 px-2.5 py-1 rounded border border-cyan-400/10">
+
+                    <span className="rounded-full border border-cyan-400/10 bg-cyan-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-300">
                       {app.tag}
                     </span>
                   </div>
-                  
-                  <h3 className="text-2xl font-bold font-display text-white">
+
+                  <h3 className="font-display text-2xl font-bold text-white">
                     {app.title}
                   </h3>
-                  
-                  <p className="text-sm text-slate-300 leading-relaxed">
+                  <p className="mt-4 text-sm leading-7 text-slate-300">
                     {app.desc}
                   </p>
-                </div>
 
-                <div className="pt-4 border-t border-white/5 text-xs text-slate-400 italic">
-                  {app.useCase}
-                </div>
-              </div>
-            ))}
+                  <div className="mt-6 border-t border-white/10 pt-5 text-sm leading-7 text-slate-400">
+                    {app.useCase}
+                  </div>
+                </motion.article>
+              );
+            })}
           </div>
-
         </div>
       </section>
 
-      {/* 6. CONCRETE CASE STUDIES ("Sur le terrain" - Premium Mini Cards) */}
-      <section className="py-28 bg-white px-6">
-        <div className="container mx-auto max-w-7xl">
-          
-          <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-            <span className="inline-block text-electric-blue font-bold uppercase tracking-wider text-xs px-3.5 py-1.5 bg-blue-50 border border-blue-100 rounded-full">
-              Des Retours mesurés
+      {/* METHODE MVP */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-600">
+              Méthode MVP
             </span>
-            <h2 className="text-3xl md:text-5xl font-display font-black text-slate-900">
-              Des cas d'usage concrets avec ROI immédiat
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Commencer simple, tester vite, faire évoluer intelligemment
             </h2>
-            <div className="h-1 w-20 bg-electric-blue mx-auto rounded-full"></div>
-            <p className="text-slate-500 text-base md:text-lg">
-              Comment VSW Digital a transformé l'administration quotidienne et la productivité d'entreprises locales.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Plutôt que de tout développer d’un coup, nous privilégions une
+              première version utile, testable et évolutive.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {concreteCases.map((c, i) => (
-              <div key={i} className="p-8 bg-slate-50 border border-slate-100 rounded-[2rem] hover:scale-[1.01] transition-all flex flex-col justify-between min-h-[300px] shadow-sm">
-                <div className="space-y-4">
-                  <span className="inline-block text-[10px] font-extrabold tracking-wider uppercase bg-white border border-slate-200 text-slate-600 px-3 py-1 rounded-full shadow-sm">
-                    {c.badge}
-                  </span>
-                  <h4 className="text-xl font-bold text-slate-900">{c.title}</h4>
-                  <p className="text-xs md:text-sm text-slate-500 leading-relaxed">{c.desc}</p>
-                </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {methodSteps.map((step, index) => (
+              <motion.article
+                key={step.step}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.04 }}
+                className="rounded-[1.6rem] border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/10"
+              >
+                <span className="mb-5 block font-display text-4xl font-black text-[#3b82f6]/20">
+                  {step.step}
+                </span>
 
-                <div className="pt-6 border-t border-slate-200/80 mt-6 flex items-center justify-between">
-                  <span className="text-xs text-slate-400 font-mono">Performance validée</span>
-                  <span className="text-xs md:text-sm font-extrabold text-emerald-600 bg-emerald-100/50 px-2.5 py-1 rounded-lg">
-                    {c.roi}
-                  </span>
-                </div>
-              </div>
+                <h3 className="font-display text-xl font-bold text-[#0f172a]">
+                  {step.title}
+                </h3>
+
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  {step.desc}
+                </p>
+              </motion.article>
             ))}
           </div>
-
         </div>
       </section>
 
-      {/* 7. PROGRESSIVE WORKFLOW / MVP METHOD - High Trust Factor */}
-      <section className="py-28 bg-slate-50 px-6 border-b border-slate-100 relative">
-        <div className="container mx-auto max-w-7xl">
-          
-          <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-            <span className="inline-block text-emerald-600 font-bold uppercase tracking-wider text-xs px-3.5 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full">
-              Zéro risque d'investissement
+      {/* STACK */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Architecture & cloud
             </span>
-            <h2 className="text-3xl md:text-5xl font-display font-black text-slate-900">
-              La méthode MVP (Minimum Viable Product) pour sécuriser vos coûts
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Des technologies modernes pour des outils évolutifs
             </h2>
-            <div className="h-1.5 w-24 bg-emerald-500 mx-auto rounded-full"></div>
-            <p className="text-slate-600 text-base md:text-lg max-w-2xl mx-auto">
-              Nous refusons de vous surfacturer des fonctionnalités inutiles. Nous lançons un outil simple, concret et efficace sous 4 à 8 semaines, validé avec vos équipes, puis nous l'améliorons progressivement.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              La stack est choisie selon les besoins du projet : performance,
+              sécurité, simplicité d’usage, évolutivité et budget.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
-            {methodSteps.map((m, i) => (
-              <div key={i} className="p-8 bg-white border border-slate-100 rounded-3xl relative overflow-hidden shadow-sm flex flex-col justify-between">
-                <div>
-                  <span className="text-4xl font-extrabold font-display text-slate-200 block mb-4">
-                    {m.step}
-                  </span>
-                  <h3 className="text-lg font-bold font-display text-slate-900 mb-2">{m.title}</h3>
-                  <p className="text-xs md:text-sm text-slate-500 leading-relaxed">{m.desc}</p>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {stackTechnologies.map((tech, index) => (
+              <article
+                key={tech.name}
+                className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-7 transition-all hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-500/10"
+              >
+                <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-[#3b82f6] ring-1 ring-slate-200">
+                  <Server className="h-5 w-5" />
                 </div>
-              </div>
-            ))}
-          </div>
 
-        </div>
-      </section>
-
-      {/* 8. TECHNOLOGIES STRAP & DETAILS (More Credibility on Next.js, Firebase) */}
-      <section className="py-28 bg-white px-6">
-        <div className="container mx-auto max-w-7xl">
-          
-          <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-            <span className="inline-block text-electric-blue font-bold uppercase tracking-wider text-xs px-3.5 py-1.5 bg-blue-50 border border-blue-100 rounded-full">
-              Architecture & Sécurité
-            </span>
-            <h2 className="text-3xl md:text-5xl font-display font-black text-slate-900">
-              Des technologies modernes, sans frais d'infrastructure cachés
-            </h2>
-            <div className="h-1 w-20 bg-electric-blue mx-auto rounded-full"></div>
-            <p className="text-slate-500 text-base md:text-lg">
-              Nous développons des applications avec les frameworks utilisés par les géants de la Tech, pour une réactivité parfaite et une sécurité de niveau bancaire.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {stackTechnologies.map((tech, idx) => (
-              <div key={idx} className="p-7 bg-slate-50 border border-slate-100 rounded-[2rem] space-y-4 hover:border-electric-blue/20 transition-all">
-                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 text-electric-blue font-bold">
-                  {idx + 1}
-                </div>
-                <h4 className="font-extrabold text-lg text-slate-900 font-display">
+                <h3 className="font-display text-lg font-bold text-[#0f172a]">
                   {tech.name}
-                </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
+                </h3>
+
+                <p className="mt-3 text-sm leading-7 text-slate-600">
                   {tech.desc}
                 </p>
-              </div>
+              </article>
             ))}
           </div>
-
         </div>
       </section>
 
-      {/* 9. INTERACTIVE TCO / SCOPE ESTIMATOR - High Conversion Hook */}
-      <section className="py-24 bg-slate-900 text-white px-6 relative overflow-hidden">
-        <div className="absolute top-0 right-1/4 w-80 h-80 bg-electric-blue/15 rounded-full blur-[80px]"></div>
-        
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-12 gap-12 items-center bg-slate-950 p-8 md:p-16 rounded-[2.5rem] border border-white/5 relative">
-            
-            <div className="lg:col-span-7 space-y-6">
-              <span className="text-xs font-mono font-bold text-electric-blue uppercase tracking-widest block">Estimez votre besoin</span>
-              <h2 className="text-3xl md:text-4xl font-display font-black text-white leading-tight">
-                Simulez la structure de votre application en 2 secondes
+      {/* ESTIMATEUR */}
+      <section className="relative isolate overflow-hidden bg-[#0f172a] py-24 text-white md:py-32">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute right-1/4 top-0 h-80 w-80 rounded-full bg-[#3b82f6]/15 blur-[90px]" />
+        </div>
+
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="grid items-center gap-10 rounded-[2.5rem] border border-white/10 bg-[#020617] p-8 shadow-2xl shadow-slate-950/30 md:p-12 lg:grid-cols-[1.1fr_0.9fr]">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-blue-300">
+                Estimation rapide
+              </span>
+
+              <h2 className="mt-4 font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-white md:text-4xl">
+                Simulez la structure de votre application
               </h2>
-              <p className="text-sm text-slate-300">
-                Ajustez les paramètres ci-contre pour configurer les intégrations typiques et estimer la durée approximative du projet de développement.
+
+              <p className="mt-5 text-sm leading-7 text-slate-300 md:text-base">
+                Cet estimateur donne une première idée du niveau de complexité.
+                Une estimation réelle nécessite toujours un cadrage précis.
               </p>
 
-              {/* Slider form field */}
-              <div className="space-y-4 pt-4 border-t border-white/5">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-xs font-semibold">
-                    <span className="text-slate-300">Nombre d'utilisateurs simultanés (équipes, techniciens) :</span>
-                    <span className="text-emerald-400 font-bold">{estimatedUsers} collaborateurs</span>
+              <div className="mt-8 space-y-6 border-t border-white/10 pt-6">
+                <div>
+                  <div className="mb-3 flex justify-between gap-4 text-sm">
+                    <span className="text-slate-300">
+                      Nombre d’utilisateurs internes :
+                    </span>
+                    <span className="font-bold text-emerald-400">
+                      {estimatedUsers}
+                    </span>
                   </div>
-                  <input 
-                    type="range" 
-                    min="1" 
-                    max="50" 
-                    value={estimatedUsers} 
-                    onChange={(e) => setEstimatedUsers(parseInt(e.target.value))}
-                    className="w-full accent-electric-blue bg-white/5 h-1.5 rounded-lg cursor-pointer"
+
+                  <input
+                    type="range"
+                    min="1"
+                    max="50"
+                    value={estimatedUsers}
+                    onChange={(e) => setEstimatedUsers(Number(e.target.value))}
+                    className="h-2 w-full cursor-pointer accent-[#3b82f6]"
                   />
                 </div>
 
-                {/* Switch choices */}
-                <div className="grid sm:grid-cols-2 gap-4 pt-2">
-                  <label className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-colors">
-                    <input 
-                      type="checkbox" 
-                      checked={hasClientPortal} 
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10">
+                    <input
+                      type="checkbox"
+                      checked={hasClientPortal}
                       onChange={() => setHasClientPortal(!hasClientPortal)}
-                      className="rounded border-white/10 text-electric-blue focus:ring-slate-950 h-4 w-4"
+                      className="h-4 w-4 accent-[#3b82f6]"
                     />
                     <div>
-                      <p className="text-xs font-bold text-white">Espace client sécurisé</p>
-                      <p className="text-[10px] text-slate-400">Pour dépôt de justificatifs</p>
+                      <p className="text-sm font-bold text-white">
+                        Espace client
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        Dépôt, suivi, documents
+                      </p>
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5 cursor-pointer hover:bg-white/10 transition-colors">
-                    <input 
-                      type="checkbox" 
-                      checked={needAutomatisation} 
-                      onChange={() => setNeedAutomatisation(!needAutomatisation)}
-                      className="rounded border-white/10 text-electric-blue focus:ring-slate-950 h-4 w-4"
+                  <label className="flex cursor-pointer items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10">
+                    <input
+                      type="checkbox"
+                      checked={needAutomatisation}
+                      onChange={() =>
+                        setNeedAutomatisation(!needAutomatisation)
+                      }
+                      className="h-4 w-4 accent-[#3b82f6]"
                     />
                     <div>
-                      <p className="text-xs font-bold text-white">Automatisation complexe</p>
-                      <p className="text-[10px] text-slate-400">Génération de PDF & SMS</p>
+                      <p className="text-sm font-bold text-white">
+                        Automatisation
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        Emails, statuts, documents
+                      </p>
                     </div>
                   </label>
                 </div>
               </div>
             </div>
 
-            {/* Simulated Live estimate response box */}
-            <div className="lg:col-span-5 bg-slate-900 rounded-3xl p-8 border border-white/10 shadow-xl text-center space-y-6">
-              <Sparkles className="h-10 w-10 text-cyan-400 mx-auto animate-pulse" />
-              <div>
-                <p className="text-xs text-slate-400 uppercase tracking-widest font-mono">Délai estimé de livraison MVP</p>
-                <p className="text-3xl md:text-4xl font-display font-extrabold text-white mt-1">
-                  {hasClientPortal && needAutomatisation ? "6 à 8 semaines" : "4 à 6 semaines"}
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.06] p-8 text-center">
+              <Sparkles className="mx-auto h-10 w-10 text-cyan-300" />
+
+              <p className="mt-6 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
+                Délai indicatif MVP
+              </p>
+
+              <p className="mt-2 font-display text-4xl font-bold text-white">
+                {estimatedDelay}
+              </p>
+
+              <div className="mt-6 space-y-3 border-t border-white/10 pt-6 text-left text-sm text-slate-300">
+                <p className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-emerald-400" />
+                  Première version utile et testable
+                </p>
+                <p className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-emerald-400" />
+                  Évolution progressive possible
+                </p>
+                <p className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-emerald-400" />
+                  Cadrage nécessaire avant devis
                 </p>
               </div>
 
-              <div className="space-y-2 text-xs text-slate-300 border-t border-white/5 pt-4 text-left">
-                <p className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-400" /> Hébergement cloud à frais fixes réduits</p>
-                <p className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-400" /> Propriété du code source garantie</p>
-                <p className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-400" /> Suivi de projet en direct sur Trello/GitHub</p>
-              </div>
-
-              <Link 
+              <Link
                 to="/contact"
-                className="w-full block text-center py-4 bg-electric-blue hover:bg-white hover:text-navy-900 text-white rounded-xl text-xs font-bold transition-all shadow-xl shadow-electric-blue/20"
+                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-6 py-4 font-semibold text-white shadow-xl shadow-blue-500/25 transition-all hover:bg-blue-400"
               >
-                Valider l'estimation avec un expert (Gratuit)
+                Valider mon estimation
+                <ArrowRight className="h-5 w-5" />
               </Link>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* 10. FAQS - Complete Refinement */}
-      <section className="py-28 bg-slate-50 px-6 border-t border-slate-100">
-        <div className="container mx-auto max-w-4xl">
-          
-          <div className="text-center max-w-2xl mx-auto mb-20 space-y-4">
-            <span className="inline-block text-electric-blue font-bold uppercase tracking-wider text-xs px-3.5 py-1.5 bg-blue-50 border border-blue-100 rounded-full">
-              Vous avez des questions ?
+      {/* FAQ */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-4xl px-6">
+          <div className="mb-14 text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              FAQ
             </span>
-            <h2 className="text-3xl md:text-5xl font-display font-black text-slate-900">
-              Questions fréquentes de cadrage
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Questions fréquentes sur les applications web
             </h2>
-            <div className="h-1 w-20 bg-electric-blue mx-auto rounded-full"></div>
-            <p className="text-slate-500 text-sm md:text-base">
-              Tout ce que vous devez savoir pour démarrer sereinement votre projet de digitalisation.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Les réponses essentielles avant de lancer un portail client, un
+              tableau de bord ou un outil métier.
             </p>
           </div>
 
           <div className="space-y-4">
-            {faqs.map((faq, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-slate-100/80 overflow-hidden shadow-sm hover:shadow-md transition-all">
-                <button 
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex justify-between items-center p-6 text-left font-bold text-slate-900 hover:text-electric-blue transition-colors gap-4"
+            {faqs.map((faq, index) => {
+              const isOpen = openFaq === index;
+
+              return (
+                <div
+                  key={faq.q}
+                  className={`overflow-hidden rounded-[1.4rem] border bg-white shadow-sm transition-all duration-300 ${
+                    isOpen
+                      ? "border-blue-200 shadow-xl shadow-blue-500/10"
+                      : "border-slate-200 hover:border-blue-200"
+                  }`}
                 >
-                  <span className="text-sm md:text-base leading-tight font-display">{faq.q}</span>
-                  <ChevronDown className={`h-5 w-5 shrink-0 text-slate-400 transition-transform duration-300 ${openFaq === i ? 'rotate-180 text-electric-blue' : ''}`} />
-                </button>
-                <AnimatePresence initial={false}>
-                  {openFaq === i && (
-                    <motion.div 
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    className="flex w-full items-center justify-between gap-5 px-6 py-5 text-left md:px-7"
+                  >
+                    <span className="font-display text-base font-bold leading-snug text-[#0f172a] md:text-lg">
+                      {faq.q}
+                    </span>
+
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
+                        isOpen
+                          ? "bg-[#3b82f6] text-white"
+                          : "bg-blue-50 text-[#3b82f6]"
+                      }`}
                     >
-                      <div className="px-6 pb-6 text-xs md:text-sm text-slate-500 leading-relaxed border-t border-slate-50 pt-3">
-                        {faq.a}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+                      <ChevronDown
+                        className={`h-5 w-5 transition-transform duration-300 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                      >
+                        <div className="border-t border-slate-100 px-6 pb-6 pt-4 md:px-7">
+                          <p className="text-sm leading-7 text-slate-600 md:text-base">
+                            {faq.a}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* 11. CTA FINAL */}
-      <section className="py-28 bg-gradient-to-br from-slate-950 to-navy-950 text-white text-center px-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-5 pointer-events-none"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-electric-blue/15 rounded-full blur-[100px] pointer-events-none"></div>
-        
-        <div className="container relative mx-auto max-w-4xl space-y-8">
-          <span className="inline-block text-cyan-400 font-mono text-xs uppercase tracking-widest font-bold">Parlons de vos chiffres</span>
-          
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-black leading-tight">
-            Vous avez une idée d'application métier ou de portail client ?
+      {/* CTA FINAL */}
+      <section className="relative isolate overflow-hidden bg-[#0f172a] py-24 text-white md:py-32">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.35),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.18),_transparent_30%),linear-gradient(180deg,_#0f172a_0%,_#111827_55%,_#020617_100%)]" />
+          <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#3b82f6]/20 blur-[120px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20" />
+        </div>
+
+        <div className="container relative mx-auto max-w-4xl px-6 text-center">
+          <span className="mb-6 inline-flex rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-300">
+            Projet d’application web
+          </span>
+
+          <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-white md:text-5xl">
+            Vous avez une idée d’application métier ou de portail client ?
           </h2>
-          
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Profitez d'un premier rendez-vous de diagnostic 100% gratuit et sans engagement. Nous cartographions vos fichiers actuels et vous proposons une feuille de route MVP chiffrée.
+
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
+            Présentez-nous vos fichiers actuels, vos tâches répétitives et vos
+            objectifs. Nous vous aidons à définir une première version claire,
+            utile et réaliste.
           </p>
-          
-          <div className="pt-6 flex flex-col sm:flex-row gap-4 items-center justify-center">
-            <Link 
+
+          <div className="mt-10">
+            <Link
               to="/contact"
-              className="px-8 py-4 bg-electric-blue text-white rounded-xl font-bold hover:bg-white hover:text-slate-950 transition-all shadow-xl shadow-electric-blue/30 text-center w-full sm:w-auto"
+              className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-8 py-4 font-semibold text-white shadow-2xl shadow-blue-500/30 transition-all hover:-translate-y-0.5 hover:bg-blue-400"
             >
-              Prendre rendez-vous (Consultation Offerte)
+              Parler de mon application
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
-            <p className="text-xs text-slate-400 font-medium">
-              ✓ Évaluation technique • ✓ Zéro engagement
-            </p>
           </div>
         </div>
       </section>
-
-    </div>
+    </main>
   );
 }

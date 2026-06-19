@@ -1,63 +1,44 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  Sparkles, 
-  ChevronDown, 
-  ChevronUp,
-  AlertTriangle, 
-  TrendingUp, 
-  Smartphone, 
-  Wrench, 
-  Search, 
-  FileText, 
-  Layout, 
-  Settings, 
-  Layers, 
-  Cpu, 
-  ArrowRight, 
-  Activity, 
-  Clock, 
-  ArrowUpRight, 
-  Zap, 
-  ShieldCheck, 
-  Check, 
-  Building, 
-  Users,
-  Grid,
-  RefreshCw,
-  Gauge,
-  HelpCircle,
-  Eye,
-  AlertOctagon,
-  Award,
-  Database,
-  Lock,
-  Server,
-  Code,
-  AlertCircle,
-  MessageSquare,
-  CheckCircle2,
-  ListFilter,
+import { useEffect, useState } from "react";
+import type { ComponentType } from "react";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "motion/react";
+import {
+  Activity,
+  AlertTriangle,
   ArrowDownCircle,
+  ArrowRight,
   BarChart3,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  Cpu,
+  FileText,
+  Gauge,
+  Grid,
+  HelpCircle,
+  Layout,
+  ListFilter,
   MousePointerClick,
-  MonitorPlay,
-  Share2,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  TrendingUp,
+  Users,
   Workflow,
-  HelpCircle as HelpIcon
-} from 'lucide-react';
+  Zap,
+} from "lucide-react";
 
 interface AuditBenefit {
   title: string;
   desc: string;
-  icon: React.ComponentType<any>;
+  icon: ComponentType<{ className?: string }>;
 }
 
 interface AnalyzedItem {
   id: string;
   title: string;
   desc: string;
-  icon: React.ComponentType<any>;
+  icon: ComponentType<{ className?: string }>;
   badge: string;
 }
 
@@ -65,7 +46,7 @@ interface AuditType {
   title: string;
   badge: string;
   desc: string;
-  icon: React.ComponentType<any>;
+  icon: ComponentType<{ className?: string }>;
 }
 
 interface OfferOption {
@@ -81,1362 +62,971 @@ interface FaqItem {
   a: string;
 }
 
-// 1. Benefits data
 const benefits: AuditBenefit[] = [
   {
     title: "Identifier les vrais points faibles",
-    desc: "Mettre le doigt avec précision sur les freins invisibles qui bloquent vos visites ou sabotent la confiance de vos prospects.",
-    icon: AlertOctagon
+    desc: "Repérer les freins qui limitent votre visibilité, votre crédibilité ou la génération de demandes qualifiées.",
+    icon: AlertTriangle,
   },
   {
     title: "Prioriser les actions utiles",
-    desc: "Ne vous éparpillez plus. Obtenez une feuille de route claire classée par ordre d'impact et de facilité de mise en œuvre.",
-    icon: ListFilter
+    desc: "Obtenir une feuille de route claire, classée selon l’impact potentiel et la facilité de mise en œuvre.",
+    icon: ListFilter,
   },
   {
     title: "Éviter les dépenses inutiles",
-    desc: "Ne financez pas une refonte complète ou des campagnes de pub onéreuses si le blocage réside dans un simple formulaire défectueux.",
-    icon: CheckCircle2
+    desc: "Savoir s’il faut optimiser l’existant, corriger quelques blocages, améliorer le SEO ou envisager une refonte.",
+    icon: CheckCircle2,
   },
   {
     title: "Améliorer la visibilité Google",
-    desc: "Analysez votre positionnement naturel pour capter des requêtes géolocalisées à forte valeur ajoutée commerciale.",
-    icon: Search
+    desc: "Analyser votre structure SEO, vos contenus, vos pages services et vos opportunités de référencement local.",
+    icon: Search,
   },
   {
-    title: "Renforcer la conversion du site",
-    desc: "Transformez vos visiteurs passifs en appels téléphoniques ou demandes de devis grâce à une ergonomie retravaillée.",
-    icon: Zap
+    title: "Renforcer la conversion",
+    desc: "Comprendre pourquoi les visiteurs ne passent pas à l’action : formulaire, CTA, confiance, mobile ou clarté de l’offre.",
+    icon: Zap,
   },
   {
-    title: "Construire un plan d'action clair",
-    desc: "Bénéficiez d'une vision stratégique à court et moyen terme, vulgarisée et sans charabia technique opaque.",
-    icon: TrendingUp
-  }
+    title: "Construire un plan d’action",
+    desc: "Repartir avec des recommandations concrètes, compréhensibles et exploitables étape par étape.",
+    icon: TrendingUp,
+  },
 ];
 
-// 2. What is analyzed grid
 const analyzedItems: AnalyzedItem[] = [
   {
     id: "site",
     title: "Site internet",
-    desc: "Design, structure, clarté des services, navigation, expérience mobile, pertinence des appels à l'action et crédibilité globale face à vos prospects.",
+    desc: "Design, structure, clarté de l’offre, navigation, expérience mobile, appels à l’action et crédibilité générale.",
     icon: Layout,
-    badge: "Ergonomie"
+    badge: "UX",
   },
   {
     id: "seo-tech",
     title: "SEO technique",
-    desc: "Indexation, balises indispensables, structure Hn des titres, fichier sitemap, maillage interne, erreurs d'exploration et compréhension globale par les robots de Google.",
+    desc: "Balises, indexation, structure des titres, sitemap, maillage interne, erreurs d’exploration et lisibilité par Google.",
     icon: Cpu,
-    badge: "Google"
+    badge: "Google",
   },
   {
     id: "seo-content",
     title: "Contenus SEO",
-    desc: "Qualité rédactionnelle des textes, ciblage des bons mots-clés, pages de services dédiées, pages locales, pertinence du blog et adéquation avec l'intention de recherche.",
+    desc: "Qualité des textes, intention de recherche, mots-clés, pages services, pages locales et pertinence éditoriale.",
     icon: FileText,
-    badge: "Rédaction"
-  },
-  {
-    id: "seo-local",
-    title: "SEO local",
-    desc: "Optimisation de votre fiche Google Business Profile, cohérence des informations sur le web, avis clients, visibilité locale sur Google Maps et requêtes géolocalisées.",
-    icon: Building,
-    badge: "Proximité"
+    badge: "Contenu",
   },
   {
     id: "performance",
     title: "Performance web",
-    desc: "Vitesse de chargement sur réseau mobile, poids des images, stabilité visuelle des blocs (Core Web Vitals) et optimisation technique serveur.",
+    desc: "Vitesse mobile, poids des images, scripts bloquants, stabilité visuelle et ressenti utilisateur.",
     icon: Gauge,
-    badge: "Vitesse"
+    badge: "Vitesse",
   },
   {
     id: "conversion",
     title: "Conversion",
-    desc: "Efficacité des formulaires, visibilité des boutons de contact, parcours utilisateur sans friction, éléments de réassurance, preuves de confiance et parcours client.",
+    desc: "Formulaires, boutons de contact, parcours utilisateur, éléments de réassurance et preuves de confiance.",
     icon: MousePointerClick,
-    badge: "Ventes"
+    badge: "Leads",
   },
   {
-    id: "google-ads",
+    id: "ads",
     title: "Google Ads",
-    desc: "Structure de vos campagnes actives, mots-clés achetés vs négatifs, pertinence des annonces, dépenses inutiles, ciblage et suivi réel du coût par conversion.",
+    desc: "Structure des campagnes, cohérence des mots-clés, suivi des conversions, pages d’atterrissage et budget.",
     icon: BarChart3,
-    badge: "Publicité"
+    badge: "Ads",
   },
   {
-    id: "competition",
-    title: "Présence concurrentielle",
-    desc: "Analyse des concurrents visibles sur Google dans votre secteur (Paris, Val-de-Marne...), structure de leurs pages, messages clés et positionnement.",
+    id: "local",
+    title: "SEO local",
+    desc: "Fiche Google Business Profile, cohérence des informations, avis clients, visibilité Maps et requêtes géolocalisées.",
     icon: Users,
-    badge: "Marché"
+    badge: "Local",
   },
   {
     id: "security",
-    title: "Maintenance & Sécurité",
-    desc: "Certificat HTTPS, version du code (CMS WordPress), risques de piratage, conformité des plugins tiers, intégrité d'hébergement et sauvegarde.",
+    title: "Sécurité & maintenance",
+    desc: "HTTPS, CMS, plugins, sauvegardes, mises à jour, hébergement et risques techniques visibles.",
     icon: ShieldCheck,
-    badge: "Sûreté"
+    badge: "Sécurité",
   },
   {
     id: "automation",
-    title: "Automatisation & Outils",
-    desc: "Identification des tâches répétitives, saisies manuelles fastidieuses, formulaires isolés, et opportunités de lier vos outils métiers (CRM, mails).",
+    title: "Automatisation",
+    desc: "Tâches répétitives, formulaires isolés, saisies manuelles, relances et connexions possibles entre outils.",
     icon: Workflow,
-    badge: "Efficacité"
-  }
+    badge: "Process",
+  },
 ];
 
-// 3. Recommended steps
 const methodSteps = [
   {
     num: "01",
-    title: "Compréhension active de votre métier",
-    desc: "Nous analysons votre secteur d'activité, votre clientèle cible, vos zones de chalandise prioritaires (Paris, Val-de-Marne, Île-de-France) et vos objectifs précis de croissance."
+    title: "Compréhension de votre activité",
+    desc: "Nous commençons par comprendre vos services, vos clients, vos objectifs, votre zone d’intervention et vos priorités commerciales.",
   },
   {
     num: "02",
-    title: "Examen complet de votre présence",
-    desc: "Nos experts examinent votre site web, sa vitesse mobile, la qualité de sa structure sémantique et l'historique de votre visibilité actuelle."
+    title: "Analyse de votre présence actuelle",
+    desc: "Nous examinons votre site, votre structure SEO, votre performance mobile, vos contenus et vos éventuelles campagnes publicitaires.",
   },
   {
     num: "03",
-    title: "Détection objective des freins",
-    desc: "Nous démasquons les points de friction qui coûtent cher : formulaires trop longs, lenteurs mobiles, balises manquantes ou campagnes de pub mal ciblées."
+    title: "Détection des freins",
+    desc: "Nous identifions les blocages qui limitent votre visibilité, votre crédibilité ou la transformation des visiteurs en demandes.",
   },
   {
     num: "04",
-    title: "Cartographie des opportunités",
-    desc: "Nous listons les gisements de croissance inexploités : mots-clés locaux à fort volume, pages services manquantes, réglages d'ergonomie simples ou automatisations."
+    title: "Repérage des opportunités",
+    desc: "Nous listons les axes d’amélioration : nouvelles pages, optimisation SEO, refonte partielle, meilleure conversion ou automatisation.",
   },
   {
     num: "05",
-    title: "Hiérarchisation pragmatique des correctifs",
-    desc: "Nous classons chaque recommandation selon un ratio simple : impact économique généré / simplicité et coût de déploiement technique."
+    title: "Priorisation des actions",
+    desc: "Chaque recommandation est classée selon son impact potentiel, son urgence et son niveau de complexité.",
   },
   {
     num: "06",
-    title: "Restitution de la feuille de route",
-    desc: "Nous vous livrons notre plan d'action vulgarisé, étape par étape, afin que vous puissiez décider des chantiers prioritaires à mener sereinement."
-  }
+    title: "Restitution claire",
+    desc: "Vous obtenez une feuille de route exploitable pour décider sereinement des prochaines actions à mener.",
+  },
 ];
 
-// 4. Types of audits
 const auditTypes: AuditType[] = [
   {
-    title: "Audit express",
-    badge: "Idéal TPE & Artisans",
-    desc: "Pour obtenir en quelques jours un retour clair sur les points bloquants majeurs d'un site vitrine local et vos premières opportunités SEO locales.",
-    icon: Zap
+    title: "Diagnostic express",
+    badge: "Première lecture",
+    desc: "Pour identifier rapidement les principaux freins visibles d’un site vitrine ou d’une présence digitale locale.",
+    icon: Zap,
   },
   {
     title: "Audit SEO",
-    badge: "Focus Visibilité Google",
-    desc: "Idéal si votre site stagne en page 2 ou 3. Analyse en profondeur de la structure technique, du contenu sémantique, du SEO local et des backlinks.",
-    icon: Search
+    badge: "Visibilité Google",
+    desc: "Pour analyser la structure, les contenus, les balises, les pages services et les opportunités de référencement.",
+    icon: Search,
   },
   {
     title: "Audit de refonte",
-    badge: "Préparation de Projet",
-    desc: "Aide à la décision capitale avant de payer un nouveau site. Faut-il simplement optimiser l'existant ou repartir à zéro ? Nous protégeons votre SEO historique.",
-    icon: Layout
+    badge: "Avant projet",
+    desc: "Pour savoir s’il faut refaire le site, optimiser l’existant ou protéger certaines pages qui fonctionnent déjà.",
+    icon: Layout,
   },
   {
     title: "Audit Google Ads",
-    badge: "Chasse au gaspillage",
-    desc: "Pour les entreprises qui dépensent en publicité mais ne voient pas de retours. Analyse du ciblage, de la landing page, du score de qualité et du tracking de leads.",
-    icon: BarChart3
+    badge: "Publicité",
+    desc: "Pour vérifier les campagnes, les mots-clés, les annonces, les pages d’atterrissage et le suivi des conversions.",
+    icon: BarChart3,
   },
   {
-    title: "Audit conversion (UX)",
-    badge: "Plus de Leads",
-    desc: "Vous avez du trafic mais personne ne vous contacte ? Analyse complète de la confiance, de l'ergonomie mobile, de l'appel à l'action et des formulaires.",
-    icon: MousePointerClick
+    title: "Audit conversion",
+    badge: "Demandes",
+    desc: "Pour comprendre pourquoi les visiteurs ne contactent pas l’entreprise malgré du trafic ou de la visibilité.",
+    icon: MousePointerClick,
   },
   {
     title: "Audit digital complet",
-    badge: "La Totale Stratégique",
-    desc: "Une radiographie globale à 360° : site internet, référencement, performances, e-réputation, réseaux, automatisations possibles et outils métiers.",
-    icon: Grid
-  }
+    badge: "Vision globale",
+    desc: "Pour analyser site, SEO, performance, conversion, publicité, outils internes et pistes d’automatisation.",
+    icon: Grid,
+  },
 ];
 
-// 5. Offers Indicatives
 const offers: OfferOption[] = [
   {
-    title: "Diagnostic Express",
-    subtitle: "La clarté rapide",
-    desc: "Idéal pour les artisans, commerçants locaux et dirigeants de TPE souhaitant lever le doute sur les bugs de leur site.",
+    title: "Diagnostic express",
+    subtitle: "La première clarté",
+    desc: "Idéal pour obtenir rapidement un premier avis structuré sur votre site ou votre visibilité.",
     ctaText: "Demander un diagnostic express",
     features: [
-      "Vérification de l'expérience mobile",
-      "Détection des principaux freins SEO visibles",
-      "Analyse de l'efficacité du formulaire",
-      "Mesure de la vitesse de chargement de base",
-      "Échange de restitution de 30 min par téléphone"
-    ]
+      "Vérification mobile",
+      "Lecture des freins SEO visibles",
+      "Analyse rapide des CTA et formulaires",
+      "Premières recommandations prioritaires",
+      "Échange de restitution synthétique",
+    ],
   },
   {
-    title: "Audit SEO & Conversion",
-    subtitle: "Croissance & Visibilité",
-    desc: "Parfait pour les PME et entreprises de services désirant transformer leur site internet en une véritable machine à leads.",
-    ctaText: "Lancer mon audit SEO & Conversion",
+    title: "Audit SEO & conversion",
+    subtitle: "Visibilité et demandes",
+    desc: "Adapté aux entreprises qui veulent comprendre pourquoi leur site ne génère pas assez de contacts.",
+    ctaText: "Lancer mon audit SEO & conversion",
     features: [
-      "Analyse de structure technique (balises, indexation)",
-      "Audit sémantique et des contenus clés de vos services",
-      "Diagnostic complet du référencement local (Maps)",
-      "Étude de l'expérience utilisateur et points de friction",
-      "Plan d'action prioritaire et document à conserver"
-    ]
+      "Analyse technique SEO",
+      "Lecture des contenus et pages services",
+      "Diagnostic de conversion",
+      "Analyse des parcours mobile",
+      "Plan d’action priorisé",
+    ],
   },
   {
-    title: "Audit Digital Complet",
-    subtitle: "Vision 360° & Automatisation",
-    desc: "Destiné aux entreprises en développement souhaitant harmoniser leur écosystème en ligne, automatiser et optimiser de A à Z.",
-    ctaText: "Solliciter l'audit complet personnalisé",
+    title: "Audit digital complet",
+    subtitle: "Vision 360°",
+    desc: "Pour obtenir une vision globale de votre présence digitale et de vos leviers d’amélioration.",
+    ctaText: "Demander un audit complet",
     features: [
-      "Analyse exhaustive (Site, Référencement, Securité)",
-      "Audit des campagnes Google Ads si actives",
-      "Diagnostic de performance de vos concurrents directs",
-      "Cartographie des automatisations et des gains de temps",
-      "Document stratégique détaillé + Réunion de restitution"
-    ]
-  }
+      "Audit site, SEO et performance",
+      "Analyse conversion et confiance",
+      "Lecture Google Ads si actif",
+      "Pistes d’automatisation",
+      "Feuille de route stratégique",
+    ],
+  },
 ];
 
-// 6. FAQs
 const faqs: FaqItem[] = [
   {
-    q: "Qu'est-ce qu'un audit digital chez VSW Digital ?",
-    a: "C'est une analyse approfondie et objective de votre visibilité sur le web et de la technicité de votre site. Nous ne nous contentons pas d'utiliser des outils de scan automatique qui fournissent des rapports génériques imbitables. Un développeur senior et un consultant SEO se penchent manuellement sur vos pages, étudient l'expérience de vos utilisateurs, testent vos formulaires et analysent la stratégie de vos concurrents locaux pour vous livrer des recommandations concrètes et compréhensibles."
+    q: "Qu’est-ce qu’un audit digital chez VSW Digital ?",
+    a: "C’est une analyse structurée de votre présence en ligne : site internet, SEO, performance, conversion, Google Ads, expérience mobile et éventuelles opportunités d’automatisation.",
   },
   {
     q: "Quelle est la différence entre un audit SEO et un audit digital complet ?",
-    a: "L'audit SEO se concentre exclusivement sur les facteurs qui régissent votre visibilité dans les moteurs de recherche (mots-clés, balises, qualité de rédaction, liens externes, Google Maps). L'audit digital englobe une vision bien plus large à 3605 : il évalue aussi l'ergonomie globale (UX), la conversion, le tracking publicitaire (Google Ads), la sécurité, l'hébergement, ainsi que vos opportunités d'automatisation des tâches répétitives avec vos outils métiers."
+    a: "L’audit SEO se concentre sur votre visibilité Google. L’audit digital complet va plus loin : il analyse aussi l’ergonomie, la conversion, la performance, les campagnes publicitaires, la sécurité et les outils internes.",
   },
   {
-    q: "Pourquoi devrais-je faire un audit avant de refaire mon site internet ?",
-    a: "Une refonte à l'aveugle est un risque majeur. Parfois, le site existant a d'excellentes bases mais convertit mal à cause de boutons invisibles. Si vous refaites tout sans comprendre, vous risquez d'effacer ce qui fonctionnait déjà, d'endommager gravement votre référencement naturel historique chez Google (perte de positions précieuses) ou de dépenser un budget conséquent pour les mauvaises raisons. L'audit d'avant-refonte pose des fondations rationnelles."
+    q: "Pourquoi faire un audit avant de refaire mon site ?",
+    a: "Parce qu’une refonte sans diagnostic peut supprimer ce qui fonctionne déjà. L’audit permet de savoir s’il faut corriger, optimiser, restructurer ou réellement repartir sur une nouvelle base.",
   },
   {
-    q: "L'audit permet-il de savoir pourquoi mon site ne génère pas de demandes de devis ?",
-    a: "Absolument. C'est l'un de nos objectifs essentiels. Nous analysons le parcours d'un utilisateur de son arrivée sur le site jusqu'à sa tentative de vous contacter. Nous décelons si vos formulaires présentent des freins (trop de champs, requêtes techniques qui échouent, Absence de version mobile lisible, manque d'atouts de réassurance ou de preuves de confiance locales)."
+    q: "L’audit peut-il expliquer pourquoi mon site ne génère pas de demandes ?",
+    a: "Oui. Nous analysons le parcours utilisateur, les formulaires, les appels à l’action, la clarté de l’offre, la version mobile, les éléments de confiance et le suivi des conversions.",
   },
   {
-    q: "Pouvez-vous analyser mon référencement local et ma fiche Google Maps ?",
-    a: "Oui, tout à fait. Pour les artisans, commerces et PME de proximité, l'audit du SEO local est primordial. Nous analysons le ciblage géographique de vos mots-clés, la cohérence de vos adresses et téléphones sur le web, la configuration et l'optimisation de votre fiche Google Business Profile, ainsi que votre réputation en ligne à travers vos avis clients."
+    q: "Pouvez-vous analyser ma fiche Google Business Profile ?",
+    a: "Oui. Le SEO local fait partie des points analysés lorsque cela est pertinent : fiche Google, avis, cohérence des informations, visibilité Maps et pages locales.",
   },
   {
-    q: "Pouvez-vous analyser l'efficacité de mes campagnes Google Ads actuelles ?",
-    a: "Oui, si vous possédez déjà des campagnes publicitaires actives, nous pouvons réaliser un audit Google Ads. Nous analyserons les requêtes de recherche réelles qui consomment votre budget (pour exclure celles qui ne sont pas qualifiées), la mise en place de vos mots-clés négatifs, la pertinence de vos annonces face à vos concurrents et la qualité de vos pages d'atterrissage (Landing Pages)."
+    q: "Faut-il donner accès à Google Analytics ou Search Console ?",
+    a: "Ce n’est pas toujours obligatoire pour commencer, mais ces accès en lecture seule permettent d’obtenir des données plus précises sur le trafic, les conversions et les erreurs d’indexation.",
   },
   {
-    q: "Ai-je besoin de vous donner accès à Google Analytics ou Google Search Console ?",
-    a: "Ce n'est pas obligatoire pour débuter, car nos outils externes de pointe nous permettent de réaliser une part importante de l'audit. Cependant, l'accès à ces outils (temporaire et hautement sécurisé) nous apporte des données réelles fondamentales (comme le comportement précis de vos vrais visiteurs ou les erreurs d'indexation signalées par Google). Nous vous expliquons pas à pas comment nous ajouter en lecture seule sans aucune divulgation de mot de passe."
-  },
-  {
-    q: "Est-ce que l'audit m'oblige à commander d'autres prestations chez vous ensuite ?",
-    a: "Pas du tout. Notre audit digital vous appartient entièrement. Les livrables et la feuille de route sont structurés de manière à pouvoir être confiés à n'importe quel développeur ou agence partenaire, ou mis en œuvre par vos soins si vous disposez de compétences en interne. Notre objectif est de vous apporter la clarté stratégique d'un consultant de confiance."
+    q: "Suis-je obligé de commander une prestation après l’audit ?",
+    a: "Non. L’audit sert d’abord à vous donner de la clarté. Vous pouvez ensuite mettre en œuvre les recommandations avec VSW Digital, avec votre équipe ou avec un autre prestataire.",
   },
   {
     q: "Combien coûte un audit digital ?",
-    a: "Nous n'appliquons pas de tarification unique car les besoins diffèrent grandement d'une structure locale à un e-commerce national. Nous proposons ainsi un premier diagnostic express d'alignement, puis des audits approfondis taillés sur-mesure sur devis. Notre préoccupation est toujours d'aligner le coût de l'audit avec le potentiel de gain ou d'économie identifiés chez vous."
+    a: "Le tarif dépend du périmètre : diagnostic express, audit SEO, audit Google Ads, audit de refonte ou audit complet. Un échange préalable permet de proposer une estimation adaptée.",
   },
-  {
-    q: "Combien de temps faut-il pour réaliser l'audit ?",
-    a: "Un diagnostic express est généralement restitué sous 3 à 5 jours ouvrés. Pour un audit digital complet ou un audit d'avant-refonte approfondi, le délai s'étend de 10 à 15 jours selon la complexité technique du site et le nombre d'outils métiers à analyser."
-  },
-  {
-    q: "L'audit garantit-il une première position sur Google ?",
-    a: "Soyons totalement intègres : personne ne peut garantir une première position sur Google de manière absolue, car les algorithmes de Google changent régulièrement et dépendent de la concurrence. En revanche, nous garantissons l'identification rigoureuse et factuelle de chaque barrière qui empêche aujourd'hui votre site de grimper, et nous vous apportons les meilleures techniques SEO blanches recommandées pour y parvenir sereinement."
-  },
-  {
-    q: "Pouvez-vous ensuite mettre en place les recommandations de l'audit ?",
-    a: "Oui ! C'est la suite logique que choisissent plus de 80% de nos clients. Qu'il s'agisse d'optimiser le code de votre site, de réécrire vos contenus de services, d'accélérer la vitesse sur mobile, de restructurer vos campagnes Google Ads ou d'automatiser des workflows de contact, notre équipe de développeurs et de spécialistes SEO s'en charge avec réactivité."
-  }
 ];
 
 export function AuditDigital() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  
-  // Interactive Diagnostic Simulator State
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [siteScore, setSiteScore] = useState<number>(75);
   const [seoScore, setSeoScore] = useState<number>(60);
   const [perfScore, setPerfScore] = useState<number>(45);
   const [convScore, setConvScore] = useState<number>(55);
-  const [activeAnalysisField, setActiveAnalysisField] = useState<string>("seo-tech");
+  const [activeAnalysisField, setActiveAnalysisField] =
+    useState<string>("seo-tech");
 
   useEffect(() => {
-    document.title = "Audit digital pour site web, SEO et visibilité | VSW Digital";
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.title = "Audit digital, SEO et conversion | VSW Digital";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    const metaDescription = document.querySelector('meta[name="description"]');
+
+    if (metaDescription) {
+      metaDescription.setAttribute(
+        "content",
+        "Audit digital pour site internet, SEO, performance, conversion, Google Ads et automatisation. VSW Digital aide les PME à identifier leurs priorités digitales."
+      );
+    }
   }, []);
 
-  const overallScore = Math.round((siteScore + seoScore + perfScore + convScore) / 4);
+  const overallScore = Math.round(
+    (siteScore + seoScore + perfScore + convScore) / 4
+  );
 
   const getScoreVerdict = (score: number) => {
-    if (score < 50) return { label: "Performance Critique", color: "text-rose-500 bg-rose-500/10 border-rose-500/20" };
-    if (score < 70) return { label: "Optimisations requises", color: "text-amber-500 bg-amber-500/10 border-amber-500/20" };
-    return { label: "Bonne santé", color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20" };
+    if (score < 50) {
+      return {
+        label: "Priorités importantes",
+        color: "text-rose-400 bg-rose-500/10 border-rose-500/20",
+      };
+    }
+
+    if (score < 70) {
+      return {
+        label: "Optimisations recommandées",
+        color: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+      };
+    }
+
+    return {
+      label: "Base intéressante",
+      color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+    };
   };
 
   const currentVerdict = getScoreVerdict(overallScore);
+  const selectedItem =
+    analyzedItems.find((item) => item.id === activeAnalysisField) ||
+    analyzedItems[0];
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 text-navy-900 font-sans antialiased selection:bg-electric-blue selection:text-white">
-      
-      {/* 1. HERO SECTION - Premium Bleu Nuit deep canvas */}
-      <section className="relative pt-28 pb-32 bg-navy-900 text-white overflow-hidden border-b border-navy-800">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full bg-electric-blue/15 blur-[120px] -translate-y-1/2" />
-          <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] rounded-full bg-modern-purple/10 blur-[150px] translate-y-1/2" />
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_80%,transparent_100%)] opacity-25" />
+    <main className="flex min-h-screen flex-col overflow-hidden bg-white text-slate-900">
+      {/* HERO */}
+      <section className="relative isolate overflow-hidden bg-[#0f172a] py-24 text-white md:py-32">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.35),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.18),_transparent_30%),linear-gradient(180deg,_#0f172a_0%,_#111827_55%,_#020617_100%)]" />
+          <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#3b82f6]/20 blur-[120px]" />
+          <div className="absolute -bottom-32 right-0 h-[420px] w-[420px] rounded-full bg-cyan-400/10 blur-[110px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20" />
         </div>
 
-        <div className="container mx-auto px-6 max-w-7xl relative z-10 text-left">
-          
-          {/* Trust badges */}
-          <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-8">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-bold tracking-wider uppercase text-electric-blue">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Diagnostic Préliminaire Offert</span>
+        <div className="container mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-[1.05fr_0.95fr]">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mx-auto max-w-4xl text-center lg:mx-0 lg:text-left"
+          >
+            <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-blue-200 shadow-2xl shadow-blue-500/10 backdrop-blur">
+              <Sparkles className="h-4 w-4 text-[#3b82f6]" />
+              Audit digital VSW Digital
             </span>
-            <span className="text-white/30 text-xs hidden md:inline">•</span>
-            <span className="inline-flex items-center gap-1 text-xs text-slate-300 bg-white/5 px-3 py-1 rounded-full border border-white/5 font-mono">
-              ⚡ Pas de charabia technique
-            </span>
-            <span className="text-white/30 text-xs hidden md:inline">•</span>
-            <span className="inline-flex items-center gap-1 text-xs text-slate-300 bg-white/5 px-3 py-1 rounded-full border border-white/5 font-mono">
-              🎯 Aide strategique PME
-            </span>
-          </div>
 
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Left Column: Heading and intro copy with natural SEO integration */}
-            <div className="lg:col-span-7 space-y-6">
-              <h1 id="audit-main-h1" className="text-4xl md:text-5.5xl font-display font-bold tracking-tight leading-[1.1] text-white">
-                Audit digital pour identifier les priorités de votre présence en ligne
-              </h1>
-              
-              <p className="text-slate-300 text-base md:text-lg leading-relaxed max-w-2xl font-light">
-                Votre site ne génère pas assez de demandes ? Votre référencement stagne ? Vos campagnes publicitaires coûtent cher ? 
-                <strong className="text-white font-medium"> VSW Digital réalise un audit digital rigoureux</strong> de votre site internet pour identifier vos points faibles réels, les opportunités inexploitées et les actions prioritaires à mener. Évitez les dépenses inutiles de refonte globale avant d’obtenir un vrai diagnostic stratégique.
-              </p>
+            <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-white md:text-6xl lg:text-7xl">
+              Identifiez les priorités de votre{" "}
+              <span className="bg-gradient-to-r from-[#3b82f6] via-sky-300 to-cyan-300 bg-clip-text text-transparent">
+                présence en ligne
+              </span>
+            </h1>
 
-              {/* Grid of micro highlights of the audit */}
-              <div className="grid sm:grid-cols-2 gap-4 pt-2">
-                <div className="flex items-start gap-2.5">
-                  <div className="p-1 rounded bg-electric-blue/10 text-electric-blue mt-0.5 border border-electric-blue/20 shrink-0">
-                    <Check className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <span className="block font-semibold text-xs text-white leading-tight">Audit SEO & Visibilité Google</span>
-                    <span className="text-[10px] text-slate-400">Pour capter les recherches locales PME</span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <div className="p-1 rounded bg-electric-blue/10 text-electric-blue mt-0.5 border border-electric-blue/20 shrink-0">
-                    <Check className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <span className="block font-semibold text-xs text-white leading-tight">Audit Performance & Cache</span>
-                    <span className="text-[10px] text-slate-400">Fluidité de votre site internet mobile</span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <div className="p-1 rounded bg-electric-blue/10 text-electric-blue mt-0.5 border border-electric-blue/20 shrink-0">
-                    <Check className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <span className="block font-semibold text-xs text-white leading-tight">Audit Conversion d'Audience</span>
-                    <span className="text-[10px] text-slate-400">Transformer le trafic passif en contacts</span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <div className="p-1 rounded bg-electric-blue/10 text-electric-blue mt-0.5 border border-electric-blue/20 shrink-0">
-                    <Check className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <span className="block font-semibold text-xs text-white leading-tight">Échanges avec experts de proximité</span>
-                    <span className="text-[10px] text-slate-400">Val-de-Marne & Paris Ile-de-France</span>
-                  </div>
-                </div>
-              </div>
+            <p className="mt-7 max-w-3xl text-lg leading-8 text-slate-300 md:text-xl lg:mx-0">
+              Votre site ne génère pas assez de demandes ? Votre référencement
+              stagne ? Vos campagnes Google Ads manquent de clarté ? L’audit
+              digital permet d’identifier les vrais freins avant d’investir dans
+              une refonte, du SEO ou de la publicité.
+            </p>
 
-              {/* Local SEO geographical anchor embedded in copy naturally */}
-              <p className="text-slate-400 text-xs font-light tracking-wide max-w-2xl">
-                Que vous soyez un artisan à Créteil, un commerçant de quartier dans le Val-de-Marne, ou une société de services à Paris, nos consultants analysent vos leviers d'acquisition locaux spécifiques pour accroître votre business.
-              </p>
-
-              {/* Action drivers */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link 
-                  to="/contact" 
-                  id="cta-hero-audit-demander"
-                  className="px-8 py-4 bg-electric-blue hover:bg-electric-blue/90 text-white rounded-xl font-bold tracking-wide transition-all duration-300 text-center shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2 hover:-translate-y-0.5"
+            <div className="mt-7 grid gap-3 sm:grid-cols-2">
+              {[
+                "Audit SEO & visibilité",
+                "Performance mobile",
+                "Conversion & formulaires",
+                "Google Ads & tracking",
+              ].map((item) => (
+                <span
+                  key={item}
+                  className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-slate-200 backdrop-blur"
                 >
-                  <span>Demander un audit digital</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <a 
-                  href="#ce-qui-est-analyse" 
-                  className="px-8 py-4 bg-slate-800 hover:bg-slate-755 border border-slate-700 text-slate-200 rounded-xl font-bold tracking-wide transition-all duration-300 text-center flex items-center justify-center gap-2 hover:-translate-y-0.5"
-                >
-                  <span>Voir ce qui est analysé</span>
-                  <ArrowDownCircle className="w-4 h-4 text-slate-400" />
-                </a>
-              </div>
+                  <Check className="h-4 w-4 text-[#3b82f6]" />
+                  {item}
+                </span>
+              ))}
             </div>
 
-            {/* Right Column: Premium Interactive Diagnostic Board Mockup */}
-            <div className="lg:col-span-5 relative mt-6 lg:mt-0">
-              <div className="bg-slate-900/95 border border-slate-800 rounded-3xl p-6 shadow-2xl backdrop-blur-md max-w-md mx-auto relative overflow-hidden text-left">
-                {/* Visual Header */}
-                <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
-                  <div className="flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-electric-blue animate-pulse" />
-                    <span className="font-mono text-[9px] font-bold text-slate-400 uppercase tracking-widest">Simulateur d'Audit VSW</span>
-                  </div>
-                  <span className="text-[9px] font-mono text-electric-blue bg-electric-blue/10 border border-electric-blue/30 px-2.5 py-0.5 rounded-full font-bold">
-                    ESTIMATION LIVE
+            <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+              <Link
+                to="/contact"
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-8 py-4 font-semibold text-white shadow-2xl shadow-blue-500/30 transition-all hover:-translate-y-0.5 hover:bg-blue-400"
+              >
+                Demander un audit digital
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Link>
+
+              <a
+                href="#ce-qui-est-analyse"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/15"
+              >
+                Voir ce qui est analysé
+                <ArrowDownCircle className="h-5 w-5 text-blue-300" />
+              </a>
+            </div>
+          </motion.div>
+
+          {/* Simulateur */}
+          <motion.div
+            initial={{ opacity: 0, x: 28, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ delay: 0.15, duration: 0.75 }}
+            className="relative mx-auto w-full max-w-xl"
+          >
+            <div className="absolute -inset-6 rounded-[2rem] bg-[#3b82f6]/20 blur-3xl" />
+
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.07] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
+              <div className="mb-5 flex items-center justify-between rounded-2xl border border-white/10 bg-[#020617]/70 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-[#3b82f6]" />
+                  <span className="text-xs font-semibold text-slate-300">
+                    Simulateur d’audit
                   </span>
                 </div>
-
-                <p className="text-slate-400 text-[11px] leading-relaxed mb-4">
-                  Ajustez les curseurs ci-dessous pour simuler l'état approximatif actuel de votre présence en ligne et observer les opportunités de croissance :
-                </p>
-
-                {/* Score slider parameters */}
-                <div className="space-y-3">
-                  {/* Site Slider */}
-                  <div className="space-y-1 bg-slate-950 p-2.5 rounded-xl border border-slate-800/60">
-                    <div className="flex justify-between items-center text-[11px] text-slate-300">
-                      <span className="font-medium">Ergonomie générale & Site internet</span>
-                      <span className="font-mono text-electric-blue font-bold">{siteScore}%</span>
-                    </div>
-                    <input 
-                      type="range" 
-                      min="20" 
-                      max="100" 
-                      value={siteScore} 
-                      onChange={(e) => setSiteScore(Number(e.target.value))}
-                      className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                    />
-                  </div>
-
-                  {/* SEO Slider */}
-                  <div className="space-y-1 bg-slate-950 p-2.5 rounded-xl border border-slate-800/60">
-                    <div className="flex justify-between items-center text-[11px] text-slate-300">
-                      <span className="font-medium">Référencement SEO & Visibilité Google</span>
-                      <span className="font-mono text-electric-blue font-bold">{seoScore}%</span>
-                    </div>
-                    <input 
-                      type="range" 
-                      min="20" 
-                      max="100" 
-                      value={seoScore} 
-                      onChange={(e) => setSeoScore(Number(e.target.value))}
-                      className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                    />
-                  </div>
-
-                  {/* Perf Slider */}
-                  <div className="space-y-1 bg-slate-950 p-2.5 rounded-xl border border-slate-800/60">
-                    <div className="flex justify-between items-center text-[11px] text-slate-300">
-                      <span className="font-medium">Vitesse mobile & Performance</span>
-                      <span className="font-mono text-electric-blue font-bold">{perfScore}%</span>
-                    </div>
-                    <input 
-                      type="range" 
-                      min="20" 
-                      max="100" 
-                      value={perfScore} 
-                      onChange={(e) => setPerfScore(Number(e.target.value))}
-                      className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                    />
-                  </div>
-
-                  {/* Conv Slider */}
-                  <div className="space-y-1 bg-slate-950 p-2.5 rounded-xl border border-slate-800/60">
-                    <div className="flex justify-between items-center text-[11px] text-slate-300">
-                      <span className="font-medium">Formulaires & Conversion clients</span>
-                      <span className="font-mono text-electric-blue font-bold">{convScore}%</span>
-                    </div>
-                    <input 
-                      type="range" 
-                      min="20" 
-                      max="100" 
-                      value={convScore} 
-                      onChange={(e) => setConvScore(Number(e.target.value))}
-                      className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                    />
-                  </div>
-                </div>
-
-                {/* Score Result Frame */}
-                <div className="mt-5 p-4 bg-slate-950 border border-slate-800/90 rounded-2xl flex items-center justify-between gap-3">
-                  <div>
-                    <span className="block text-[10px] text-slate-400 uppercase tracking-widest font-mono">Score de Santé Estimatif</span>
-                    <span className="block text-2xl font-bold text-white mt-0.5">{overallScore} / 100</span>
-                    <span className={`inline-block text-[9px] font-mono font-bold uppercase rounded px-2 py-0.5 mt-1 border ${currentVerdict.color}`}>
-                      {currentVerdict.label}
-                    </span>
-                  </div>
-
-                  <div className="text-right space-y-1 max-w-[180px]">
-                    <span className="block text-[10px] text-slate-300 font-bold font-mono">Diagnostic Prioritaire :</span>
-                    <span className="text-[10px] text-slate-450 leading-tight block">
-                      {overallScore >= 75 
-                        ? "Stabiliser en optimisant vos tunnels d'acquisition Ads." 
-                        : "Vos canaux d'appels fuient. Effectuez des audits correctifs urgents."
-                      }
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-2 text-center">
-                  <Link 
-                    to="/contact" 
-                    className="inline-flex items-center gap-1.5 text-xs text-electric-blue hover:text-white font-medium transition-all"
-                  >
-                    <span>Vérifier en détail gratuitement avec un de nos experts</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* 2. SECTION PROBLÈME - Focus on typical bottlenecks & commercial empathy */}
-      <section className="py-24 bg-white border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Left intro text info */}
-            <div className="lg:col-span-5 space-y-6">
-              <span className="text-xs font-bold tracking-wider text-rose-600 uppercase bg-rose-50 border border-rose-100 px-3.5 py-1 rounded-full inline-block">
-                Le Dilemme des Dirigeants
-              </span>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-                Vous sentez que votre présence digitale pourrait mieux fonctionner, mais par où commencer ?
-              </h2>
-              <div className="h-1 w-16 bg-rose-500 rounded-full" />
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed font-light">
-                Beaucoup de dirigeants d’entreprises, d’artisans et de commerçants souhaitent améliorer leur visibilité locale ou nationale, envisagent de refaire entièrement leur site web ou de dépenser d’importants budgets sur Google Ads. Cependant, ils le font souvent sans de véritables indicateurs factuels.
-              </p>
-              <p className="text-slate-655 text-sm leading-relaxed font-light">
-                Résultat ? Vous dépensez des ressources précieuses sur de mauvaises cibles techniques, alors qu'un simple audit de visibilité Google ou un diagnostic de performance site ciblé permettrait d'injecter l'effort exactement au bon endroit.
-              </p>
-              
-              <div className="bg-slate-50 border border-slate-200 p-4.5 rounded-2xl">
-                <p className="text-xs text-slate-550 italic">
-                  "Agir sans faire d'audit de départ, c'est comme soigner une maladie sans faire d'analyse sanguine de contrôle. On pallie les symptômes au hasard, sans traiter la véritable cause."
-                </p>
-                <span className="block font-bold text-xs text-slate-800 mt-2 font-display text-right">— L'équipe Conseil, VSW Digital</span>
-              </div>
-            </div>
-
-            {/* Right: Grid of frequent pain points */}
-            <div className="lg:col-span-7">
-              <div className="bg-slate-50 border border-slate-200/80 rounded-[2rem] p-6 md:p-8">
-                <span className="block font-mono text-[10px] font-bold text-rose-600 uppercase tracking-wider mb-6">
-                  ⚠️ Les symptômes fréquents d'une présence sous-optimisée :
+                <span className="rounded-full bg-blue-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-300">
+                  Démo
                 </span>
+              </div>
 
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {[
-                    "un site internet peu visible sur vos services clés",
-                    "très peu de demandes de devis via les formulaires",
-                    "un trafic faible ou mal qualifié",
-                    "un mauvais positionnement Google sur vos requêtes géolocalisées",
-                    "des pages d'atterrissage lentes et mal structurées",
-                    "une rédaction de contenu insuffisante ou hors cible",
-                    "un formulaire de contact complexe ou inefficace",
-                    "des campagnes Google Ads mal suivies ou budgétivores",
-                    "l'absence totale de stratégie locale Maps structurée",
-                    "des outils clients dispersés et déconnectés",
-                    "des tâches manuelles répétitives à faible valeur",
-                    "aucune mesure réelle des conversions obtenues"
-                  ].map((errItem, idx) => (
-                    <div key={idx} className="flex gap-2.5 items-start bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-                      <div className="p-0.5 rounded-full bg-rose-50 border border-rose-100 mt-0.5 shrink-0">
-                        <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />
-                      </div>
-                      <span className="text-xs font-medium text-slate-700 leading-tight">{errItem}</span>
+              <p className="mb-5 text-sm leading-7 text-slate-300">
+                Ajustez les curseurs pour simuler l’état perçu de votre présence
+                actuelle. Ce score reste indicatif : seul un audit réel permet de
+                confirmer les priorités.
+              </p>
+
+              <div className="space-y-4">
+                {[
+                  {
+                    label: "Site & ergonomie",
+                    value: siteScore,
+                    setter: setSiteScore,
+                  },
+                  {
+                    label: "SEO & visibilité Google",
+                    value: seoScore,
+                    setter: setSeoScore,
+                  },
+                  {
+                    label: "Performance mobile",
+                    value: perfScore,
+                    setter: setPerfScore,
+                  },
+                  {
+                    label: "Conversion & formulaires",
+                    value: convScore,
+                    setter: setConvScore,
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-2xl border border-white/5 bg-[#020617] p-4"
+                  >
+                    <div className="mb-2 flex justify-between text-xs text-slate-300">
+                      <span>{item.label}</span>
+                      <span className="font-bold text-[#3b82f6]">
+                        {item.value}%
+                      </span>
                     </div>
-                  ))}
+                    <input
+                      type="range"
+                      min="20"
+                      max="100"
+                      value={item.value}
+                      onChange={(e) => item.setter(Number(e.target.value))}
+                      className="h-2 w-full cursor-pointer accent-[#3b82f6]"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-5 rounded-2xl border border-white/10 bg-[#020617] p-5">
+                <p className="text-xs uppercase tracking-wider text-slate-400">
+                  Score estimatif
+                </p>
+                <div className="mt-2 flex items-end justify-between gap-4">
+                  <p className="font-display text-4xl font-bold text-white">
+                    {overallScore}/100
+                  </p>
+                  <span
+                    className={`rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${currentVerdict.color}`}
+                  >
+                    {currentVerdict.label}
+                  </span>
                 </div>
               </div>
             </div>
-
-          </div>
-
+          </motion.div>
         </div>
       </section>
 
-      {/* 3. SECTION BÉNÉFICES - Why an audit matters strategically */}
-      <section className="py-24 bg-slate-100 border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-electric-blue uppercase bg-white border border-slate-200 px-3.5 py-1 rounded-full inline-block">
-              Des Bénéfices Directs pour votre PME
+      {/* PROBLEME */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="grid items-center gap-14 lg:grid-cols-[0.9fr_1.1fr]">
+            <div>
+              <span className="mb-5 inline-flex rounded-full border border-rose-100 bg-rose-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-rose-500">
+                Le dilemme
+              </span>
+
+              <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+                Vous sentez que votre présence digitale pourrait mieux
+                fonctionner, mais vous ne savez pas par où commencer.
+              </h2>
+
+              <p className="mt-6 text-base leading-8 text-slate-600">
+                Beaucoup d’entreprises veulent améliorer leur visibilité, refaire
+                leur site ou investir dans Google Ads sans disposer d’un
+                diagnostic clair. L’audit permet d’éviter les décisions prises à
+                l’aveugle.
+              </p>
+
+              <div className="mt-8 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-6">
+                <p className="text-sm leading-7 text-slate-600">
+                  Un bon audit ne sert pas à produire un rapport compliqué. Il
+                  sert à savoir quoi corriger, dans quel ordre, avec quel niveau
+                  de priorité.
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-6 md:p-8">
+              <p className="mb-6 text-xs font-bold uppercase tracking-[0.2em] text-rose-500">
+                Symptômes fréquents
+              </p>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[
+                  "Peu de demandes via le formulaire",
+                  "Site lent sur mobile",
+                  "Pages peu visibles sur Google",
+                  "Mauvais suivi des conversions",
+                  "Contenu trop court ou trop générique",
+                  "Boutons d’appel peu visibles",
+                  "Campagnes Ads mal mesurées",
+                  "Fiche Google peu optimisée",
+                  "Pages services manquantes",
+                  "Tâches manuelles répétitives",
+                  "Absence de données fiables",
+                  "Refonte envisagée sans diagnostic",
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+                  >
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-rose-500" />
+                    <span className="text-sm leading-6 text-slate-700">
+                      {item}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* BENEFICES */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Bénéfices
             </span>
-            <h2 className="text-3xl md:text-4.5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Un audit digital pour prendre de meilleures décisions stratégiques
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Un audit digital pour prendre de meilleures décisions
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Notre objectif est simple : vous donner une visibilité nette sur votre situation actuelle afin de guider vos investissements numériques vers le meilleur retour sur investissement.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              L’objectif est de donner une vision nette de votre situation
+              actuelle pour orienter vos investissements vers les actions les
+              plus utiles.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6.5">
-            {benefits.map((b, idx) => {
-              const Icon = b.icon;
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {benefits.map((benefit, index) => {
+              const Icon = benefit.icon;
+
               return (
-                <div 
-                  key={idx} 
-                  className="bg-white border border-slate-200 rounded-2xl p-6.5 hover:shadow-xl hover:border-slate-300 transition-all group duration-300 flex flex-col justify-between"
+                <motion.article
+                  key={benefit.title}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
+                  className="group rounded-[1.6rem] border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-500/10"
                 >
-                  <div className="space-y-4">
-                    <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-900 border border-slate-100 flex items-center justify-center shadow-sm group-hover:bg-electric-blue group-hover:text-white group-hover:border-electric-blue transition-colors duration-300">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 text-base font-display transition-colors leading-tight">{b.title}</h3>
-                      <p className="text-slate-550 text-xs leading-relaxed font-sans mt-2.5 font-light">{b.desc}</p>
-                    </div>
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-[#3b82f6] ring-1 ring-blue-100 transition-all group-hover:bg-[#3b82f6] group-hover:text-white">
+                    <Icon className="h-7 w-7" />
                   </div>
-                </div>
+
+                  <h3 className="font-display text-xl font-bold text-[#0f172a]">
+                    {benefit.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {benefit.desc}
+                  </p>
+                </motion.article>
               );
             })}
           </div>
-
         </div>
       </section>
 
-      {/* 4. SECTION WHAT IS ANALYZED - Modular detail overview */}
-      <section id="ce-qui-est-analyse" className="py-24 bg-white border-b border-slate-200/50 scroll-mt-6">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-electric-blue uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Notre Périmètre d'Expertises
+      {/* ANALYSE */}
+      <section id="ce-qui-est-analyse" className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Ce qui est analysé
             </span>
-            <h2 className="text-3xl md:text-4.2xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Ce que VSW Digital peut analyser précisément dans votre audit
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Une lecture complète de votre présence digitale
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Nous couvrons l'ensemble du spectre de votre empreinte digitale pour assurer une cohérence d'ingénierie et de conversion. Activez le détail de chaque carte ci-dessous pour voir nos leviers :
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Nous analysons les éléments qui influencent directement la
+              visibilité, la confiance, la performance et la conversion.
             </p>
           </div>
 
-          {/* Interactive tabs showing the detail list or clean grids */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {analyzedItems.map((item) => {
               const Icon = item.icon;
               const isSelected = activeAnalysisField === item.id;
+
               return (
-                <button 
+                <button
                   key={item.id}
+                  type="button"
                   onClick={() => setActiveAnalysisField(item.id)}
-                  className={`text-left rounded-2xl p-6.5 border transition-all duration-300 flex flex-col justify-between h-full bg-white relative hover:shadow-lg ${
-                    isSelected 
-                      ? 'border-electric-blue ring-1 ring-electric-blue shadow-lg' 
-                      : 'border-slate-200 border-dashed hover:border-slate-355'
+                  className={`group rounded-[1.5rem] border p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                    isSelected
+                      ? "border-blue-300 bg-blue-50 shadow-blue-500/10"
+                      : "border-slate-200 bg-white hover:border-blue-200"
                   }`}
                 >
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center w-full">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-xs ${
-                        isSelected ? 'bg-electric-blue text-white' : 'bg-slate-50 text-slate-800 border border-slate-100'
-                      }`}>
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <span className="text-[10px] font-mono tracking-wider font-bold uppercase text-slate-500">
-                        {item.badge}
-                      </span>
+                  <div className="mb-5 flex items-center justify-between">
+                    <div
+                      className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-all ${
+                        isSelected
+                          ? "bg-[#3b82f6] text-white"
+                          : "bg-slate-50 text-[#3b82f6] ring-1 ring-slate-200"
+                      }`}
+                    >
+                      <Icon className="h-6 w-6" />
                     </div>
 
-                    <div className="space-y-2">
-                      <h3 className="font-bold text-slate-900 text-base font-display flex items-center gap-1.5">
-                        <span>{item.title}</span>
-                        {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-electric-blue animate-ping" />}
-                      </h3>
-                      <p className="text-slate-550 text-xs leading-relaxed font-sans font-light">{item.desc}</p>
-                    </div>
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                      {item.badge}
+                    </span>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400 font-mono">
-                    <span>{isSelected ? "👉 SECTEUR ACTIF SÉLECTIONNÉ" : "🔍 SÉLECTIONNER POUR VOIR LE PILIER"}</span>
-                    <ArrowUpRight className={`w-3.5 h-3.5 transition-transform ${isSelected ? 'rotate-45 text-electric-blue' : ''}`} />
-                  </div>
+                  <h3 className="font-display text-lg font-bold text-[#0f172a]">
+                    {item.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {item.desc}
+                  </p>
                 </button>
               );
             })}
           </div>
 
-          {/* Educational panel that reveals what we do upon chosen tab focus */}
-          <div className="bg-[#0f172a] text-white rounded-[2rem] p-6 md:p-10 mt-10 border border-slate-850 relative overflow-hidden shadow-2xl">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-electric-blue/10 blur-[60px] rounded-full" />
-            
-            <div className="grid md:grid-cols-12 gap-8 items-center">
-              <div className="md:col-span-4 space-y-2">
-                <span className="text-[10px] font-mono font-bold text-electric-blue uppercase tracking-wider block">Zone de Zoom interactif :</span>
-                {(() => {
-                  const curr = analyzedItems.find(i => i.id === activeAnalysisField) || analyzedItems[0];
-                  return (
-                    <>
-                      <h4 className="text-xl font-display font-medium">{curr.title}</h4>
-                      <p className="text-slate-400 text-xs font-sans font-light">
-                        Voici comment nous agissons concrètement sur l'aspect technique et marketing lors de l'audit de ce pilier.
-                      </p>
-                    </>
-                  );
-                })()}
-              </div>
-
-              <div className="md:col-span-8 bg-slate-950/80 p-5 rounded-2xl border border-slate-800">
-                {activeAnalysisField === "site" && (
-                  <div className="space-y-3.5 text-xs text-slate-350">
-                    <p className="font-bold text-[13px] text-white">⭐ Diagnostic d'Ergonomie de Site Vitrine ou E-commerce :</p>
-                    <ul className="grid sm:grid-cols-2 gap-2">
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Test d'affichage sur écrans mobiles tiers (iPhones, Androids)</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Hiérarchie visuelle pour guider l'action</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Positionnement des boutons d'appels directs</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Analyse des éléments de preuve sociale et d'avis clients</span></li>
-                    </ul>
-                  </div>
-                )}
-                {activeAnalysisField === "seo-tech" && (
-                  <div className="space-y-3.5 text-xs text-slate-355">
-                    <p className="font-bold text-[13px] text-white">⭐ Diagnostic SEO Technique & Exploration Googlebot :</p>
-                    <ul className="grid sm:grid-cols-2 gap-2">
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Vérification des fichiers de sitemap XML et rachat d'URL</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Analyse des balises H1, H2, H3 et doublons sémantiques</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Détection des erreurs de redirection indésirables (404, 301)</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Contrôle de l'indexabilité globale via Search Console</span></li>
-                    </ul>
-                  </div>
-                )}
-                {activeAnalysisField === "seo-content" && (
-                  <div className="space-y-3.5 text-xs text-slate-355">
-                    <p className="font-bold text-[13px] text-white">⭐ Évaluation de la Richesse Sémantique et Rédactionnelle :</p>
-                    <ul className="grid sm:grid-cols-2 gap-2">
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Ciblage de l'intention réelle de vos acheteurs</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Analyse de densité des mots-clés sans sur-optimisation</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Rédaction de textes explicatifs pour vos fiches techniques</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Maillage pour lier pertinemment vos pages services</span></li>
-                    </ul>
-                  </div>
-                )}
-                {activeAnalysisField === "seo-local" && (
-                  <div className="space-y-3.5 text-xs text-slate-355">
-                    <p className="font-bold text-[13px] text-white">⭐ Diagnostic Référencement Local (Maps & Fiches Google) :</p>
-                    <ul className="grid sm:grid-cols-2 gap-2">
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Cohérence absolue Nom-Adresse-Téléphone (données NAP)</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Sélection de la catégorie principale de votre fiche Maps</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Répartition des avis locaux et suggestions de réponses</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Analyse de présence sur la banlieue d'activité cible</span></li>
-                    </ul>
-                  </div>
-                )}
-                {activeAnalysisField === "performance" && (
-                  <div className="space-y-3.5 text-xs text-slate-355">
-                    <p className="font-bold text-[13px] text-white">⭐ Mesure Objective de la Performance & Clapet de Vitesse :</p>
-                    <ul className="grid sm:grid-cols-2 gap-2">
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Analyse de vitesse mobile sur de vrais réseaux 4G/5G</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Pression et poids de vos illustrations et images</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Optimisation des scripts JS tiers qui bloquent l'affichage</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Revue de la latence serveur (TTFB)</span></li>
-                    </ul>
-                  </div>
-                )}
-                {activeAnalysisField === "conversion" && (
-                  <div className="space-y-3.5 text-xs text-slate-355">
-                    <p className="font-bold text-[13px] text-white">⭐ Analyse des gisements de conversion de prospects :</p>
-                    <ul className="grid sm:grid-cols-2 gap-2">
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Parcours utilisateur fluide vers l'appel téléphonique</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Mise en valeur psychologique des avis authentiques</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Allègement des champs inutiles du formulaire</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Pertinence des popups et outils de réassurance</span></li>
-                    </ul>
-                  </div>
-                )}
-                {/* Fallback support for others */}
-                {!["site", "seo-tech", "seo-content", "seo-local", "performance", "conversion"].includes(activeAnalysisField) && (
-                  <div className="space-y-3.5 text-xs text-slate-355">
-                    <p className="font-bold text-[13px] text-white">⭐ Revue d'environnement et de cohérence digitale :</p>
-                    <ul className="grid sm:grid-cols-2 gap-2">
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Détection des fuites de budgets et dépenses inutiles</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Positionnement face aux leaders locaux du Val-de-Marne</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Audit de sécurité des extensions WordPress obsolètes</span></li>
-                      <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-450 shrink-0" /><span>Opportunités de connexions d'APIs automatiques</span></li>
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* 5. SECTION MÉTHODE - Detailed Step list */}
-      <section className="py-24 bg-slate-50 border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-electric-blue uppercase bg-white border border-slate-250 px-3.5 py-1 rounded-full inline-block">
-              Notre Démarche Transparente
-            </span>
-            <h2 className="text-3xl md:text-4.2xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Notre méthode pour réaliser un audit digital utile et exploitable
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Chez VSW Digital, nous réfutons les rapports inexploitables générés automatiquement par des robots. Nous suivons une méthodologie rigoureuse, façonnée pour les réalités d’une PME.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {methodSteps.map((step, idx) => (
-              <div 
-                key={idx} 
-                className="bg-white border border-slate-200/90 rounded-2xl p-6 md:p-8 hover:shadow-md transition-all relative overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 p-4 text-4xl md:text-5xl font-mono font-bold text-slate-100 select-none">
-                  {step.num}
-                </div>
-                
-                <div className="space-y-4 relative z-10">
-                  <span className="w-8 h-8 rounded-lg bg-electric-blue/10 text-electric-blue flex items-center justify-center font-mono text-xs font-bold">
-                    {step.num}
-                  </span>
-                  
-                  <div className="space-y-2">
-                    <h3 className="font-bold text-slate-900 font-display text-base leading-tight">{step.title}</h3>
-                    <p className="text-slate-500 text-xs leading-relaxed font-sans font-light">{step.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* 6. SECTION TYPES OF AUDITS - Variety adapted to clients */}
-      <section className="py-24 bg-white border-b border-slate-200/30">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-electric-blue uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Des Analyses selon votre Contexte
-            </span>
-            <h2 className="text-3xl md:text-4.2xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Un format d'audit digital adapté à votre situation
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Parce qu'une jeune entreprise n'a pas les mêmes enjeux qu'une industrie en recherche d'automatisation des flux ou qu'une campagne Google Ads de grande envergure, nous varions le curseur analytique.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6.5">
-            {auditTypes.map((type, idx) => {
-              const Icon = type.icon;
-              return (
-                <div key={idx} className="bg-slate-50 border border-slate-200/80 rounded-2xl p-6 hover:bg-white hover:border-slate-300 transition-all flex flex-col justify-between">
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <div className="w-9 h-9 rounded-lg bg-white border border-slate-200 text-slate-900 flex items-center justify-center shadow-xs">
-                        <Icon className="w-4.5 h-4.5" />
-                      </div>
-                      <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-200/60 px-2 py-0.5 rounded">
-                        {type.badge}
-                      </span>
-                    </div>
-
-                    <div className="space-y-2">
-                      <h3 className="font-bold text-slate-900 font-display text-base">{type.title}</h3>
-                      <p className="text-slate-600 text-xs leading-relaxed font-sans font-light">{type.desc}</p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-        </div>
-      </section>
-
-      {/* 7. SECTION LIVRABLES - Concrete material they retrieve */}
-      <section className="py-24 bg-slate-50 border-b border-slate-200/70">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            <div className="lg:col-span-6 space-y-6">
-              <span className="text-xs font-bold tracking-wider text-electric-blue uppercase bg-white border border-slate-250 px-3.5 py-1 rounded-full inline-block">
-                Ce que vous possédez ensuite
-              </span>
-              <h2 className="text-3xl md:text-4.2xl font-display font-bold text-slate-900 tracking-tight leading-sharp">
-                Ce que vous obtenez concrètement après l'audit
-              </h2>
-              <div className="h-1 w-16 bg-electric-blue rounded-full" />
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed font-light">
-                À l’issue de notre travail d'analyse, nous ne vous abandonnons pas face à une pile de données brutes incompréhensibles. Nous vous transmettons un socle complet et exploitable de documents fondamentaux.
-              </p>
-              
-              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-                <p className="text-xs text-slate-550 leading-relaxed font-light">
-                  <strong className="text-slate-950 font-semibold block mb-1">💡 Notre philosophie d'action :</strong>
-                  "L’objectif n’est pas de produire un rapport compliqué de 150 pages destiné à rester au fond d’un tiroir, mais une feuille de route claire, vulgarisée, priorisée et exploitable immédiatement par n'importe quel développeur."
+          <div className="mt-10 overflow-hidden rounded-[2rem] bg-[#0f172a] p-8 text-white shadow-2xl shadow-slate-900/20 md:p-10">
+            <div className="grid gap-8 md:grid-cols-[0.8fr_1.2fr] md:items-center">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-300">
+                  Zoom sélectionné
+                </p>
+                <h3 className="mt-3 font-display text-3xl font-bold">
+                  {selectedItem.title}
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-slate-300">
+                  {selectedItem.desc}
                 </p>
               </div>
-            </div>
 
-            <div className="lg:col-span-6">
-              <div className="bg-[#0f172a] text-white p-6 md:p-8 rounded-[2rem] border border-slate-800 shadow-xl space-y-4">
-                <span className="block font-mono text-[9px] font-bold text-electric-blue uppercase tracking-wider">
-                  📂 Le dossier de livrables VSW Digital comprend :
-                </span>
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.06] p-6">
+                <p className="mb-4 text-sm font-semibold text-white">
+                  Exemples de points vérifiés :
+                </p>
 
-                <ul className="space-y-3.5">
+                <div className="grid gap-3 sm:grid-cols-2">
                   {[
-                    "un diagnostic clair et hiérarchisé de votre situation technique actuelle",
-                    "la liste factuelle de chaque point faible et bug à corriger d'urgence",
-                    "la liste de vos opportunités de visibilité naturelle inexploitées",
-                    "des recommandations prioritaires vulgarisées pour votre chef de projet",
-                    "un plan d’action par étapes logiques de déploiement",
-                    "des suggestions de nouvelles pages sémantiques Google à créer",
-                    "des recommandations objectives de refonte (ou de simple ajustement)",
-                    "des recommandations correctives de ciblage Google Ads si nécessaire",
-                    "des recommandations techniques serveur (Performances, HTTPS, PHP)",
-                    "des pistes concrètes d’automatisation de formulaires évitant la saisie manuelle",
-                    "une estimation des efforts et budgets à court, moyen et long terme"
-                  ].map((livItem, idx) => (
-                    <li key={idx} className="flex gap-2.5 items-start text-xs text-slate-300">
-                      <div className="p-0.5 rounded-full bg-electric-blue/20 mt-0.5 shrink-0 text-electric-blue">
-                        <Check className="w-3.5 h-3.5" />
-                      </div>
-                      <span>{livItem}</span>
-                    </li>
+                    "Qualité de la structure",
+                    "Clarté du parcours utilisateur",
+                    "Visibilité des actions importantes",
+                    "Cohérence avec vos objectifs",
+                  ].map((item) => (
+                    <div key={item} className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-emerald-400" />
+                      <span className="text-sm text-slate-300">{item}</span>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             </div>
-
           </div>
-
         </div>
       </section>
 
-      {/* 8. SECTION EXEMPLES DE RECOMMANDATIONS - Real examples grid */}
-      <section className="py-24 bg-white border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-electric-blue uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Exemples Concrets
+      {/* METHODE */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Méthode
             </span>
-            <h2 className="text-3xl md:text-4.2xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Exemples de recommandations proposées après un audit digital
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Une démarche claire, utile et exploitable
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Pour vous donner une idée plus claire, voici le genre d’améliorations concrètes que nous sommes régulièrement amenés à préconiser et à déployer de manière autonome :
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              L’audit doit vous aider à décider. Nous privilégions une méthode
+              lisible, progressive et orientée action.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {[
-              { title: "Créer une page service plus complète", desc: "Pour mieux capter les intentions d'achat directes de l'internaute sur Google." },
-              { title: "Ajouter des boutons de contact plus visibles", desc: "Placer un bouton d'appel collé en bas de l'écran tactile mobile." },
-              { title: "Compresser l’intégralité des images lourdes", desc: "Passer au format moderne WebP pour diviser par 3 le temps de chargement." },
-              { title: "Redonner du poids aux balises de structures", desc: "Corriger l'absence ou la duplication de la balise titre H1." },
-              { title: "Déployer des pages géolocalisées spécifiques", desc: "Pages dédiées d'interventions locales (ex: Créteil, Saint-Maur)." },
-              { title: "Revisiter votre fiche Google Maps Pro", desc: "Intégrer vos termes clés les plus recherchés dans la fiche." },
-              { title: "Mettre sous observation les formulaires", desc: "Brancher des tests de validation d'envois automatiques." },
-              { title: "Créer un tunnel d'atterrissage Ads dédié", desc: "Une Landing Page épurée de 100% de distractions extérieures." },
-              { title: "Éradiquer les erreurs 404 Google Console", desc: "Faire des redirections d'anciennes pages cassées." },
-              { title: "Simplifier grandement le formulaire", desc: "Réduire à 3 questions l'estimation d'un devis." },
-              { title: "Injecter des preuves de réassurance", desc: "Planches de chantiers finis, décennale active, avis certifiés." },
-              { title: "Lier CRM et réception de mails de prospects", desc: "Branchements d'automatisations simples de sauvegarde." }
-            ].map((rec, idx) => (
-              <div key={idx} className="bg-slate-50 border border-slate-200 rounded-xl p-5 hover:border-slate-350 hover:bg-white transition-all">
-                <h4 className="font-bold text-slate-900 text-xs font-display flex gap-2 items-start leading-snug">
-                  <span className="text-electric-blue font-mono font-bold shrink-0">#{idx + 1}</span>
-                  <span>{rec.title}</span>
-                </h4>
-                <p className="text-slate-500 text-[11px] leading-relaxed font-sans font-light mt-2">{rec.desc}</p>
-              </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {methodSteps.map((step, index) => (
+              <motion.article
+                key={step.num}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.04 }}
+                className="rounded-[1.6rem] border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/10"
+              >
+                <span className="mb-5 block font-display text-4xl font-black text-[#3b82f6]/20">
+                  {step.num}
+                </span>
+
+                <h3 className="font-display text-xl font-bold text-[#0f172a]">
+                  {step.title}
+                </h3>
+
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  {step.desc}
+                </p>
+              </motion.article>
             ))}
           </div>
-
         </div>
       </section>
 
-      {/* 9. SECTION POUR QUI - Target audience split */}
-      <section className="py-24 bg-slate-50 border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            <div className="lg:col-span-5 space-y-6">
-              <span className="text-xs font-bold tracking-wider text-electric-blue uppercase bg-white border border-slate-250 px-3.5 py-1 rounded-full inline-block">
-                Secteurs Accompagnés
-              </span>
-              <h2 className="text-3xl md:text-4.2xl font-display font-bold text-slate-900 tracking-tight leading-sharp">
-                À qui s’adresse concrètement l’audit digital ?
-              </h2>
-              <div className="h-1 w-16 bg-electric-blue rounded-full" />
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed font-light">
-                Notre structure est modulaire. Nous réalisons l'audit numérique pour des typologies multiples de professionnels de l'Île-de-France, allant de l'artisan individuel de proximité aux PME plus structurées.
-              </p>
-              <p className="text-slate-550 text-xs leading-relaxed font-light">
-                <span className="text-slate-900 font-bold block mb-1">💡 Notre expertise s'adresse particulièrement à vous si :</span>
-                Vous avez déjà investi dans un outil ou un site internet, mais que vous constatez un rendement décevant (peu de trafic, fiches Google Maps stagnantes, absence de clarté commerciale ou coûts marketing Google Ads excessifs).
-              </p>
-            </div>
+      {/* TYPES AUDITS */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Formats d’audit
+            </span>
 
-            <div className="lg:col-span-7">
-              <div className="bg-white border border-slate-200 rounded-[2rem] p-6 md:p-8 shadow-sm">
-                
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {[
-                    "PME régionales",
-                    "Artisans locaux",
-                    "Commerçants de quartier",
-                    "Indépendants",
-                    "Sociétés de services",
-                    "Entreprises de rénovation",
-                    "Sociétés de déménagement",
-                    "Sécurité privée",
-                    "Centres de formation",
-                    "Cabinets comptables",
-                    "Administratif & Droit",
-                    "Entreprises de transport",
-                    "Réparateurs de téléphones",
-                    "Dossiers de domiciliation",
-                    "Prestataires B2B"
-                  ].map((secItem, idx) => (
-                    <div key={idx} className="bg-slate-50 border border-slate-150 p-3 rounded-lg text-center flex items-center justify-center min-h-[50px] hover:border-blue-200 transition-colors">
-                      <span className="text-xs font-semibold text-slate-700 font-display leading-tight">{secItem}</span>
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Un format adapté à votre situation
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Selon votre besoin, l’audit peut être rapide, orienté SEO, centré
+              sur la conversion, ou couvrir l’ensemble de votre présence
+              digitale.
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {auditTypes.map((type, index) => {
+              const Icon = type.icon;
+
+              return (
+                <motion.article
+                  key={type.title}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.04 }}
+                  className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-7 transition-all hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-500/10"
+                >
+                  <div className="mb-5 flex items-center justify-between">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#3b82f6] ring-1 ring-slate-200">
+                      <Icon className="h-6 w-6" />
+                    </div>
+
+                    <span className="rounded-full bg-slate-200 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                      {type.badge}
+                    </span>
+                  </div>
+
+                  <h3 className="font-display text-xl font-bold text-[#0f172a]">
+                    {type.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {type.desc}
+                  </p>
+                </motion.article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* OFFRES */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Choisir le bon niveau
+            </span>
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Des prestations adaptées à votre besoin
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Le périmètre dépend de votre situation : simple diagnostic,
+              problème SEO précis ou vision digitale complète.
+            </p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {offers.map((offer, index) => (
+              <motion.article
+                key={offer.title}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.06 }}
+                className={`rounded-[1.8rem] border p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-2xl ${
+                  index === 1
+                    ? "border-blue-200 bg-white shadow-blue-500/10"
+                    : "border-slate-200 bg-white"
+                }`}
+              >
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#3b82f6]">
+                  {offer.subtitle}
+                </p>
+
+                <h3 className="mt-3 font-display text-2xl font-bold text-[#0f172a]">
+                  {offer.title}
+                </h3>
+
+                <p className="mt-4 text-sm leading-7 text-slate-600">
+                  {offer.desc}
+                </p>
+
+                <div className="mt-7 space-y-3 border-t border-slate-100 pt-6">
+                  {offer.features.map((feature) => (
+                    <div key={feature} className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#3b82f6]" />
+                      <span className="text-sm leading-6 text-slate-600">
+                        {feature}
+                      </span>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-100 text-center">
-                  <p className="text-[11px] font-mono text-slate-400">
-                    🛠️ Nous calibrons nos analyses de diagnostic en fonction des contraintes propres à chaque domaine.
-                  </p>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* 10. SECTION AUDIT AVANT INVESTISSEMENT - Cost prevention argument */}
-      <section className="py-24 bg-white border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-rose-600 uppercase bg-rose-50 border border-rose-100 px-3.5 py-1 rounded-full inline-block">
-              Gestion de Budget Intelligente
-            </span>
-            <h2 className="text-3xl md:text-4.2xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Pourquoi faire un audit avant d'investir dans un nouveau site, du SEO ou Google Ads ?
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              L'échec d'un projet web provient presque toujours de mauvaises décisions de départ. Diagnostiquer permet d'isoler le levier le plus puissant pour votre budget disponible.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { title: "Mieux comprendre les priorités réelles", desc: "Identifier exactement l'origine du goulot d'étranglement de vos ventes." },
-              { title: "Choisir le levier optimal", desc: "Trancher objectivement entre une refonte complète de site, un plan d'actions SEO long terme ou du Google Ads immédiat." },
-              { title: "Éviter de refaire ce qui fonctionne", desc: "Pourquoi dépenser 5000€ pour un site complet quand seul le formulaire et 2 pages de services sont défectueux ?" },
-              { title: "Préserver vos pages de référencement", desc: "Protéger et conserver les URL solides qui vous amènent déjà du trafic organique." },
-              { title: "Mieux allouer vos budgets", desc: "Maximiser l'impact de chaque euro investi en réglant d'abord les bugs évidents du site." },
-              { title: "Stratégie de croissance progressive", desc: "Élaborer un calendrier d'actions réaliste sans asphyxier la trésorerie de votre entreprise." },
-              { title: "Mesurer ce qui compte vraiment", desc: "Mettre en place des sondes de conversion transparentes pour savoir exactement d'où vient chaque lead." },
-              { title: "Décisions basées sur la donnée", desc: "Sortez du flou artistique et des opinions arbitraires des agences web traditionnelles." }
-            ].map((investObj, idx) => (
-              <div key={idx} className="bg-slate-50 border border-slate-200 rounded-xl p-5.5 flex flex-col justify-between">
-                <div className="space-y-2.5">
-                  <div className="w-6 h-6 rounded bg-rose-50 border border-rose-100/60 text-rose-500 font-mono text-[10px] font-bold flex items-center justify-center">
-                    {(idx + 1).toString().padStart(2, '0')}
-                  </div>
-                  <h4 className="font-bold text-slate-900 font-display text-xs leading-snug">{investObj.title}</h4>
-                  <p className="text-slate-500 text-[11px] leading-relaxed font-sans font-light">{investObj.desc}</p>
-                </div>
-              </div>
+                <Link
+                  to="/contact"
+                  className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-6 py-4 font-semibold text-white transition-all hover:bg-blue-400"
+                >
+                  {offer.ctaText}
+                  <ArrowRight className="h-5 w-5" />
+                </Link>
+              </motion.article>
             ))}
           </div>
-
         </div>
       </section>
 
-      {/* 11. SECTION OUTILS ET ANALYSES - Trust & reality disclaimer */}
-      <section className="py-24 bg-slate-50 border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            <div className="lg:col-span-6 space-y-6">
-              <span className="text-xs font-bold tracking-wider text-electric-blue uppercase bg-white border border-slate-250 px-3.5 py-1 rounded-full inline-block">
-                Outils de pointe & transparence
-              </span>
-              <h2 className="text-3xl md:text-4.2xl font-display font-bold text-slate-900 tracking-tight leading-sharp">
-                Des analyses concrètes basées sur des faits, pas seulement des impressions
-              </h2>
-              <div className="h-1 w-16 bg-electric-blue rounded-full" />
-              
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed font-light">
-                Nous nous appuyons sur une suite d'instruments professionnels de benchmark (Google Lighthouse, Search Console, analyseurs sémantiques avancés) pour asseoir nos diagnostics.
-              </p>
-
-              {/* Strict compliance disclaimer message requested */}
-              <div className="bg-amber-50 border border-amber-200/80 p-5 rounded-2xl flex gap-3">
-                <div className="p-1 rounded bg-amber-500/10 text-amber-600 border border-amber-500/20 shrink-0 mt-0.5">
-                  <AlertCircle className="w-4 h-4" />
-                </div>
-                <div>
-                  <h5 className="font-bold text-slate-900 text-xs font-display">Clause de Transparence & Accès</h5>
-                  <p className="text-[11px] text-slate-600 leading-relaxed font-light mt-1">
-                    Nous n'accédons à aucun de vos outils privés (Search Console, Analytics, espaces administratifs) sans votre accord formel en direct. S'ils ne sont pas configurés ou si vous préférez procéder autrement, nous réalisons l'intégralité de notre audit via des outils d'observations externes et des simulations de robots. C'est l'assurance pour vous d'un traitement éthique sans divulgation technique à risque.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="lg:col-span-6">
-              <div className="bg-white border border-slate-200 p-6 md:p-8 rounded-[2rem] shadow-xs">
-                <span className="block font-mono text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-4">
-                  📈 Les vecteurs réels d'observation :
-                </span>
-
-                <div className="grid sm:grid-cols-2 gap-3.5 text-xs text-slate-700">
-                  <div className="flex gap-2 items-center"><Check className="w-3.5 h-3.5 text-emerald-550 shrink-0" /><span>Données réelles Google Search Console</span></div>
-                  <div className="flex gap-2 items-center"><Check className="w-3.5 h-3.5 text-emerald-550 shrink-0" /><span>Google Analytics si configuré</span></div>
-                  <div className="flex gap-2 items-center"><Check className="w-3.5 h-3.5 text-emerald-550 shrink-0" /><span>Analyse des pages réellement indexées</span></div>
-                  <div className="flex gap-2 items-center"><Check className="w-3.5 h-3.5 text-emerald-550 shrink-0" /><span>Exploration des mots-clés performants</span></div>
-                  <div className="flex gap-2 items-center"><Check className="w-3.5 h-3.5 text-emerald-550 shrink-0" /><span>Benchmark des leaders du marché</span></div>
-                  <div className="flex gap-2 items-center"><Check className="w-3.5 h-3.5 text-emerald-550 shrink-0" /><span>Tests de performance mobile réels</span></div>
-                  <div className="flex gap-2 items-center"><Check className="w-3.5 h-3.5 text-emerald-550 shrink-0" /><span>Analyse ergonomique de l'UX responsive</span></div>
-                  <div className="flex gap-2 items-center"><Check className="w-3.5 h-3.5 text-emerald-550 shrink-0" /><span>Analyse de réassurance des formulaires</span></div>
-                  <div className="flex gap-2 items-center"><Check className="w-3.5 h-3.5 text-emerald-550 shrink-0" /><span>Revue des Landing Pages de campagne</span></div>
-                  <div className="flex gap-2 items-center"><Check className="w-3.5 h-3.5 text-emerald-550 shrink-0" /><span>Analyse de structure SEO globale</span></div>
-                  <div className="flex gap-2 items-center"><Check className="w-3.5 h-3.5 text-emerald-550 shrink-0" /><span>Criblage sémantique de contenu</span></div>
-                  <div className="flex gap-2 items-center"><Check className="w-3.5 h-3.5 text-emerald-550 shrink-0" /><span>Santé de la fiche Google My Business</span></div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* 12. SECTION OFFRES INDICATIVES - Standard grid with Sur Devis branding */}
-      <section className="py-24 bg-white border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-electric-blue uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Nos Formules de Diagnostic
+      {/* FAQ */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-4xl px-6">
+          <div className="mb-14 text-center">
+            <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              <HelpCircle className="h-4 w-4" />
+              FAQ
             </span>
-            <h2 className="text-3xl md:text-4.2xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Des formats d'audits adaptés à l'ambition de votre entreprise
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Questions fréquentes sur l’audit digital
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Nous n'appliquons pas de tarification rigide ou déconnectée de la taille de votre PME. Tous nos audits approfondis sont précédés d'un cadrage gratuit.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Voici les réponses aux questions courantes avant de demander un
+              diagnostic ou un audit plus complet.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {offers.map((off, idx) => (
-              <div 
-                key={idx} 
-                className="bg-slate-50 border border-slate-200 rounded-[2rem] p-6.5 md:p-8 flex flex-col justify-between hover:border-slate-300 transition-all hover:shadow-lg relative overflow-hidden"
-              >
-                <div className="space-y-6">
-                  <div className="space-y-1.5 pb-4 border-b border-slate-200">
-                    <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">{off.subtitle}</span>
-                    <h3 className="text-xl font-display font-semibold text-slate-900">{off.title}</h3>
-                    <p className="text-xs text-slate-550 leading-relaxed font-light">{off.desc}</p>
-                  </div>
+          <div className="space-y-4">
+            {faqs.map((faq, index) => {
+              const isOpen = openFaq === index;
 
-                  {/* Pricing tag custom message */}
-                  <div className="py-1">
-                    <span className="block text-2xl font-bold text-navy-900 font-display">Sur Devis / Gratuit</span>
-                    <span className="text-[10px] text-slate-450 font-mono">Cadrage & Alignement offert</span>
-                  </div>
-
-                  {/* Checklist of inclusions */}
-                  <ul className="space-y-3">
-                    {off.features.map((feat, fidx) => (
-                      <li key={fidx} className="flex gap-2 items-start text-[11.5px] text-slate-600">
-                        <Check className="w-4 h-4 text-emerald-500 bg-emerald-100/50 p-0.5 rounded-full shrink-0 mt-0.5" />
-                        <span>{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mt-8">
-                  <Link 
-                    to="/contact" 
-                    className="w-full inline-block px-6 py-3 bg-navy-900 hover:bg-electric-blue text-white rounded-xl text-center font-bold text-xs tracking-wider uppercase transition-colors"
-                  >
-                    {off.ctaText}
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* 13. SECTION WHY CONFIG - Credentials PME proximity */}
-      <section className="py-24 bg-slate-50 border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-electric-blue uppercase bg-white border border-slate-250 px-3.5 py-1 rounded-full inline-block">
-              Proximité & Expertise Val-de-Marne
-            </span>
-            <h2 className="text-3xl md:text-4.2xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Pourquoi confier votre audit digital à VSW Digital ?
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Parce que nous ne sommes pas une grosse plateforme nationale déshumanisée, mais un partenaire d'Île-de-France soucieux du développement économique du tissu d'artisans et PME locaux.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { title: "Vision stratégique globale", desc: "Une analyse complète de votre site web, SEO, campagnes publicitaires Google Ads, expérience utilisateur, cloud et automatisation." },
-              { title: "Double compétence de pointe", desc: "Nous maîtrisons l'ingénierie technique (code propre, serveurs) à l'égal du marketing à la conversion." },
-              { title: "Pratique quotidienne des PME", desc: "Nous connaissons les réels blocages d'un artisan local ou d'un commerce de proximité en Île-de-France." },
-              { title: "Transformation concrète", desc: "Nous transmettons des recommandations d'actions réalistes plutôt que des graphiques indigestes." },
-              { title: "Esprit clair, sans jargon", desc: "Chaque terme technique est décrypté avec pédagogie pour vous permettre de décider librement." },
-              { title: "Hiérarchisation pragmatique", desc: "Nous vous disons quelle action générera le plus de leads pour le moindre effort budgétaire." },
-              { title: "Forte expertise locale", desc: "Nous maîtrisons la géolocalisation des requêtes sur Paris et le Val-de-Marne (94)." },
-              { title: "Accompagnement de continuité", desc: "Nous mettons en œuvre les recommandations si vous souhaitez nous déléguer le développement." }
-            ].map((recom, idx) => (
-              <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-6 hover:border-slate-300 transition-all flex flex-col justify-between">
-                <div className="space-y-3">
-                  <Award className="w-5 h-5 text-electric-blue" />
-                  <h4 className="font-bold text-slate-900 font-display text-xs leading-snug">{recom.title}</h4>
-                  <p className="text-slate-550 text-[11px] leading-relaxed font-sans font-light">{recom.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* 14. SECTION FAQ - Sincere responses with toggling logic */}
-      <section className="py-24 bg-white border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-4xl text-left">
-          
-          <div className="text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-electric-blue uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Foire Aux Questions
-            </span>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Des réponses honnêtes et claires à toutes vos questions sur l’audit
-            </h2>
-            <p className="text-slate-550 text-xs md:text-sm font-light max-w-xl mx-auto">
-              Retrouvez l'esprit pragmatique de nos réponses d'experts pour éclairer votre démarche numérique.
-            </p>
-          </div>
-
-          <div className="space-y-3.5">
-            {faqs.map((faq, idx) => {
-              const isOpen = openFaq === idx;
               return (
-                <div 
-                  key={idx} 
-                  className="bg-slate-50 border border-slate-200/80 rounded-xl overflow-hidden transition-colors"
+                <div
+                  key={faq.q}
+                  className={`overflow-hidden rounded-[1.4rem] border bg-white shadow-sm transition-all duration-300 ${
+                    isOpen
+                      ? "border-blue-200 shadow-xl shadow-blue-500/10"
+                      : "border-slate-200 hover:border-blue-200"
+                  }`}
                 >
                   <button
-                    onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full flex justify-between items-center p-4.5 text-left text-slate-900 hover:bg-slate-100 transition-colors font-semibold text-xs md:text-sm font-display"
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    className="flex w-full items-center justify-between gap-5 px-6 py-5 text-left md:px-7"
                   >
-                    <span>{faq.q}</span>
-                    {isOpen ? <ChevronUp className="w-4 h-4 text-electric-blue shrink-0" /> : <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />}
+                    <span className="font-display text-base font-bold leading-snug text-[#0f172a] md:text-lg">
+                      {faq.q}
+                    </span>
+
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
+                        isOpen
+                          ? "bg-[#3b82f6] text-white"
+                          : "bg-blue-50 text-[#3b82f6]"
+                      }`}
+                    >
+                      <ChevronDown
+                        className={`h-5 w-5 transition-transform duration-300 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </span>
                   </button>
-                  
-                  {isOpen && (
-                    <div className="p-4.5 bg-white border-t border-slate-200 text-[11.5px] leading-relaxed text-slate-600 font-sans font-light whitespace-pre-line border-dashed">
-                      {faq.a}
-                    </div>
-                  )}
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                      >
+                        <div className="border-t border-slate-100 px-6 pb-6 pt-4 md:px-7">
+                          <p className="text-sm leading-7 text-slate-600 md:text-base">
+                            {faq.a}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               );
             })}
           </div>
-
         </div>
       </section>
 
-      {/* 15. SECTION FINAL CTA */}
-      <section className="py-24 bg-navy-900 text-white relative overflow-hidden border-t border-navy-800">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 right-1/4 w-[400px] h-[400px] rounded-full bg-electric-blue/10 blur-[100px]" />
-          <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-modern-purple/10 blur-[120px]" />
+      {/* CTA FINAL */}
+      <section className="relative isolate overflow-hidden bg-[#0f172a] py-24 text-white md:py-32">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.35),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.18),_transparent_30%),linear-gradient(180deg,_#0f172a_0%,_#111827_55%,_#020617_100%)]" />
+          <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#3b82f6]/20 blur-[120px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20" />
         </div>
 
-        <div className="container mx-auto px-6 max-w-4xl relative z-10 text-center space-y-6">
-          <span className="inline-flex items-center gap-1 bg-white/5 border border-white/10 text-electric-blue px-3.5 py-1 rounded-full font-mono text-[10px] uppercase font-bold tracking-wider">
-            🤝 On fait le point ?
+        <div className="container relative mx-auto max-w-4xl px-6 text-center">
+          <span className="mb-6 inline-flex rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-300">
+            Audit digital
           </span>
-          
-          <h2 className="text-3xl md:text-4.2xl font-display font-bold tracking-tight text-white leading-tight">
-            Vous voulez savoir exactement ce qui bloque votre présence digitale ?
+
+          <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-white md:text-5xl">
+            Vous voulez savoir ce qui bloque réellement votre présence en ligne ?
           </h2>
-          
-          <p className="text-slate-300 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-light">
-            Demandez un audit digital de votre site internet et de votre visibilité SEO en quelques clics. VSW Digital vous aide à identifier vos priorités pour optimiser durablement votre image, votre référencement, vos conversions de clients et votre stratégie publicitaire en Île-de-France.
+
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
+            Présentez-nous votre site, vos objectifs et vos difficultés
+            actuelles. VSW Digital vous aide à identifier les actions les plus
+            utiles avant d’investir dans une refonte, du SEO ou de la publicité.
           </p>
 
-          <div className="pt-4 flex flex-col sm:flex-row justify-center gap-4">
-            <Link 
-              to="/contact" 
-              className="px-8 py-4 bg-electric-blue hover:bg-electric-blue/90 text-white rounded-xl font-bold tracking-wide transition-all duration-300 shadow-lg shadow-blue-500/20"
+          <div className="mt-10">
+            <Link
+              to="/contact"
+              className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-8 py-4 font-semibold text-white shadow-2xl shadow-blue-500/30 transition-all hover:-translate-y-0.5 hover:bg-blue-400"
             >
               Demander mon audit digital
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
-            
-            <a 
-              href="mailto:vsw.contact@gmail.com" 
-              className="px-8 py-4 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-slate-200 rounded-xl font-bold tracking-wide transition-all duration-300 text-center"
-            >
-              Écrire à vsw.contact@gmail.com
-            </a>
           </div>
-
-          <p className="text-slate-500 font-mono text-[11px] mt-6">
-             Raccrochez vos outils (Maps, Analytics) : Nous diagnostiquons vos indicateurs en direct.
-          </p>
         </div>
       </section>
-
-    </div>
+    </main>
   );
 }

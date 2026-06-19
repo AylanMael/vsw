@@ -1,54 +1,56 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { 
-  Sparkles, 
-  ChevronDown, 
-  ChevronUp,
-  AlertTriangle, 
-  TrendingUp, 
-  Smartphone, 
-  Wrench, 
-  Search, 
-  FileText, 
-  Layout, 
-  Settings, 
-  Layers, 
-  Cpu, 
-  ArrowRight, 
-  Activity, 
-  Clock, 
-  ArrowUpRight, 
-  Zap, 
-  ShieldCheck, 
-  Check, 
-  Building, 
-  Users,
-  Grid,
-  RefreshCw,
-  Gauge,
-  HelpCircle,
-  Eye,
-  AlertOctagon,
-  Award,
-  Database,
-  Lock,
-  Server,
-  HardDrive,
-  Code,
-  AlertCircle,
-  Signal,
-  MessageSquare,
-  LifeBuoy,
-  XCircle,
+import { useEffect, useState } from "react";
+import type { ComponentType } from "react";
+import { Link } from "react-router-dom";
+import { AnimatePresence, motion } from "motion/react";
+import {
+  Activity,
+  AlertTriangle,
+  ArrowRight,
+  Check,
   CheckCircle2,
-  ListFilter
-} from 'lucide-react';
+  ChevronDown,
+  Code,
+  Database,
+  FileText,
+  Gauge,
+  HardDrive,
+  Layout,
+  Lock,
+  MessageSquare,
+  RefreshCw,
+  Search,
+  Server,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  Wrench,
+  Zap,
+} from "lucide-react";
 
-interface Prestation {
+interface RiskItem {
   title: string;
   desc: string;
-  icon: any;
-  badge?: string;
+  severity: string;
+  icon: ComponentType<{ className?: string }>;
+}
+
+interface BenefitItem {
+  title: string;
+  desc: string;
+  icon: ComponentType<{ className?: string }>;
+}
+
+interface PrestationItem {
+  title: string;
+  desc: string;
+  icon: ComponentType<{ className?: string }>;
+  badge: string;
+}
+
+interface SupportedSite {
+  title: string;
+  desc: string;
+  icon: ComponentType<{ className?: string }>;
 }
 
 interface MaintenanceOffer {
@@ -57,7 +59,7 @@ interface MaintenanceOffer {
   desc: string;
   monthlyPrice: number;
   yearlyPrice: number;
-  badge?: string;
+  badge: string;
   recommended?: boolean;
   features: string[];
   ctaText: string;
@@ -68,1470 +70,1113 @@ interface FaqItem {
   a: string;
 }
 
-const unmaintainedRisks = [
+type SystemTab = "healthy" | "at-risk";
+type BillingCycle = "monthly" | "yearly";
+type QuizStep = 1 | 2 | 3 | 4;
+
+const risks: RiskItem[] = [
   {
     title: "Ralentissement progressif",
-    desc: "L'accumulation d'historique, de bases de données fragmentées et de caches périmés ralentit le chargement sur mobile, faisant fuir vos visiteurs.",
-    severity: "Critique pour vos ventes",
-    icon: AlertOctagon
+    desc: "Un site non entretenu peut devenir plus lent avec le temps : images lourdes, cache mal configuré, scripts inutiles ou base de données encombrée.",
+    severity: "Performance",
+    icon: Gauge,
   },
   {
     title: "Extensions obsolètes",
-    desc: "Les modules non mis à jour créent des incompatibilités. À tout moment, un panier d'achat ou un bouton d'appel peut cesser de fonctionner.",
-    severity: "Risque fonctionnel permanent",
-    icon: Settings
+    desc: "Sur WordPress, les extensions non mises à jour peuvent provoquer des bugs, des incompatibilités ou des failles de sécurité connues.",
+    severity: "Stabilité",
+    icon: Settings,
   },
   {
-    title: "Failles & Vulnérabilités",
-    desc: "Les robots et pirates scannent le web à la recherche de versions de code obsolètes pour injecter des spams ou voler des données.",
-    severity: "Menace de piratage élevée",
-    icon: Lock
+    title: "Failles de sécurité",
+    desc: "Un CMS, un thème ou un plugin non maintenu augmente les risques d’intrusion, de spam ou de dégradation du site.",
+    severity: "Sécurité",
+    icon: Lock,
   },
   {
-    title: "Données non sauvegardées",
-    desc: "Sans backup redondant externalisé, une simple erreur de manipulation ou un crash d'hébergeur peut anéantir des mois de travail.",
-    severity: "Perte définitive possible",
-    icon: HardDrive
+    title: "Sauvegardes absentes",
+    desc: "Sans sauvegarde fiable, une erreur de manipulation, une mise à jour ratée ou un incident serveur peut devenir difficile à corriger.",
+    severity: "Continuité",
+    icon: HardDrive,
   },
   {
-    title: "Bugs inopinés invisibles",
-    desc: "Une mise au point de serveur ou un script hébergé qui expire peut détruire la mise en page sans que vous ne soyez notifié.",
-    severity: "Image de marque dégradée",
-    icon: Wrench
+    title: "Bugs invisibles",
+    desc: "Un formulaire, un bouton, une mise en page mobile ou un script peut cesser de fonctionner sans que vous vous en rendiez compte immédiatement.",
+    severity: "Expérience",
+    icon: Wrench,
   },
   {
-    title: "Formulaires de contact muets",
-    desc: "Les protocoles d'envoi de mails durcissent régulièrement. Sans correction active, vos formulaires cessent d'envoyer vos devis.",
-    severity: "Prospects perdus en silence",
-    icon: MessageSquare
-  }
+    title: "Formulaires non reçus",
+    desc: "Les problèmes d’envoi d’e-mails sont fréquents : sans surveillance, vous pouvez perdre des demandes sans le savoir.",
+    severity: "Prospects",
+    icon: MessageSquare,
+  },
 ];
 
-const benefits = [
+const benefits: BenefitItem[] = [
   {
-    id: 'b-1',
-    title: "Sérénité d'esprit totale",
-    desc: "Plus besoin de surveiller des consoles techniques compliquées ou de craindre un crash. VSW Digital gère l'arrière-boutique pour vous.",
-    icon: ShieldCheck
+    title: "Sérénité technique",
+    desc: "Vous déléguez la surveillance, les mises à jour, les sauvegardes et les petites corrections à un interlocuteur technique.",
+    icon: ShieldCheck,
   },
   {
-    id: 'b-2',
-    title: "Zéro interruption d'activité",
-    desc: "Nous veillons à la disponibilité constante de vos pages pour que chaque prospect puisse vous joindre à tout moment, jour et nuit.",
-    icon: Activity
+    title: "Site plus fiable",
+    desc: "Les points critiques sont vérifiés régulièrement pour limiter les interruptions, bugs ou dysfonctionnements visibles.",
+    icon: Activity,
   },
   {
-    id: 'b-3',
-    title: "Sauvegardes étanches",
-    desc: "Vos données vitales sont copiées de manière automatisée hors-site. Un vrai airbag réversible en cas de fausse manipulation.",
-    icon: Database
+    title: "Sauvegardes régulières",
+    desc: "Des sauvegardes planifiées permettent de restaurer le site plus facilement en cas de problème.",
+    icon: Database,
   },
   {
-    id: 'b-4',
-    title: "Maintien de la performance",
-    desc: "Les optimisations continues garantissent un temps de chargement éclair, apprécié de vos visiteurs et valorisé par Google.",
-    icon: Gauge
+    title: "Performance suivie",
+    desc: "La vitesse, le poids des pages et certains éléments techniques peuvent être améliorés progressivement.",
+    icon: Gauge,
   },
   {
-    id: 'b-5',
-    title: "Support ultra-prioritaire",
-    desc: "Un bug graphique ? Une question urgente ? Vous disposez d’une ligne directe de développeurs pour réparer sous de courts délais.",
-    icon: Wrench
+    title: "Support réactif",
+    desc: "Vous disposez d’un accompagnement pour corriger un souci, poser une question ou demander une petite évolution.",
+    icon: Wrench,
   },
   {
-    id: 'b-6',
-    title: "Amélioration continue",
-    desc: "Faites évoluer votre site de manière incrémentale : modification de tarifs, ajout de chantiers, mise à jour d'horaires.",
-    icon: RefreshCw
-  }
-];
-
-const prestations: Prestation[] = [
-  {
-    title: "Mises à jour sécurisées",
-    desc: "Suivi contrôlé et manuel du cœur du CMS (WordPress) et de ses dépendances pour prévenir tout crash technique ou dysfonctionnement.",
+    title: "Évolution continue",
+    desc: "Votre site reste vivant : textes, horaires, tarifs, photos, pages, articles ou éléments de réassurance peuvent évoluer.",
     icon: RefreshCw,
-    badge: "Indispensable"
+  },
+];
+
+const prestations: PrestationItem[] = [
+  {
+    title: "Mises à jour contrôlées",
+    desc: "Suivi du CMS, des thèmes, extensions ou dépendances, avec prudence pour éviter les incompatibilités.",
+    icon: RefreshCw,
+    badge: "Indispensable",
   },
   {
     title: "Sauvegardes externalisées",
-    desc: "Planification automatique et stockage chiffré sur des serveurs distincts de votre hébergeur pour une reprise d'activité rapide.",
+    desc: "Mise en place de sauvegardes régulières pour sécuriser vos contenus, fichiers et données importantes.",
     icon: Database,
-    badge: "Sécurité"
+    badge: "Sécurité",
   },
   {
-    title: "Protection & Firewall",
-    desc: "Configuration de pare-feux, blocage d'adresses IP suspectes et renforcement des barrières techniques pour décourager les robots.",
+    title: "Protection & durcissement",
+    desc: "Renforcement des accès, limitation des tentatives abusives, configuration de protections et bonnes pratiques.",
     icon: Lock,
-    badge: "Sécurité"
+    badge: "Protection",
   },
   {
-    title: "Résolution d'anomalies",
-    desc: "Diagnostics réguliers et réparations rapides des boutons défectueux, liens morts (erreurs 404) ou déformations mobiles.",
-    icon: AlertCircle,
-    badge: "Stabilité"
+    title: "Correction d’anomalies",
+    desc: "Diagnostic et correction des bugs visibles : liens cassés, erreurs 404, formulaires, affichage mobile ou petits défauts.",
+    icon: AlertTriangle,
+    badge: "Stabilité",
   },
   {
-    title: "Nettoyage & Cache",
-    desc: "Nettoyage mensuel de la base de données, suppression des fichiers caches transitoires volumineux et compression d'images.",
+    title: "Nettoyage & cache",
+    desc: "Optimisation du cache, nettoyage des éléments inutiles et amélioration progressive du temps de chargement.",
     icon: Gauge,
-    badge: "Vitesse"
+    badge: "Vitesse",
   },
   {
-    title: "Supervision Serveur & SSL",
-    desc: "Ajustement de la puissance d'hébergement, surveillance de la validité du certificat de sécurité HTTPS pour rassurer vos clients.",
+    title: "SSL & hébergement",
+    desc: "Vérification du certificat HTTPS, de la configuration serveur et des éléments techniques liés à l’hébergement.",
     icon: Server,
-    badge: "Technique"
+    badge: "Technique",
   },
   {
     title: "Modifications de contenus",
-    desc: "Ajout de coordonnées, mise à jour légale, insertion d'avis clients ou mise à jour de votre grille tarifaire au fil de l'eau.",
+    desc: "Ajout ou correction de textes, photos, horaires, tarifs, avis clients, pages ou informations importantes.",
     icon: FileText,
-    badge: "Flexibilité"
+    badge: "Contenu",
   },
   {
-    title: "Suivi d'audience & SEO",
-    desc: "Relecture continue de la Search Console Google pour éviter les pénalités d'indexation invisibles.",
+    title: "Suivi SEO technique",
+    desc: "Surveillance de certaines erreurs d’indexation, liens cassés, redirections et éléments techniques visibles par Google.",
     icon: Search,
-    badge: "Visibilité"
-  }
+    badge: "SEO",
+  },
 ];
 
-const supportedSites = [
+const supportedSites: SupportedSite[] = [
   {
-    title: "Sites WordPress & WooCommerce",
-    desc: "Le CMS leader mondial. Nécessite une surveillance rigoureuse des plug-ins pour bloquer les failles publiques très recherchées.",
-    icon: Settings
+    title: "WordPress & WooCommerce",
+    desc: "Sites vitrines, blogs, catalogues ou boutiques nécessitant un suivi régulier des thèmes, extensions et sauvegardes.",
+    icon: Settings,
   },
   {
     title: "React / Next.js / TypeScript",
-    desc: "Architectures modernes codées sur-mesure requérant une attention d'ingénierie sur les paquets de code npm et l'intégrité d'APIs.",
-    icon: Code
+    desc: "Sites et applications modernes avec dépendances, déploiement, build, API ou hébergement plus technique.",
+    icon: Code,
   },
   {
-    title: "Sites Vitrines (Artisans & PME)",
-    desc: "Votre premier canal de crédibilité locale. Doit afficher une fluidité irréprochable et un cadenas de sécurité actif en continu.",
-    icon: Layout
+    title: "Sites vitrines PME",
+    desc: "Sites professionnels servant à présenter vos services, générer des demandes et rassurer vos prospects.",
+    icon: Layout,
   },
   {
-    title: "Landing Pages de Campagnes",
-    desc: "S'assurer que chaque euro investi sur Google Ads ou Facebook mène à un formulaire d'acquisition réactif, sans bug d'envoi.",
-    icon: Zap
+    title: "Landing pages",
+    desc: "Pages utilisées pour Google Ads, SEO ou campagnes marketing, avec besoin de disponibilité et de conversion.",
+    icon: Zap,
   },
   {
-    title: "E-shop & Catalogues",
-    desc: "Garantir un parcours utilisateur fluide de la sélection de service jusqu'à l'écran de paiement sécurisé.",
-    icon: Database
+    title: "Projets connectés",
+    desc: "Sites reliés à Firebase, formulaires avancés, stockage cloud, API ou automatisations.",
+    icon: Server,
   },
-  {
-    title: "Projets connectés (Firebase / Cloud)",
-    desc: "Supervision des flux de données, de la bande passante consommée et des seuils d'alertes des services de stockage.",
-    icon: Server
-  }
-];
-
-const wpFocusPoints = [
-  "Mises à jour contrôlées de WordPress (après relecture préventive de compatibilité)",
-  "Audits de sécurité réguliers contre les injections de scripts malveillants",
-  "Remplacement ou nettoyage des extensions trop lourdes qui ralentissent le temps de réaction",
-  "Automatisation de sauvegardes redondantes (historique sur 30 jours)",
-  "Installation de captchas discrets et filtres antispam de formulaires",
-  "Masquage astucieux des adresses d'administration classique (wp-admin)",
-  "Optimisation de la base SQL pour réduire l'encombrement des révisions d'articles"
 ];
 
 const methodSteps = [
   {
     step: "01",
-    title: "Audit de Santé Initial",
-    desc: "Nous analysons l'état de votre site (rapidité, sécurité, plugins, hébergement) pour identifier immédiatement les corrections urgentes à mener de manière transparente."
+    title: "Audit initial",
+    desc: "Nous analysons l’état du site : technologie, mises à jour, sauvegardes, sécurité, performance et points sensibles.",
   },
   {
     step: "02",
-    title: "Airbag & Sauvegardes",
-    desc: "Avant d'appliquer la moindre mise à jour, nous installons un système de sauvegarde automatisé externalisé pour parer à tout incident éventuel."
+    title: "Sauvegarde de sécurité",
+    desc: "Avant toute intervention, nous sécurisons une copie du site pour pouvoir revenir en arrière en cas d’anomalie.",
   },
   {
     step: "03",
-    title: "Remise à Niveau Immédiate",
-    desc: "Nous appliquons les optimisations prioritaires : correction des bugs graphiques notables, fermeture des failles identifiées et relance de vos formulaires bloqués."
+    title: "Remise à niveau",
+    desc: "Nous traitons les urgences : mises à jour critiques, formulaires, bugs visibles, SSL, sauvegardes ou sécurité.",
   },
   {
     step: "04",
-    title: "Activation du Monitoring",
-    desc: "Nous déployons des sondes de disponibilité actives pour être alertés dans la minute en cas d'indisponibilité, de ralentissement ou de piratage."
+    title: "Mise sous surveillance",
+    desc: "Nous configurons les vérifications nécessaires selon votre formule : disponibilité, sauvegardes, sécurité, formulaires ou SEO.",
   },
   {
     step: "05",
-    title: "Entretien Continu Mensuel",
-    desc: "Mises à jour planifiées, vérification des processus de paiement/contact, nettoyage régulier des bases SQL et ajustements d'affichage."
+    title: "Entretien régulier",
+    desc: "Nous réalisons les actions planifiées : mises à jour, nettoyage, contrôle, petites corrections et suivi technique.",
   },
   {
     step: "06",
-    title: "Assistance & Évolution",
-    desc: "Besoin de mettre à jour un tarif, d'ajouter une actualité, ou d'un conseil ? Notre équipe réactive intègre vos demandes d'évolutions incluses."
-  }
+    title: "Évolution continue",
+    desc: "Votre site peut évoluer avec vos besoins : contenus, pages, visuels, SEO, formulaires ou nouvelles fonctionnalités.",
+  },
 ];
 
-// Re-engineered offers focusing on subscription pricing and high readability
 const offers: MaintenanceOffer[] = [
   {
-    id: "m-essential",
-    title: "Abonnement Essentiel",
-    desc: "La formule de sécurité fondamentale pour les sites vitrines d'artisans, indépendants et TPE locales souhaitant déléguer l'inquiétude technique de base.",
+    id: "essential",
+    title: "Essentiel",
+    desc: "Pour les sites vitrines simples qui ont besoin d’une base de sécurité, de sauvegardes et d’un suivi technique régulier.",
     monthlyPrice: 49,
     yearlyPrice: 39,
-    badge: "Sérénité Basique",
+    badge: "Base sécurité",
     features: [
-      "Mises à jour manuelles mensuelles",
-      "Sauvegarde hebdomadaire externalisée",
-      "Protection pare-feu & anti-force brute",
-      "Surveillance certificat SSL actif",
-      "Restauration prioritaire incluse en cas d'anomalie",
-      "Support technique par e-mail (réponse sous 48h)"
+      "Mises à jour mensuelles contrôlées",
+      "Sauvegarde régulière externalisée",
+      "Vérification SSL et disponibilité",
+      "Protection anti-spam de base",
+      "Contrôle des formulaires principaux",
+      "Support par e-mail",
     ],
-    ctaText: "Sécuriser mon site vitrine"
+    ctaText: "Choisir Essentiel",
   },
   {
-    id: "m-pro",
-    title: "Abonnement Professionnel",
-    desc: "La formule la plus plébiscitée par les PME, cabinets de services, et professions libérales dont le site internet est un canal de vente indispensable.",
+    id: "pro",
+    title: "Professionnel",
+    desc: "Pour les PME dont le site est un vrai canal commercial et qui souhaitent un suivi plus complet.",
     monthlyPrice: 119,
     yearlyPrice: 99,
-    badge: "Le Choix Préféré des PME",
+    badge: "Recommandé PME",
     recommended: true,
     features: [
-      "Mises à jour hebdomadaires contrôlées",
-      "Sauvegarde quotidienne externalisée",
-      "Monitoring actif de disponibilité (24h/24, 7j/7)",
-      "Correction garantie des dysfonctionnements de formulaires",
-      "Nettoyage manuel du cache & optimisation de vitesse",
-      "1 heure mensuelle d'ajustements de contenus (textes & visuels)",
-      "Support téléphonique & e-mail prioritaire (réponse sous 24h)"
+      "Mises à jour contrôlées plus fréquentes",
+      "Sauvegardes régulières renforcées",
+      "Surveillance de disponibilité",
+      "Contrôle des formulaires et CTA",
+      "Optimisation légère de performance",
+      "1h mensuelle d’ajustements de contenus",
+      "Support prioritaire par e-mail ou téléphone",
     ],
-    ctaText: "Choisir la formule Professionnelle"
+    ctaText: "Choisir Professionnel",
   },
   {
-    id: "m-premium",
-    title: "Abonnement Premium & Évolution",
-    desc: "Pour les marques exigeantes, e-commerces actifs ou applications sur-mesure nécessitant réactivité continue, sécurité renforcée et croissance.",
+    id: "premium",
+    title: "Premium & Évolution",
+    desc: "Pour les sites plus sensibles, e-commerce, applications ou projets nécessitant un accompagnement plus actif.",
     monthlyPrice: 249,
     yearlyPrice: 199,
-    badge: "Performance & Évolutions incl.",
+    badge: "Suivi avancé",
     features: [
-      "Suivi technique proactif en continu",
-      "Sauvegarde quotidienne multi-zones redondée",
-      "Monitoring de sécurité haute fréquence & patchs urgents",
-      "Surveillance SEO (correction des nouvelles erreurs 404 Google)",
-      "3 heures mensuelles d'évolutions et développement incluses",
-      "Rapport mensuel vulgarisé de statistiques d'audience",
-      "Ligne directe & canal de communication dédié (Slack ou téléphone)"
+      "Suivi technique renforcé",
+      "Sauvegardes fréquentes et vérifiées",
+      "Surveillance sécurité plus poussée",
+      "Suivi SEO technique de base",
+      "3h mensuelles d’évolutions incluses",
+      "Rapport mensuel synthétique",
+      "Canal de communication dédié selon besoin",
     ],
-    ctaText: "Activer le suivi Premium"
-  }
+    ctaText: "Choisir Premium",
+  },
 ];
 
 const faqs: FaqItem[] = [
   {
-    q: "Ce type d’abonnement de maintenance est-il avec ou sans engagement ?",
-    a: "Tous nos abonnements de maintenance chez VSW Digital sont strictement d'esprit 'sans engagement'. Nous croyons en la qualité de notre suivi technique de proximité. Vous pouvez suspendre ou résilier votre abonnement à tout moment par simple e-mail, sans frais de sortie ni justification nécessaire. Nous vous remettons alors l'intégralité des accès d'administration à jour."
+    q: "L’abonnement de maintenance est-il avec engagement ?",
+    a: "Les formules peuvent être proposées sans engagement long. Les modalités précises sont définies dans le devis ou le contrat, avec une volonté de rester simple et transparent.",
   },
   {
-    q: "Quelle différence entre mon hébergeur actuel et votre service ?",
-    a: "Votre hébergeur (type o2switch, OVH, Hostinger) fournit simplement la 'maison' (l'espace serveur et d'alimentation du site). Il ne surveille pas si votre code WordPress est à jour, si vos extensions sont vulnérables à des attaques, si vos formulaires buggent ou si des liens sont cassés. Nous sommes comme les artisans spécialisés qui réparent, entretiennent, configurent et font évoluer l'habitation pour que tout fonctionne à la perfection."
+    q: "Quelle différence entre l’hébergeur et la maintenance VSW Digital ?",
+    a: "L’hébergeur fournit l’espace serveur. La maintenance concerne le suivi du site lui-même : mises à jour, sécurité, sauvegardes, formulaires, performance, contenus et corrections.",
   },
   {
-    q: "Pouvez-vous garantir une invulnérabilité ou sécurité absolue de mon site ?",
-    a: "Soyons honnêtes et transparents : la sécurité à 100% n'existe pas en informatique, et quiconque prétend le contraire manque d'honnêteté. En revanche, notre maintenance proactive referme 95% des failles couramment exploitées par les pirates (mises à jour immédiates des extensions faillibles, pare-feu intelligent). Surtout, notre véritable force réside dans la résilience : grâce à nos sauvegardes externalisées quotidiennes, si un piratage survenait, nous restaurons une version impeccable et assainie de votre site en moins de 4 heures sans frais."
+    q: "Pouvez-vous garantir une sécurité absolue ?",
+    a: "Non, aucune sécurité absolue n’existe en informatique. En revanche, une maintenance sérieuse réduit fortement les risques courants et améliore la capacité de réaction en cas de problème.",
   },
   {
-    q: "Mon site n'a pas été construit par VSW Digital. Pouvez-vous le maintenir ?",
-    a: "Tout à fait. C'est le cas de près de la moitié des sites que nous accompagnons. Nous réalisons un audit initial rigoureux de l'état actuel de votre code afin d'administrer une mise à niveau préventive des extensions, nettoyer ce qui est obsolete et installer sereinement nos outils de monitoring."
+    q: "Pouvez-vous maintenir un site que vous n’avez pas créé ?",
+    a: "Oui, après un audit initial. Cela permet de vérifier la technologie, les accès, les extensions, l’hébergement, les sauvegardes et l’état général du site.",
   },
   {
-    q: "Que contiennent vos heures d'évolutions de contenus incluses ?",
-    a: "Selon l'abonnement choisi (Pro ou Premium), vous profitez de crédits de temps mensuels d'ajustements de contenus récurrents. Vous nous envoyez simplement vos modifications (remplacement d'un numéro, mise en avant d'une promotion ou photo, mise en ligne d'un nouvel article rédigé, correction d'un horaire...) et nos développeurs s'en chargent sous 24 à 48h. C'est l'assurance pour vous d'un site toujours vivant sans y consacrer de temps."
+    q: "Les modifications de contenus sont-elles incluses ?",
+    a: "Selon la formule, un temps mensuel peut être inclus pour de petites modifications : textes, horaires, photos, tarifs, articles ou ajustements simples.",
   },
   {
-    q: "Le temps de chargement des pages sur mobile va-t-il vraiment s'améliorer ?",
-    a: "Oui. En nettoyant les extensions gourmandes inutiles, en compressant vos illustrations lourdes téléchargées directement et en régulant le cache de votre hébergeur, nous optimisons de manière mesurable vos 'Core Web Vitals'. Un site rapide améliore à la fois le taux d'appel de vos clients et votre classement SEO sur Google."
-  }
+    q: "La maintenance peut-elle améliorer la vitesse du site ?",
+    a: "Oui, dans une certaine mesure. Le nettoyage, le cache, la compression d’images et la réduction d’éléments inutiles peuvent améliorer le temps de chargement.",
+  },
 ];
 
 export function MaintenanceSiteInternet() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [activeSystemTab, setActiveSystemTab] = useState<'healthy' | 'at-risk'>('healthy');
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [quizStep, setQuizStep] = useState<number>(1);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [activeSystemTab, setActiveSystemTab] = useState<SystemTab>("healthy");
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
+  const [quizStep, setQuizStep] = useState<QuizStep>(1);
   const [quizAnswers, setQuizAnswers] = useState({
-    tech: '',
-    traffic: '',
-    needs: ''
+    tech: "",
+    traffic: "",
+    needs: "",
   });
   const [quizResult, setQuizResult] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = "Abonnement Maintenance site internet, sécurité & hébergement | VSW Digital";
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.title =
+      "Maintenance site internet, sécurité et sauvegardes | VSW Digital";
+
+    const metaDescription = document.querySelector('meta[name="description"]');
+
+    if (metaDescription) {
+      metaDescription.setAttribute(
+        "content",
+        "VSW Digital propose la maintenance de sites internet WordPress, React et Next.js : mises à jour, sauvegardes, sécurité, performance, support et évolutions."
+      );
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  const toggleFaq = (index: number) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
-
-  const selectAnswer = (field: 'tech' | 'traffic' | 'needs', value: string) => {
+  const selectAnswer = (
+    field: "tech" | "traffic" | "needs",
+    value: string
+  ) => {
     const updated = { ...quizAnswers, [field]: value };
     setQuizAnswers(updated);
-    
-    if (field === 'tech') {
+
+    if (field === "tech") {
       setQuizStep(2);
-    } else if (field === 'traffic') {
+    }
+
+    if (field === "traffic") {
       setQuizStep(3);
-    } else if (field === 'needs') {
-      // Calculate Recommendation
+    }
+
+    if (field === "needs") {
       calculateRecommendation(updated);
       setQuizStep(4);
     }
   };
 
-  const calculateRecommendation = (ans: typeof quizAnswers) => {
-    if (ans.tech === 'wordpress' || ans.tech === 'je_ne_sais_pas') {
-      if (ans.traffic === 'high' || ans.needs === 'evolution') {
-        setQuizResult('m-premium');
-      } else if (ans.traffic === 'medium' || ans.needs === 'occasional') {
-        setQuizResult('m-pro');
-      } else {
-        setQuizResult('m-essential');
-      }
-    } else if (ans.tech === 'react_next') {
-      if (ans.traffic === 'high' || ans.needs === 'evolution') {
-        setQuizResult('m-premium');
-      } else {
-        setQuizResult('m-pro'); // custom stack starts at pro level due to compilation and script needs
-      }
-    } else {
-      if (ans.needs === 'evolution') {
-        setQuizResult('m-pro');
-      } else {
-        setQuizResult('m-essential');
-      }
+  const calculateRecommendation = (answers: typeof quizAnswers) => {
+    if (answers.needs === "evolution" || answers.traffic === "high") {
+      setQuizResult("premium");
+      return;
     }
+
+    if (
+      answers.tech === "react_next" ||
+      answers.traffic === "medium" ||
+      answers.needs === "occasional"
+    ) {
+      setQuizResult("pro");
+      return;
+    }
+
+    setQuizResult("essential");
   };
 
   const resetQuiz = () => {
-    setQuizAnswers({ tech: '', traffic: '', needs: '' });
+    setQuizAnswers({ tech: "", traffic: "", needs: "" });
     setQuizResult(null);
     setQuizStep(1);
   };
 
-  const getRecommendedPlanObj = () => {
-    return offers.find(o => o.id === quizResult) || offers[1];
-  };
+  const recommendedOffer =
+    offers.find((offer) => offer.id === quizResult) || offers[1];
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#fafbfe] text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-white">
-      
-      {/* 1. HERO SECTION - Premium twilight dashboard & reassurance badges */}
-      <section className="relative pt-24 pb-32 bg-[#090d1a] text-white overflow-hidden border-b border-slate-900">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full bg-blue-600/15 blur-[120px] -translate-y-1/2" />
-          <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] rounded-full bg-indigo-600/10 blur-[150px] translate-y-1/2" />
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_80%,transparent_100%)] opacity-40" />
+    <main className="flex min-h-screen flex-col overflow-hidden bg-white text-slate-900">
+      {/* HERO */}
+      <section className="relative isolate overflow-hidden bg-[#0f172a] py-24 text-white md:py-32">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.35),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.18),_transparent_30%),linear-gradient(180deg,_#0f172a_0%,_#111827_55%,_#020617_100%)]" />
+          <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#3b82f6]/20 blur-[120px]" />
+          <div className="absolute -bottom-32 right-0 h-[420px] w-[420px] rounded-full bg-cyan-400/10 blur-[110px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20" />
         </div>
 
-        <div className="container mx-auto px-6 max-w-7xl relative z-10 text-left">
-          
-          {/* Trust badges below the navbar region */}
-          <div className="flex flex-wrap items-center gap-3 mb-8">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/50 text-[11px] font-semibold tracking-wider uppercase text-blue-400">
-              <Sparkles className="w-3 h-3" />
-              <span>Abonnements de Proximité</span>
+        <div className="container mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-[1.05fr_0.95fr]">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mx-auto max-w-4xl text-center lg:mx-0 lg:text-left"
+          >
+            <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-blue-200 shadow-2xl shadow-blue-500/10 backdrop-blur">
+              <Sparkles className="h-4 w-4 text-[#3b82f6]" />
+              Maintenance site internet
             </span>
-            <span className="text-slate-450 text-xs hidden md:inline">•</span>
-            <span className="inline-flex items-center gap-1.5 text-xs text-slate-350 bg-slate-900/40 px-3 py-1 rounded-full border border-slate-800/60 font-mono">
-              🛡️ Résiliation en 1 clic
-            </span>
-            <span className="text-slate-450 text-xs hidden md:inline">•</span>
-            <span className="inline-flex items-center gap-1.5 text-xs text-slate-350 bg-slate-900/40 px-3 py-1 rounded-full border border-slate-800/60 font-mono">
-              ⚡ Début d'intervention en 24h
-            </span>
-          </div>
 
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Left Column Text Content */}
-            <div className="lg:col-span-7 space-y-6">
-              
-              <h1 id="main-h1" className="text-4xl md:text-5.55xl lg:text-5xl xl:text-5.5xl font-display font-bold tracking-tight leading-[1.12] text-white max-w-3xl">
-                Maintenance de site internet pour garder un site fiable, sécurisé et performant
-              </h1>
-              
-              <p className="text-slate-300 text-base md:text-lg leading-relaxed max-w-2xl font-light">
-                Un site professionnel ne doit jamais être laissé à l'abandon. Déléguez la surveillance technique quotidienne, les sauvegardes externalisées fiables et les petites modifications de contenu à nos développeurs chevronnés, grâce à nos abonnements mensuels sans engagement de durée.
-              </p>
+            <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-white md:text-6xl lg:text-7xl">
+              Gardez un site{" "}
+              <span className="bg-gradient-to-r from-[#3b82f6] via-sky-300 to-cyan-300 bg-clip-text text-transparent">
+                fiable, sécurisé et performant
+              </span>
+            </h1>
 
-              {/* Direct value proof tags */}
-              <div className="grid sm:grid-cols-3 gap-4 pt-2 pb-2">
-                <div className="flex items-start gap-2.5">
-                  <div className="p-1 rounded bg-blue-500/10 text-blue-400 mt-0.5">
-                    <Check className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <span className="block font-bold text-xs text-white leading-tight">Sauvegarde Déportée</span>
-                    <span className="text-[10px] text-slate-400">Backups quotidiens préservés</span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <div className="p-1 rounded bg-blue-500/10 text-blue-400 mt-0.5">
-                    <Check className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <span className="block font-bold text-xs text-white leading-tight">Optimisation Core Vitals</span>
-                    <span className="text-[10px] text-slate-400">Vitesse mobile sous surveillance</span>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <div className="p-1 rounded bg-blue-500/10 text-blue-400 mt-0.5">
-                    <Check className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <span className="block font-bold text-xs text-white leading-tight">Expertise Mutuelle</span>
-                    <span className="text-[10px] text-slate-400">Pour WordPress & NextJS</span>
-                  </div>
-                </div>
-              </div>
+            <p className="mt-7 max-w-3xl text-lg leading-8 text-slate-300 md:text-xl lg:mx-0">
+              VSW Digital assure la maintenance de votre site : mises à jour,
+              sauvegardes, sécurité, performance, petites corrections et
+              évolutions de contenus.
+            </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <a 
-                  href="#plans-tarifs" 
-                  id="cta-maintenance-hero"
-                  className="px-8 py-4.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold tracking-wide transition-all duration-300 text-center shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 flex items-center justify-center gap-2"
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              {["Sauvegardes", "Sécurité", "Évolutions"].map((item) => (
+                <span
+                  key={item}
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-slate-200 backdrop-blur"
                 >
-                  <span>Découvrir nos abonnements mensuels</span>
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-                <a 
-                  href="#simulateur-besoins" 
-                  className="px-8 py-4.5 bg-slate-850 hover:bg-slate-800 border border-slate-700/80 text-slate-200 rounded-xl font-bold tracking-wide transition-all duration-300 text-center flex items-center justify-center gap-2"
-                >
-                  <span>Quel plan choisir ? (Formulaire)</span>
-                  <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                </a>
-              </div>
-              
-              <p className="text-slate-500 text-[11px] font-mono">
-                🔍 Diagnostic initial GRATUIT avant de débuter l'abonnement
-              </p>
+                  <Check className="h-4 w-4 text-[#3b82f6]" />
+                  {item}
+                </span>
+              ))}
             </div>
 
-            {/* Right Column - Premium Vigilance Panel simulation (Interactive) */}
-            <div className="lg:col-span-5 relative">
-              <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-md max-w-md mx-auto relative overflow-hidden text-left">
-                
-                {/* Visual Status Indicator Top */}
-                <div className="flex items-center justify-between gap-2 mb-6 border-b border-slate-800 pb-4">
-                  <div className="flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-blue-400 animate-pulse" />
-                    <h4 className="text-white font-mono font-bold text-[10px] uppercase tracking-wider">Console de Vigilance Régionale</h4>
-                  </div>
-                  <span className="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-605/30 px-2 py-0.5 rounded font-mono font-bold">
-                    ACTIVE 24/7
+            <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+              <a
+                href="#plans-tarifs"
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-8 py-4 font-semibold text-white shadow-2xl shadow-blue-500/30 transition-all hover:-translate-y-0.5 hover:bg-blue-400"
+              >
+                Voir les formules
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </a>
+
+              <a
+                href="#simulateur-besoins"
+                className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/15"
+              >
+                Quel plan choisir ?
+              </a>
+            </div>
+          </motion.div>
+
+          {/* Console visuelle */}
+          <motion.div
+            initial={{ opacity: 0, x: 28, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ delay: 0.15, duration: 0.75 }}
+            className="relative mx-auto w-full max-w-xl"
+          >
+            <div className="absolute -inset-6 rounded-[2rem] bg-[#3b82f6]/20 blur-3xl" />
+
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.07] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
+              <div className="mb-5 flex items-center justify-between rounded-2xl border border-white/10 bg-[#020617]/70 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-[#3b82f6]" />
+                  <span className="text-xs font-semibold text-slate-300">
+                    Console de suivi
                   </span>
                 </div>
+                <span className="rounded-full bg-blue-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-300">
+                  Démo
+                </span>
+              </div>
 
-                {/* Simulated interactive tabs to visualize "Protected" vs "At Risk" states */}
-                <div className="grid grid-cols-2 gap-2 mb-4 bg-slate-950 p-1.5 rounded-xl">
-                  <button 
-                    onClick={() => setActiveSystemTab('healthy')}
-                    className={`px-3 py-2 text-[10px] font-mono rounded-lg transition-all duration-300 ${
-                      activeSystemTab === 'healthy' 
-                        ? 'bg-emerald-600 text-white font-bold shadow-md' 
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
-                    }`}
+              <div className="mb-5 grid grid-cols-2 gap-2 rounded-2xl border border-white/5 bg-[#020617] p-1.5">
+                <button
+                  type="button"
+                  onClick={() => setActiveSystemTab("healthy")}
+                  className={`rounded-xl px-3 py-2 text-xs font-semibold transition-all ${
+                    activeSystemTab === "healthy"
+                      ? "bg-emerald-500 text-[#020617]"
+                      : "text-slate-400 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  Suivi actif
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveSystemTab("at-risk")}
+                  className={`rounded-xl px-3 py-2 text-xs font-semibold transition-all ${
+                    activeSystemTab === "at-risk"
+                      ? "bg-rose-500 text-white"
+                      : "text-slate-400 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  Sans suivi
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {(activeSystemTab === "healthy"
+                  ? [
+                      ["Disponibilité", "Surveillance configurée", "OK"],
+                      ["Sauvegardes", "Dernière copie vérifiée", "OK"],
+                      ["Performance", "Cache et images suivis", "Stable"],
+                      ["Sécurité", "Mises à jour contrôlées", "Suivi"],
+                    ]
+                  : [
+                      ["Disponibilité", "Aucune alerte configurée", "Risque"],
+                      ["Sauvegardes", "Fréquence non vérifiée", "À vérifier"],
+                      ["Performance", "Images et cache non suivis", "Lent"],
+                      ["Sécurité", "Extensions potentiellement obsolètes", "Attention"],
+                    ]
+                ).map(([title, desc, status]) => (
+                  <div
+                    key={title}
+                    className="flex items-center justify-between rounded-2xl border border-white/5 bg-[#020617] p-4"
                   >
-                    🟢 SAIN (SUIVI PAR VSW)
-                  </button>
-                  <button 
-                    onClick={() => setActiveSystemTab('at-risk')}
-                    className={`px-3 py-2 text-[10px] font-mono rounded-lg transition-all duration-300 ${
-                      activeSystemTab === 'at-risk' 
-                        ? 'bg-rose-950 text-rose-350 border border-rose-900/30 font-bold' 
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
-                    }`}
-                  >
-                    🔴 À L'ABANDON (SANS SUIVI)
-                  </button>
-                </div>
-
-                {/* Action-Oriented System Data Feedback */}
-                {activeSystemTab === 'healthy' ? (
-                  <div className="space-y-3.5">
-                    
-                    {/* Element 1: Uptime Metric */}
-                    <div className="p-3 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-                          <CheckCircle2 className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <span className="block text-white text-xs font-bold leading-tight">Disponibilité réseau</span>
-                          <span className="block text-[10px] text-slate-400">Ping régulier actif 1min</span>
-                        </div>
-                      </div>
-                      <span className="font-mono text-[10px] text-emerald-400 font-bold px-2 py-0.5 bg-emerald-500/10 rounded">
-                        99.98% SAIN
-                      </span>
+                    <div>
+                      <p className="text-sm font-bold text-white">{title}</p>
+                      <p className="text-xs text-slate-400">{desc}</p>
                     </div>
-
-                    {/* Element 2: Save state */}
-                    <div className="p-3 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-                          <Database className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <span className="block text-white text-xs font-bold leading-tight">Sauvegardes chiffrées</span>
-                          <span className="block text-[10px] text-slate-400">Stockage déporté Cloud d'urgence</span>
-                        </div>
-                      </div>
-                      <span className="font-mono text-[10px] text-blue-400 font-bold px-2 py-0.5 bg-blue-500/10 rounded">
-                        QUOTIDIEN OK
-                      </span>
-                    </div>
-
-                    {/* Element 3: Speed index */}
-                    <div className="p-3 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-                          <Gauge className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <span className="block text-white text-xs font-bold leading-tight">Temps de réponse mobile</span>
-                          <span className="block text-[10px] text-slate-400">Cache expiré purgé automatiquement</span>
-                        </div>
-                      </div>
-                      <span className="font-mono text-[10px] text-emerald-400 font-bold px-2 py-0.5 bg-emerald-500/10 rounded">
-                        0.4s (EXCELLENT)
-                      </span>
-                    </div>
-
-                    {/* Element 4: Plug-in & Code compliance */}
-                    <div className="p-3 bg-slate-950/80 border border-slate-800 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-                          <Lock className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <span className="block text-white text-xs font-bold leading-tight">Failles de plugins WordPress</span>
-                          <span className="block text-[10px] text-slate-400">Scans quotidiens menés</span>
-                        </div>
-                      </div>
-                      <span className="font-mono text-[10px] text-emerald-450 font-bold px-2 py-0.5 bg-emerald-500/10 rounded">
-                        0 MENACES
-                      </span>
-                    </div>
-
+                    <span
+                      className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
+                        activeSystemTab === "healthy"
+                          ? "bg-emerald-400/10 text-emerald-400"
+                          : "bg-rose-400/10 text-rose-400"
+                      }`}
+                    >
+                      {status}
+                    </span>
                   </div>
-                ) : (
-                  <div className="space-y-3.5">
-                    
-                    {/* Element 1: Down detection vulnerability */}
-                    <div className="p-3 bg-rose-950/25 border border-rose-950/40 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center shrink-0">
-                          <AlertOctagon className="w-4 h-4 animate-bounce" />
-                        </div>
-                        <div>
-                          <span className="block text-rose-300 text-xs font-bold leading-tight">Aucune sonde de crash</span>
-                          <span className="block text-[10px] text-rose-200">En cas de bug, vous l'apprendrez de vos clients</span>
-                        </div>
-                      </div>
-                      <span className="font-mono text-[10px] text-rose-400 font-bold px-2 py-0.5 bg-rose-500/20 rounded">
-                        CRITIQUE
-                      </span>
-                    </div>
-
-                    {/* Element 2: Save vulnerability */}
-                    <div className="p-3 bg-rose-950/25 border border-rose-950/40 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center shrink-0">
-                          <Database className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <span className="block text-rose-300 text-xs font-bold leading-tight">Pas de sauvegarde hors hébergeur</span>
-                          <span className="block text-[10px] text-rose-200">Aucun backup n'est externalisé</span>
-                        </div>
-                      </div>
-                      <span className="font-mono text-[10px] text-rose-450 font-bold px-2 py-0.5 bg-rose-500/20 rounded">
-                        CRASH DANGER
-                      </span>
-                    </div>
-
-                    {/* Element 3: Performance issues */}
-                    <div className="p-3 bg-rose-950/25 border border-rose-950/40 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-450 flex items-center justify-center shrink-0">
-                          <Gauge className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <span className="block text-rose-300 text-xs font-bold leading-tight">Temps de chargement mobile : 4.8s</span>
-                          <span className="block text-[10px] text-rose-200">Images lourdes et cache saturé</span>
-                        </div>
-                      </div>
-                      <span className="font-mono text-[10px] text-rose-400 font-bold px-2 py-0.5 bg-rose-500/20 rounded">
-                        SEO PÉNALISÉ
-                      </span>
-                    </div>
-
-                    {/* Element 4: Plug-in outdated warning */}
-                    <div className="p-3 bg-rose-950/25 border border-rose-950/40 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center shrink-0">
-                          <Settings className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <span className="block text-rose-300 text-xs font-bold leading-tight">Module WordPress obsolète</span>
-                          <span className="block text-[10px] text-rose-200">14 paquets à risque scan mondial</span>
-                        </div>
-                      </div>
-                      <span className="font-mono text-[10px] text-rose-400 font-bold px-2 py-0.5 bg-rose-500/20 rounded">
-                        14 VULNÉRABILITÉS
-                      </span>
-                    </div>
-
-                  </div>
-                )}
-
-                <div className="mt-6 pt-4 border-t border-slate-800 text-center">
-                  <p className="text-slate-400 text-xs font-mono">
-                    {activeSystemTab === 'healthy' 
-                      ? "✨ Votre site reste performant, à jour et digne de confiance." 
-                      : "🚨 Risque fort de rupture transactionnelle ou d'affichage."
-                    }
-                  </p>
-                </div>
-
+                ))}
               </div>
             </div>
-
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* 2. CRITICAL RISKS SECTION - Modern Bento cluster layout for commercial impact */}
-      <section className="py-28 bg-[#fafbfe] border-b border-slate-200/60">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-rose-600 uppercase bg-rose-50 border border-rose-100 px-3.5 py-1 rounded-full inline-block">
-              Analyse objective du risque
+      {/* RISQUES */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-rose-100 bg-rose-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-rose-500">
+              Risques courants
             </span>
-            <h2 className="text-3xl md:text-4.5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Un site laissé sans surveillance accumule l'obsolescence et fragilise vos ventes
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Un site non maintenu devient progressivement fragile
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              N'attendez pas l'écran rouge d'exclusion de Google ou un message alarmé d'un visiteur pour agir. Les dysfonctionnements d'un hébergement non géré sont sournois, invisibles en journée, mais désastreux pour votre image professionnelle régionale.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              La plupart des problèmes arrivent discrètement : lenteur, bug de
+              formulaire, plugin obsolète, erreur de mise à jour ou absence de
+              sauvegarde exploitable.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {unmaintainedRisks.map((risk, idx) => {
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {risks.map((risk, index) => {
               const Icon = risk.icon;
+
               return (
-                <div 
-                  key={idx} 
-                  className="bg-white border border-slate-200 rounded-2xl p-6.5 hover:shadow-xl hover:border-blue-300 transition-all duration-300 flex flex-col justify-between space-y-5"
+                <motion.article
+                  key={risk.title}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.04 }}
+                  className="rounded-[1.6rem] border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-1 hover:border-rose-200 hover:shadow-xl"
                 >
-                  <div className="space-y-4">
-                    <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100/50 text-slate-800 flex items-center justify-center shadow-sm">
-                      <Icon className="w-5 h-5 text-rose-500" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 font-display text-base leading-snug">{risk.title}</h3>
-                      <p className="text-slate-500 text-xs leading-relaxed font-sans mt-2">{risk.desc}</p>
-                    </div>
+                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-500 ring-1 ring-rose-100">
+                    <Icon className="h-7 w-7" />
                   </div>
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono">
-                    <span className="text-rose-600 font-bold bg-rose-50 px-2 py-0.5 rounded">{risk.severity}</span>
-                    <span className="text-slate-400">IMPACT DIRECT</span>
+
+                  <h3 className="font-display text-xl font-bold text-[#0f172a]">
+                    {risk.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {risk.desc}
+                  </p>
+
+                  <div className="mt-5 border-t border-slate-100 pt-4">
+                    <span className="rounded-full bg-rose-50 px-3 py-1 text-xs font-bold text-rose-500">
+                      {risk.severity}
+                    </span>
                   </div>
-                </div>
+                </motion.article>
               );
             })}
           </div>
-
-          {/* Sincere Case study display card */}
-          <div className="bg-[#0c1223] text-white rounded-[2rem] p-8 md:p-12 mt-12 grid lg:grid-cols-12 gap-8 items-center relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/5 blur-[80px] rounded-full" />
-            
-            <div className="lg:col-span-7 space-y-4">
-              <span className="px-2.5 py-1 bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold uppercase tracking-wider text-[10px] rounded inline-block font-mono">
-                Cas d'étude PME locale
-              </span>
-              <h3 className="text-2xl md:text-3xl font-display font-medium text-white tracking-tight">
-                Le syndrome du site "créé et oublié" : Un scénario hélas trop classique.
-              </h3>
-              <p className="text-slate-300 text-sm leading-relaxed font-light">
-                Un artisan spécialisé dans le BTP diffuse une campagne publicitaire payante à 300€/mois pour acquérir de nouveaux prospects. Un jour, en raison du changement invisible de la version PHP chez son hébergeur, l'extension gérant les formulaires de de devis plante et n'envoie plus rien. Ne recevant plus de notifications, l'artisan pense simplement que le marché est calme. <strong>Résultat :</strong> Une perte financière directe et 8 formulaires de contact restés figés sur le serveur pendant plus d'un mois.
-              </p>
-            </div>
-
-            <div className="lg:col-span-5 bg-slate-950/80 p-6 rounded-2xl border border-slate-800 space-y-4">
-              <h4 className="text-xs font-mono font-bold text-slate-400 uppercase tracking-widest block">Notre protocole d'airbag :</h4>
-              <ul className="space-y-3 text-[12px] text-slate-300">
-                <li className="flex gap-2.5 items-start">
-                  <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5 bg-emerald-500/10 rounded-full p-0.5" />
-                  <span>Sonde active qui teste l'affichage de vos formulaires</span>
-                </li>
-                <li className="flex gap-2.5 items-start">
-                  <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5 bg-emerald-500/10 rounded-full p-0.5" />
-                  <span>Mesure de rapidité quotidienne pour éviter le rejet Google</span>
-                </li>
-                <li className="flex gap-2.5 items-start">
-                  <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5 bg-emerald-500/10 rounded-full p-0.5" />
-                  <span>Intervention sous 4 heures si un test de contact échoue</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
         </div>
       </section>
 
-      {/* 3. CORE BENEFITS SECTION - Elevating credentials and reassurance */}
-      <section className="py-28 bg-white border-b border-slate-100">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              La tranquillité au quotidien
+      {/* BENEFICES */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Bénéfices
             </span>
-            <h2 className="text-3xl md:text-4.5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Pourquoi nous confier la clé de votre santé numérique ?
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Une maintenance pour préserver votre site et votre image
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              La technique de votre site ne devrait plus jamais consister en une surcharge mentale. Reprenez votre focus métier en déléguant à des techniciens réactifs d'Île-de-France.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              La maintenance permet de limiter les risques, d’améliorer la
+              fiabilité et de garder un site vivant, propre et professionnel.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {benefits.map((benefit) => {
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {benefits.map((benefit, index) => {
               const Icon = benefit.icon;
+
               return (
-                <div 
-                  key={benefit.id} 
-                  className="bg-slate-50/70 border border-slate-150 rounded-2xl p-6.5 md:p-8 hover:border-blue-300 hover:bg-white transition-all flex items-start gap-4"
+                <motion.article
+                  key={benefit.title}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.04 }}
+                  className="group rounded-[1.6rem] border border-slate-200 bg-slate-50 p-7 transition-all hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-500/10"
                 >
-                  <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 border border-blue-100/55 flex items-center justify-center shrink-0 mt-0.5">
-                    <Icon className="w-5 h-5 text-blue-600" />
+                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-[#3b82f6] ring-1 ring-blue-100 transition-all group-hover:bg-[#3b82f6] group-hover:text-white">
+                    <Icon className="h-7 w-7" />
                   </div>
-                  <div className="space-y-2">
-                    <h3 className="font-bold text-slate-900 font-display text-base leading-tight">{benefit.title}</h3>
-                    <p className="text-xs text-slate-600 leading-relaxed font-sans font-light">{benefit.desc}</p>
-                  </div>
-                </div>
+
+                  <h3 className="font-display text-xl font-bold text-[#0f172a]">
+                    {benefit.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {benefit.desc}
+                  </p>
+                </motion.article>
               );
             })}
           </div>
-
         </div>
       </section>
 
-      {/* 4. PRESTATIONS DETAIL - Action-focused list items */}
-      <section id="nos-prestations" className="py-28 bg-[#fafbfe] border-b border-slate-200/50 scroll-mt-6">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Notre panel d'actions
+      {/* PRESTATIONS */}
+      <section id="nos-prestations" className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Prestations incluses
             </span>
-            <h2 className="text-3xl md:text-4.5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              L'intégralité des actions techniques indispensables, packagée sans surprise
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Les actions techniques essentielles pour garder un site propre
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Que ce soit pour soigner le référencement naturel, accélérer l'allègement de votre page d'accueil ou restructurer un paramètre TLS, nous menons chaque intervention avec soin.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Selon la formule choisie, nous intervenons sur les points
+              nécessaires pour assurer le suivi technique, la sécurité et les
+              évolutions courantes.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {prestations.map((p, idx) => {
-              const Icon = p.icon;
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {prestations.map((item, index) => {
+              const Icon = item.icon;
+
               return (
-                <div 
-                  key={idx} 
-                  className="bg-white border border-slate-200/85 rounded-2xl p-6 hover:border-blue-400 hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+                <motion.article
+                  key={item.title}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.03 }}
+                  className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/10"
                 >
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100/40 text-blue-600 flex items-center justify-center shadow-sm">
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <span className="text-[9px] font-mono text-blue-500 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
-                        {p.badge}
-                      </span>
+                  <div className="mb-5 flex items-center justify-between">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-[#3b82f6] ring-1 ring-blue-100">
+                      <Icon className="h-6 w-6" />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 text-sm font-display leading-tight">{p.title}</h3>
-                      <p className="text-slate-500 text-[11.5px] leading-relaxed font-sans mt-2.5 font-light">{p.desc}</p>
-                    </div>
+
+                    <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#3b82f6]">
+                      {item.badge}
+                    </span>
                   </div>
-                </div>
+
+                  <h3 className="font-display text-lg font-bold text-[#0f172a]">
+                    {item.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {item.desc}
+                  </p>
+                </motion.article>
               );
             })}
           </div>
-
         </div>
       </section>
 
-      {/* 5. INTERACTIVE CONFIGURATOR STEPPER - Direct subscription target helper */}
-      <section id="simulateur-besoins" className="py-28 bg-white border-b border-slate-100 scroll-mt-6">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Simulateur Intelligent
+      {/* SIMULATEUR */}
+      <section id="simulateur-besoins" className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-5xl px-6">
+          <div className="mx-auto mb-14 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Simulateur
             </span>
-            <h2 className="text-3xl md:text-4.5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Quel abonnement de maintenance correspond à votre entreprise ?
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Quel abonnement correspond à votre site ?
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Répondez à 3 questions simples pour cibler la formule de maintenance la plus rationnelle selon votre configuration.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Répondez à trois questions pour obtenir une recommandation
+              indicative. Le choix final sera confirmé après audit initial.
             </p>
           </div>
 
-          <div className="max-w-3xl mx-auto bg-slate-50 border border-slate-200 rounded-[2rem] p-6 md:p-10 shadow-lg relative overflow-hidden">
-            <div className="absolute top-0 right-1/4 w-32 h-32 bg-blue-500/5 blur-xl rounded-full" />
-            
-            {/* Step indicators */}
-            <div className="flex items-center gap-1.5 mb-8">
+          <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-6 shadow-xl shadow-slate-900/5 md:p-10">
+            <div className="mb-8 flex gap-2">
               {[1, 2, 3, 4].map((step) => (
-                <div 
-                  key={step} 
-                  className={`h-1.5 rounded-full flex-1 transition-all duration-300 ${
-                    quizStep >= step ? 'bg-blue-600' : 'bg-slate-200'
+                <div
+                  key={step}
+                  className={`h-2 flex-1 rounded-full ${
+                    quizStep >= step ? "bg-[#3b82f6]" : "bg-slate-200"
                   }`}
                 />
               ))}
             </div>
 
-            {/* Step 1: Technology selection */}
             {quizStep === 1 && (
-              <div className="space-y-6">
-                <div className="space-y-1">
-                  <span className="font-mono text-blue-600 text-xs font-bold uppercase">Question 01 sur 03</span>
-                  <h3 className="text-xl font-display font-medium text-slate-900">Quelle est la technologie actuelle de votre site ?</h3>
-                </div>
-                
-                <div className="grid sm:grid-cols-3 gap-4">
-                  {[
-                    { key: 'wordpress', label: 'WordPress / Webmaster classique', desc: 'Gestion par plugins tiers' },
-                    { key: 'react_next', label: 'Projet Custom (Next.js / React / TypeScript)', desc: 'Framework codé, besoin de développeur' },
-                    { key: 'je_ne_sais_pas', label: 'Autre site ou "Je ne sais pas"', desc: 'Nous mènerons un audit préalable gratuit' }
-                  ].map((opt) => (
-                    <button
-                      key={opt.key}
-                      onClick={() => selectAnswer('tech', opt.key)}
-                      className="bg-white border border-slate-200 hover:border-blue-500 hover:shadow p-5 text-left rounded-xl transition-all h-full flex flex-col justify-between"
-                    >
-                      <strong className="text-slate-900 text-xs font-display block mb-1">{opt.label}</strong>
-                      <span className="text-[10px] text-slate-550 block">{opt.desc}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <QuizStepBlock
+                label="Question 1 sur 3"
+                title="Quelle est la technologie actuelle de votre site ?"
+                options={[
+                  {
+                    key: "wordpress",
+                    label: "WordPress / WooCommerce",
+                    desc: "Site géré avec CMS, thème ou extensions.",
+                  },
+                  {
+                    key: "react_next",
+                    label: "React / Next.js",
+                    desc: "Site ou application développée sur mesure.",
+                  },
+                  {
+                    key: "unknown",
+                    label: "Je ne sais pas",
+                    desc: "Nous vérifierons la technologie lors de l’audit.",
+                  },
+                ]}
+                onSelect={(value) => selectAnswer("tech", value)}
+              />
             )}
 
-            {/* Step 2: Traffic selection */}
             {quizStep === 2 && (
-              <div className="space-y-6">
-                <div className="space-y-1">
-                  <span className="font-mono text-blue-600 text-xs font-bold uppercase">Question 02 sur 03</span>
-                  <h3 className="text-xl font-display font-medium text-slate-900">Quel est le volume de trafic mensuel estimé ?</h3>
-                </div>
-                
-                <div className="grid sm:grid-cols-3 gap-4">
-                  {[
-                    { key: 'low', label: 'Moins de 1000 visites', desc: 'Activités locales, artisans, TPE' },
-                    { key: 'medium', label: '1000 à 10 000 visites', desc: 'PME en croissance, budgets Google Ads actifs' },
-                    { key: 'high', label: 'Plus de 10 000 visites', desc: 'E-commerce dynamique, forte audience' }
-                  ].map((opt) => (
-                    <button
-                      key={opt.key}
-                      onClick={() => selectAnswer('traffic', opt.key)}
-                      className="bg-white border border-slate-200 hover:border-blue-500 hover:shadow p-5 text-left rounded-xl transition-all h-full flex flex-col justify-between"
-                    >
-                      <strong className="text-slate-900 text-xs font-display block mb-1">{opt.label}</strong>
-                      <span className="text-[10px] text-slate-550 block">{opt.desc}</span>
-                    </button>
-                  ))}
-                </div>
-
-                <button 
-                  onClick={() => setQuizStep(1)} 
-                  className="text-xs text-slate-450 hover:text-slate-600 block pt-2 underline"
-                >
-                  ← Retour à la question précédente
-                </button>
-              </div>
+              <QuizStepBlock
+                label="Question 2 sur 3"
+                title="Quel est le niveau d’activité du site ?"
+                options={[
+                  {
+                    key: "low",
+                    label: "Site vitrine simple",
+                    desc: "Peu de pages et trafic modéré.",
+                  },
+                  {
+                    key: "medium",
+                    label: "Site commercial actif",
+                    desc: "Demandes régulières, SEO ou Ads.",
+                  },
+                  {
+                    key: "high",
+                    label: "Site sensible ou très actif",
+                    desc: "E-commerce, espace client ou fort trafic.",
+                  },
+                ]}
+                onSelect={(value) => selectAnswer("traffic", value)}
+                onBack={() => setQuizStep(1)}
+              />
             )}
 
-            {/* Step 3: Needs selection */}
             {quizStep === 3 && (
-              <div className="space-y-6">
-                <div className="space-y-1">
-                  <span className="font-mono text-blue-600 text-xs font-bold uppercase">Question 03 sur 03</span>
-                  <h3 className="text-xl font-display font-medium text-slate-900">De quel niveau de modification de contenu avez-vous besoin ?</h3>
-                </div>
-                
-                <div className="grid sm:grid-cols-3 gap-4">
-                  {[
-                    { key: 'technical_only', label: 'Aucun - juste la sécurité technique', desc: 'Mises à jour manuelles, backups, monitoring' },
-                    { key: 'occasional', label: 'Petit ajustement ponctuel', desc: 'Textes, fiches, tarifs, 1h par mois incluse' },
-                    { key: 'evolution', label: 'Évolutions d\'offres régulières', desc: 'Développements fréquents, 3h par mois incluses' }
-                  ].map((opt) => (
-                    <button
-                      key={opt.key}
-                      onClick={() => selectAnswer('needs', opt.key)}
-                      className="bg-white border border-slate-200 hover:border-blue-500 hover:shadow p-5 text-left rounded-xl transition-all h-full flex flex-col justify-between"
-                    >
-                      <strong className="text-slate-900 text-xs font-display block mb-1">{opt.label}</strong>
-                      <span className="text-[10px] text-slate-550 block">{opt.desc}</span>
-                    </button>
-                  ))}
-                </div>
-
-                <button 
-                  onClick={() => setQuizStep(2)} 
-                  className="text-xs text-slate-450 hover:text-slate-600 block pt-2 underline"
-                >
-                  ← Retour à la question précédente
-                </button>
-              </div>
+              <QuizStepBlock
+                label="Question 3 sur 3"
+                title="Quel niveau d’évolution souhaitez-vous ?"
+                options={[
+                  {
+                    key: "technical_only",
+                    label: "Sécurité technique uniquement",
+                    desc: "Mises à jour, sauvegardes, surveillance.",
+                  },
+                  {
+                    key: "occasional",
+                    label: "Petites modifications ponctuelles",
+                    desc: "Textes, images, horaires, tarifs.",
+                  },
+                  {
+                    key: "evolution",
+                    label: "Évolutions régulières",
+                    desc: "Pages, fonctionnalités, SEO, améliorations.",
+                  },
+                ]}
+                onSelect={(value) => selectAnswer("needs", value)}
+                onBack={() => setQuizStep(2)}
+              />
             )}
 
-            {/* Step 4: Results */}
             {quizStep === 4 && (
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <span className="font-mono text-emerald-600 text-xs font-bold uppercase tracking-wider block bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded inline-block">
-                    Diagnostic complété avec succès !
-                  </span>
-                  <h3 className="text-2xl font-display font-medium text-slate-900">Formule recommandée : {getRecommendedPlanObj().title}</h3>
-                  <p className="text-slate-600 text-xs leading-relaxed max-w-xl">
-                    Au vu de votre équipement ({quizAnswers.tech === 'react_next' ? 'Code React Moderne' : quizAnswers.tech === 'wordpress' ? 'CMS WordPress' : 'Site Standard'}), de votre trafic de proximité et de votre besoin ({quizAnswers.needs === 'technical_only' ? 'Suivi technique pur' : 'Suivi technique & évolutions incluses'}), cette formule vous correspond parfaitement.
+              <div>
+                <span className="inline-flex rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-600">
+                  Recommandation indicative
+                </span>
+
+                <h3 className="mt-5 font-display text-3xl font-bold text-[#0f172a]">
+                  {recommendedOffer.title}
+                </h3>
+
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
+                  Selon vos réponses, cette formule semble la plus adaptée. Un
+                  audit initial permettra de confirmer le périmètre exact.
+                </p>
+
+                <div className="mt-8 rounded-[1.5rem] border border-slate-200 bg-white p-6">
+                  <p className="text-sm text-slate-500">À partir de</p>
+                  <p className="mt-1 font-display text-4xl font-bold text-[#0f172a]">
+                    {recommendedOffer.monthlyPrice} €{" "}
+                    <span className="text-base font-medium text-slate-500">
+                      / mois HT
+                    </span>
+                  </p>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {recommendedOffer.desc}
                   </p>
                 </div>
 
-                {/* Simulated recommended offer preview inside the quiz box */}
-                <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6 text-left relative overflow-hidden flex flex-col sm:flex-row gap-5 justify-between items-start sm:items-center">
-                  <div className="space-y-1.5">
-                    <span className="text-[9px] font-mono font-bold bg-blue-50 text-blue-600 px-2 py-0.5 rounded uppercase">
-                      Recommandation d'expert VSW Digital
-                    </span>
-                    <h4 className="font-bold text-slate-900 text-base">{getRecommendedPlanObj().title}</h4>
-                    <p className="text-[11px] text-slate-550 font-sans max-w-sm">{getRecommendedPlanObj().desc}</p>
-                  </div>
-                  
-                  <div className="text-left sm:text-right shrink-0">
-                    <span className="block text-[10px] text-slate-400 font-mono">TARIF PAR MOIS HT :</span>
-                    <span className="block text-xl font-bold text-slate-900">{getRecommendedPlanObj().monthlyPrice} € / mois</span>
-                    <span className="block text-[10px] text-slate-400">Sans engagement, résiliation en ligne</span>
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <Link
                     to="/contact"
-                    className="px-6 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs tracking-wider transition-all duration-300 text-center flex items-center justify-center gap-2"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-6 py-4 font-semibold text-white transition-all hover:bg-blue-400"
                   >
-                    <span>Souscrire à cet abonnement</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    Demander cette formule
+                    <ArrowRight className="h-5 w-5" />
                   </Link>
-                  <button 
-                    onClick={resetQuiz} 
-                    className="px-6 py-3.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-xs tracking-wider transition-all duration-300"
+
+                  <button
+                    type="button"
+                    onClick={resetQuiz}
+                    className="rounded-2xl border border-slate-200 bg-white px-6 py-4 font-semibold text-slate-700 transition-all hover:bg-slate-50"
                   >
-                    Recommencer le diagnostic
+                    Recommencer
                   </button>
                 </div>
               </div>
             )}
-
           </div>
-
         </div>
       </section>
 
-      {/* 6. TECHNOLOGY & STACK MATRIX - Direct details, no jargon */}
-      <section className="py-28 bg-[#fafbfe] border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Compatibilité Multilingues
+      {/* COMPATIBILITE */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Technologies maintenues
             </span>
-            <h2 className="text-3xl md:text-4.5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Une expertise étendue sur WordPress, Next.js et de multiples architectures
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              WordPress, React, Next.js et projets connectés
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Quel que soit l'outil de création initial choisi par votre précédent prestataire, nous reprenons l'administration de votre code sans douleur pour le restructurer en lieu sûr.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Nous adaptons la maintenance à la technologie utilisée et au rôle
+              réel de votre site dans votre activité.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
             {supportedSites.map((site, index) => {
               const Icon = site.icon;
+
               return (
-                <div 
-                  key={index} 
-                  className="bg-white border border-slate-200 p-6 md:p-8 rounded-3xl space-y-4 hover:border-blue-400 hover:shadow shadow-sm transition-all"
+                <motion.article
+                  key={site.title}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.04 }}
+                  className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/10"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 text-slate-800 flex items-center justify-center shadow-sm">
-                    <Icon className="w-5 h-5 text-blue-600" />
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-[#3b82f6] ring-1 ring-blue-100">
+                    <Icon className="h-6 w-6" />
                   </div>
-                  <h3 className="font-bold text-slate-900 text-base font-display">{site.title}</h3>
-                  <p className="text-slate-500 text-xs leading-relaxed font-sans font-light">{site.desc}</p>
-                </div>
+
+                  <h3 className="font-display text-lg font-bold text-[#0f172a]">
+                    {site.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {site.desc}
+                  </p>
+                </motion.article>
               );
             })}
           </div>
+        </div>
+      </section>
 
-          {/* Sectors list grid */}
-          <div className="mt-16 text-center space-y-4 max-w-4xl mx-auto">
-            <span className="text-[10px] font-mono text-slate-450 tracking-wider uppercase block">
-              Secteurs déjà sous maintenance active par VSW Digital :
+      {/* METHODE */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Méthode
             </span>
-            <div className="flex flex-wrap justify-center gap-2">
-              {[
-                'Art artisans', 'Établissements BTP', 'PME industrielles', 'Services comptables', 'Sociétés de sécurité', 
-                'Cabinets juridiques', 'Sociétés de logistique', 'Acteurs du e-commerce', 'Organismes de formation', 
-                'Professions libérales', 'Écoles privées', 'Hôtels & Restauration'
-              ].map((tag, idx) => (
-                <span key={idx} className="px-3 py-1 bg-white border border-slate-200 text-slate-650 text-xs rounded-full font-medium shadow-sm">
-                  {tag}
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Une prise en charge progressive et sécurisée
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Nous ne modifions pas un site à l’aveugle. Chaque intervention
+              commence par une vérification et une sauvegarde.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {methodSteps.map((step, index) => (
+              <motion.article
+                key={step.step}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.04 }}
+                className="rounded-[1.6rem] border border-slate-200 bg-slate-50 p-7 transition-all hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-500/10"
+              >
+                <span className="mb-5 block font-display text-4xl font-black text-[#3b82f6]/20">
+                  {step.step}
                 </span>
-              ))}
-            </div>
-          </div>
 
-        </div>
-      </section>
+                <h3 className="font-display text-xl font-bold text-[#0f172a]">
+                  {step.title}
+                </h3>
 
-      {/* 7. FOCUS WORDPRESS MAINTENANCE SPECIALTY */}
-      <section className="py-28 bg-white border-b border-slate-100">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Left Column Checklist */}
-            <div className="lg:col-span-7 space-y-6">
-              <span className="px-2.5 py-1 bg-blue-50 border border-blue-100 text-blue-600 font-bold uppercase tracking-wider text-[10px] rounded inline-block font-mono">
-                Intervention Spécialiste WordPress
-              </span>
-              
-              <h2 className="text-3xl md:text-[2.25rem] font-display font-medium tracking-tight text-slate-900 leading-tight">
-                WordPress : Gérer les failles courantes sans dégrader vos plugins
-              </h2>
-              
-              <p className="text-slate-650 leading-relaxed font-sans text-sm md:text-base font-light">
-                WordPress propulse plus de 40% des sites mondiaux. Mais cette popularité en fait la cible première d'infiltrations de robots. Notre équipe contrôle manuellement la conformité de chaque module (Elementor, Divi, WooCommerce...) et n'exécute jamais de mises à jour automatiques à l'aveugle, évitant drastiquement les surprises après mise en production.
-              </p>
-
-              <div className="space-y-3 pt-2">
-                {wpFocusPoints.map((point, index) => (
-                  <div key={index} className="flex gap-2.5 items-start">
-                    <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5 bg-emerald-50 rounded-full p-0.5 border border-emerald-100" />
-                    <span className="text-slate-700 text-xs md:text-sm font-sans font-light">{point}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right Column Visual Credential Card */}
-            <div className="lg:col-span-5 relative">
-              <div className="bg-[#0c1223] text-white rounded-3xl p-8 space-y-6 shadow-xl relative overflow-hidden text-left border border-slate-800">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 blur-[40px] rounded-full" />
-                
-                <h3 className="font-display font-bold text-white text-base">Le nettoyage de mauvais prestataires</h3>
-                <p className="text-slate-350 text-xs leading-relaxed font-sans font-light">
-                  Votre hébergement est encombré ? Votre ancien webmaster est injoignable et vous souffrez d’extensions superflues lentes ? Nous récupérons proprement vos accès existants administrateurs, nettoyons les codes périmés restants et vous restituons un site fluide, débarrassé des dépendances inutiles qui l'alourdissent.
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  {step.desc}
                 </p>
-
-                <div className="border-t border-slate-800 pt-4 flex justify-between items-center text-[10px] text-slate-550 font-mono">
-                  <span>CLEANUP WP PLATFORM</span>
-                  <span className="text-blue-400">VSW DIGITAL ENGINEERING</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* 8. EXPERT SERVER TRANSIT (Hosting alternatives) */}
-      <section className="py-28 bg-[#fafbfe] border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Puissance & Hébergement
-            </span>
-            <h2 className="text-3xl md:text-4.5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Un hébergeur performant réduit la fuite de vos prospects
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              La rapidité dépend à 50% de la configuration sous-jacente du serveur de distribution (DNS, CDN, TTFB initial). Nous gérons la liaison optimale de votre espace selon vos réelles contraintes techniques.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
-            {[
-              { name: "Hébergement Cloud / VPS", desc: "Configuration de la mémoire virtuelle RAM allouée à la volée." },
-              { name: "Certificat SSL", desc: "Ajustement TLS constant pour garder le cadenas vert valide." },
-              { name: "Compression statique Gzip", desc: "Optimisation de l'allègement de bande passante." },
-              { name: "Liaisons CDN Intelligentes", desc: "Distribution géographique rapide des pages en France." },
-              { name: "Indépendance Éthique", desc: "Conseils techniques objectifs sur le choix (OVH, o2switch, Firebase)." }
-            ].map((opt, idx) => (
-              <div 
-                key={idx} 
-                className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-blue-300 transition-colors flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <span className="text-xs font-bold text-blue-600 font-mono block">SERVEUR COMPLIANCE 0{idx + 1}</span>
-                  <h4 className="font-bold text-slate-900 font-display text-[13.5px] leading-tight">{opt.name}</h4>
-                  <p className="text-slate-500 text-[10.5px] leading-relaxed font-sans font-light">{opt.desc}</p>
-                </div>
-              </div>
+              </motion.article>
             ))}
           </div>
-
-          <div className="mt-12 bg-blue-50/50 border border-blue-150/80 rounded-2xl p-6.5 text-center max-w-2xl mx-auto font-sans text-xs text-blue-900 leading-relaxed">
-            💡 <strong>Pas de parti pris hébergeur :</strong> Nous recommandons l'espace d'hébergement le plus pertinent (o2switch / OVH pour WordPress, Vercel / Netlify pour NextJS, Google Cloud / Firebase pour les gros volumes de données) pour optimiser vos frais de serveurs.
-          </div>
-
         </div>
       </section>
 
-      {/* 9. ONBOARDING STRATEGY & STEPS TIMELINE */}
-      <section className="py-28 bg-white border-b border-slate-100">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Rigueur d'exécution
+      {/* OFFRES */}
+      <section id="plans-tarifs" className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Abonnements
             </span>
-            <h2 className="text-3xl md:text-4.5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Notre méthode d'onboarding : de l'audit initial au suivi serein
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Des formules de maintenance claires et évolutives
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Nous n'appliquons aucun changement à l'aveugle. Nous ordonnons une suite logique structurée pour un atterrissage en toute sûreté.
-            </p>
-          </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {methodSteps.map((m, idx) => (
-              <div 
-                key={idx} 
-                className="bg-slate-50/50 border border-slate-180 rounded-2xl p-6 md:p-8 relative shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-              >
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="font-mono text-4xl font-black text-blue-100 block leading-none">{m.step}</span>
-                    <span className="text-[9px] text-slate-400 font-mono tracking-widest font-bold">PROTOCOLE VSW</span>
-                  </div>
-                  <h3 className="font-bold text-slate-900 font-display text-base leading-tight">{m.title}</h3>
-                  <p className="text-slate-600 text-[11.5px] leading-relaxed font-sans font-light mb-0">{m.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* 10. PRODUCTIZED PLANS & MONTHLY SUBSCRIPTION PRICING SECTION */}
-      <section id="plans-tarifs" className="py-28 bg-[#fafbfe] border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Budgetisation Simple & Claire
-            </span>
-            <h2 className="text-3xl md:text-4.5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Des abonnements de maintenance mensualisés, sans engagement de durée
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Bénéficiez de la transparence totale d'un accompagnement packagé de proximité. Ajustez ou stoppez votre formule par simple e-mail d'un mois sur l'autre.
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Les tarifs ci-dessous servent de base indicative. Chaque site est
+              vérifié avant validation de la formule.
             </p>
 
-            {/* Interactive Monthly vs Annual billing toggle */}
-            <div className="pt-6 flex justify-center">
-              <div className="bg-slate-200/60 p-1.5 rounded-2xl flex items-center gap-1.5 border border-slate-300/40">
-                <button
-                  onClick={() => setBillingCycle('monthly')}
-                  className={`px-4.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
-                    billingCycle === 'monthly'
-                      ? 'bg-white text-slate-905 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Mensuel (Flexibilité)
-                </button>
-                <button
-                  onClick={() => setBillingCycle('yearly')}
-                  className={`px-4.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-1.5 ${
-                    billingCycle === 'yearly'
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <span>Annuel / 2 mois offerts</span>
-                  <span className="text-[9px] bg-amber-400 text-slate-950 font-mono font-black px-1.5 py-0.5 rounded uppercase">
-                    PROMO
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
-            {offers.map((offer) => (
-              <div 
-                key={offer.id} 
-                className={`rounded-[2rem] p-6.5 md:p-8 flex flex-col justify-between transition-all duration-300 relative ${
-                  offer.recommended 
-                    ? 'bg-slate-900 text-white border-2 border-blue-600 shadow-xl scale-102 lg:scale-105 z-10' 
-                    : 'bg-white border border-slate-200 hover:border-slate-300 text-slate-900 shadow-sm'
+            <div className="mt-8 inline-flex rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm">
+              <button
+                type="button"
+                onClick={() => setBillingCycle("monthly")}
+                className={`rounded-xl px-5 py-2.5 text-sm font-semibold transition-all ${
+                  billingCycle === "monthly"
+                    ? "bg-[#0f172a] text-white"
+                    : "text-slate-600 hover:bg-slate-50"
                 }`}
               >
-                {/* Visual Popular Seal */}
-                {offer.recommended && (
-                  <div className="absolute top-0 right-1/2 translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white text-[10px] font-mono uppercase font-black px-3.5 py-1 rounded-full whitespace-nowrap">
-                    ⭐ LE PLUS POPULAIR POUR LES DIRECTEURS DE PME
-                  </div>
-                )}
+                Mensuel
+              </button>
 
-                <div className="space-y-6">
-                  <div className="flex justify-between items-start gap-1">
-                    <div>
-                      <h3 className="font-bold text-xl font-display leading-tight">{offer.title}</h3>
-                      <p className={`text-[11.5px] mt-1.5 leading-relaxed font-sans ${offer.recommended ? 'text-slate-350 font-light' : 'text-slate-550 font-light'}`}>
-                        {offer.desc}
-                      </p>
-                    </div>
-                    {offer.badge && (
-                      <span className={`px-2 py-0.5 rounded text-[8px] font-mono font-black uppercase tracking-wider shrink-0 whitespace-nowrap ${
-                        offer.recommended ? 'bg-blue-500/10 text-blue-400' : 'bg-slate-100 text-slate-600'
-                      }`}>
-                        {offer.badge}
-                      </span>
-                    )}
-                  </div>
+              <button
+                type="button"
+                onClick={() => setBillingCycle("yearly")}
+                className={`rounded-xl px-5 py-2.5 text-sm font-semibold transition-all ${
+                  billingCycle === "yearly"
+                    ? "bg-[#0f172a] text-white"
+                    : "text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                Annuel
+              </button>
+            </div>
+          </div>
 
-                  {/* Pricing segment */}
-                  <div className="pt-2 pb-2 border-t border-b border-dashed border-slate-700/25">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-display font-medium font-bold text-slate-900">
-                        {billingCycle === 'monthly' ? offer.monthlyPrice : offer.yearlyPrice} €
-                      </span>
-                      <span className={`text-xs ${offer.recommended ? 'text-slate-400' : 'text-slate-500'} font-sans`}>
-                        / mois (HT)
-                      </span>
-                    </div>
-                    <span className={`block text-[10.5px] mt-1 font-mono ${offer.recommended ? 'text-blue-400' : 'text-blue-600'}`}>
-                      {billingCycle === 'yearly' 
-                        ? `Soit ${offer.yearlyPrice * 12} € facturés par an (2 mois offerts)` 
-                        : "Sans engagement récurrent"
-                      }
+          <div className="grid gap-6 lg:grid-cols-3">
+            {offers.map((offer, index) => {
+              const price =
+                billingCycle === "monthly"
+                  ? offer.monthlyPrice
+                  : offer.yearlyPrice;
+
+              return (
+                <motion.article
+                  key={offer.id}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.06 }}
+                  className={`relative rounded-[1.8rem] border bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-2xl ${
+                    offer.recommended
+                      ? "border-blue-200 shadow-blue-500/10"
+                      : "border-slate-200"
+                  }`}
+                >
+                  {offer.recommended && (
+                    <span className="absolute right-6 top-6 rounded-full bg-[#3b82f6] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                      Recommandé
+                    </span>
+                  )}
+
+                  <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#3b82f6]">
+                    {offer.badge}
+                  </span>
+
+                  <h3 className="mt-5 font-display text-2xl font-bold text-[#0f172a]">
+                    {offer.title}
+                  </h3>
+
+                  <p className="mt-4 text-sm leading-7 text-slate-600">
+                    {offer.desc}
+                  </p>
+
+                  <div className="mt-6">
+                    <span className="font-display text-5xl font-bold text-[#0f172a]">
+                      {price}€
+                    </span>
+                    <span className="ml-2 text-sm text-slate-500">
+                      / mois HT
                     </span>
                   </div>
 
-                  {/* Bullet features */}
-                  <div className="space-y-3 pt-2">
-                    {offer.features.map((feat, i) => (
-                      <div key={i} className="flex gap-2.5 items-start">
-                        <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5 bg-emerald-500/10 rounded-full p-0.5 border border-emerald-500/25" />
-                        <span className={`text-[11px] leading-snug font-sans font-light ${offer.recommended ? 'text-slate-300' : 'text-slate-700'}`}>
-                          {feat}
+                  {billingCycle === "yearly" && (
+                    <p className="mt-2 text-sm text-emerald-600">
+                      Tarif indicatif en paiement annuel
+                    </p>
+                  )}
+
+                  <div className="mt-7 space-y-3 border-t border-slate-100 pt-6">
+                    {offer.features.map((feature) => (
+                      <div key={feature} className="flex items-start gap-3">
+                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#3b82f6]" />
+                        <span className="text-sm leading-6 text-slate-600">
+                          {feature}
                         </span>
                       </div>
                     ))}
                   </div>
-                </div>
 
-                <div className="pt-8 mt-8 border-t border-slate-700/20 text-center space-y-3">
-                  <Link 
-                    to="/contact" 
-                    id={`cta-contact-plan-${offer.id}`}
-                    className={`w-full text-center block px-6 py-4 rounded-xl text-xs font-bold tracking-wider transition-all duration-300 uppercase shadow ${
-                      offer.recommended 
-                        ? 'bg-blue-600 hover:bg-blue-500 text-white hover:scale-[1.01]' 
-                        : 'bg-slate-900 hover:bg-slate-800 text-white hover:scale-[1.01]'
-                    }`}
+                  <Link
+                    to="/contact"
+                    className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-6 py-4 font-semibold text-white transition-all hover:bg-blue-400"
                   >
                     {offer.ctaText}
+                    <ArrowRight className="h-5 w-5" />
                   </Link>
-                  <span className={`block text-[10px] font-mono uppercase tracking-widest ${offer.recommended ? 'text-slate-400' : 'text-slate-500'}`}>
-                    🚀 ACTIVATION EN 24 H CHRONO
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="max-w-4xl mx-auto mt-16 text-center space-y-4 font-sans text-xs text-slate-500 bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
-            <p className="font-light">
-              ℹ️ <strong>Pour les architectures complexes</strong> : Pour les sites marchands volumineux (WooCommerce de plus de 500 articles ou plateformes d'API sur-mesure complexes), nous configurons un bilan d'onboarding spécifique et un devis d'accompagnement sur-mesure pour couvrir spécifiquement vos besoins de base de données.
-            </p>
-          </div>
-
-        </div>
-      </section>
-
-      {/* 11. SINCERE & HONEST SECURITY PROTOCOL SECTION (Builds high trust) */}
-      <section className="py-28 bg-white border-b border-slate-100">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            <div className="lg:col-span-6 space-y-6">
-              <span className="px-2.5 py-1 bg-blue-50 border border-blue-100 text-blue-600 font-bold uppercase tracking-wider text-[10px] rounded inline-block font-mono">
-                La réalité de la Sûreté Web
-              </span>
-              
-              <h2 className="text-3xl md:text-3.5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-                La réalité de la sécurité informatique : la résilience organisée face aux attaques
-              </h2>
-              
-              <p className="text-slate-650 leading-relaxed font-sans text-xs md:text-sm font-light">
-                Aucune entreprise dans le monde ne peut décemment faire la promesse d'une sécurité absolue contre le piratage. En informatique de réseau, le risque zéro n'existe pas. Cependant, l'immense majorité des failles découle d'un simple manque d'hygiène de base (vieux pluginElementor non corrigé, version de serveur obsolète depuis 12 mois).
-              </p>
-
-              <p className="text-slate-650 leading-relaxed font-sans text-xs md:text-sm font-light">
-                <strong>Notre engagement éthique :</strong> Réduire de l'ordre de 95% l'exposition de votre vitrine web aux portes d'accès triviales recherchées par les robots. Et surtout, structurer un backup externalisé réversible pour restaurer proprement et gratuitement votre site en moins de 4h s'il venait à subir une attaque isolée.
-              </p>
-
-              <div className="grid sm:grid-cols-2 gap-4 pt-2">
-                {[
-                  { title: "Firewall actif", desc: "Blocage préliminaire des adresses de robots suspicieuses." },
-                  { title: "Reprise post-incident", desc: "Restauration propre et d'urgence menée par nos soins." },
-                  { title: "Sauvegardes étanches", desc: "Copie isolée géographiquement des données serveur." },
-                  { title: "Zéro obsolescence", desc: "Veille bimensuelle de la validité de chaque script." }
-                ].map((sec, idx) => (
-                  <div key={idx} className="p-4 bg-slate-50 border border-slate-150 rounded-xl space-y-1">
-                    <strong className="text-slate-900 text-xs font-display flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
-                      {sec.title}
-                    </strong>
-                    <p className="text-slate-500 text-[10px] leading-relaxed font-sans font-light">{sec.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right container visual graphic */}
-            <div className="lg:col-span-6">
-              <div className="bg-[#0b0f19] text-white rounded-[2rem] p-8 md:p-10 space-y-6 relative overflow-hidden border border-slate-900 text-left">
-                <div className="absolute top-0 right-0 p-4 opacity-15">
-                  <ShieldCheck className="w-20 h-20 text-blue-500" />
-                </div>
-                
-                <h3 className="font-display font-medium text-white text-base">Le Plan de Reprise d'Activité (PRA) inclus</h3>
-                <p className="text-slate-350 text-xs leading-relaxed font-sans font-light">
-                  En qualité de titulaire d'un contrat de maintenance VSW Digital, vous disposez sans frais supplémentaires de notre garantie d'intervention d'urgence suite à une attaque. Nous prenons l'entière charge du diagnostic initial, du nettoyage des tables SQL injectées, et de la réimplantation propre à partir de notre sauvegarde externe préservée hors-site.
-                </p>
-
-                <div className="bg-slate-950/80 p-4 rounded-xl border border-blue-900/40 text-[11px] text-blue-350 leading-relaxed font-mono space-y-2">
-                  <span className="text-rose-450 block font-bold">⚠️ RAPPEL DE SÉCURITÉ :</span>
-                  <span>Plus un site attend pour subir sa première mise à jour technique globale, plus le risque d'incompatibilité violente (ou conflit de base) augmente lors du premier déploiement préventif.</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* 12. SEARCH COGNITIVE / SEO ADVANTAGE */}
-      <section className="py-28 bg-[#fafbfe] border-b border-slate-200/50">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Intégrité de Référencement
-            </span>
-            <h2 className="text-3xl md:text-4.5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Un site internet sain conserve plus facilement ses classements Google
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Les robots d'indexation de Google parcourent régulièrement vos fichiers sources pour évaluer la vitesse de rendu et les rapports de compatibilité mobile. Un site négligé perd ses acquis locaux durement gagnés face à la concurrence.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { title: "Nettoyage des redirections", desc: "Détecter et corriger les liens brisés générant de frustrantes pages blanches d'erreur 404.", icon: Search },
-              { title: "Mise à jour du Sitemap", desc: "Transmettre proprement la structure de vos nouvelles pages de manière fluide aux robots.", icon: FileText },
-              { title: "Surveillance Search Console", desc: "Identifier immédiatement les alertes d'affichage mobile éditées par Google à la source.", icon: Smartphone },
-              { title: "Optimisation de structure", desc: "Garder un balisage HTML irréprochable exempt d'erreurs de scripts bloquants.", icon: Wrench }
-            ].map((el, i) => {
-              const Icon = el.icon;
-              return (
-                <div key={i} className="bg-white border border-slate-200 rounded-2xl p-6.5 hover:border-blue-400 transition-colors">
-                  <span className="text-[10px] font-mono text-blue-600 font-bold block mb-3 uppercase tracking-wider">SEO PILLAR 0{i + 1}</span>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon className="w-4 h-4 text-slate-700" />
-                    <h3 className="font-bold text-slate-900 font-display text-sm leading-tight">{el.title}</h3>
-                  </div>
-                  <p className="text-slate-500 text-[11px] leading-relaxed font-sans font-light">{el.desc}</p>
-                </div>
+                </motion.article>
               );
             })}
           </div>
-
         </div>
       </section>
 
-      {/* 13. SINCERE FAQ SECTION WITH ACCORDION AND INTUITION FOR SME DIRECTORS */}
-      <section className="py-28 bg-[#fafbfe] border-b border-slate-200/50 scroll-mt-6">
-        <div className="container mx-auto px-6 max-w-7xl text-left">
-          
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase bg-blue-50 border border-blue-100 px-3.5 py-1 rounded-full inline-block">
-              Renseignements techniques simples
+      {/* FAQ */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-4xl px-6">
+          <div className="mb-14 text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              FAQ
             </span>
-            <h2 className="text-3xl md:text-4.5xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-              Foire Aux Questions : Comprendre le suivi serein sans jargon obscur
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Questions fréquentes sur la maintenance
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base max-w-2xl mx-auto font-light">
-              Prenez des décisions éclairées. Nous répondons aux questions courantes reçues de la part de dirigeants d'entreprises locales.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Les réponses aux questions courantes avant de confier la
+              maintenance de votre site.
             </p>
           </div>
 
-          <div className="max-w-3xl mx-auto space-y-4">
-            {faqs.map((item, idx) => {
-              const isOpen = openFaq === idx;
+          <div className="space-y-4">
+            {faqs.map((faq, index) => {
+              const isOpen = openFaq === index;
+
               return (
-                <div 
-                  key={idx} 
-                  className="bg-white border rounded-2xl overflow-hidden shadow-sm transition-all duration-300"
-                  style={{ borderColor: isOpen ? '#3b82f6' : '#e2e8f0' }}
+                <div
+                  key={faq.q}
+                  className={`overflow-hidden rounded-[1.4rem] border bg-white shadow-sm transition-all duration-300 ${
+                    isOpen
+                      ? "border-blue-200 shadow-xl shadow-blue-500/10"
+                      : "border-slate-200 hover:border-blue-200"
+                  }`}
                 >
-                  <button 
-                    onClick={() => toggleFaq(idx)}
-                    className="w-full flex items-center justify-between p-5 text-left font-display font-bold text-slate-950 text-sm md:text-base gap-4 transition-colors hover:bg-slate-50/50"
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    className="flex w-full items-center justify-between gap-5 px-6 py-5 text-left md:px-7"
                   >
-                    <span>{item.q}</span>
-                    <span className="shrink-0 text-slate-500">
-                      {isOpen ? <ChevronUp className="w-5 h-5 text-blue-600" /> : <ChevronDown className="w-5 h-5" />}
+                    <span className="font-display text-base font-bold leading-snug text-[#0f172a] md:text-lg">
+                      {faq.q}
+                    </span>
+
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
+                        isOpen
+                          ? "bg-[#3b82f6] text-white"
+                          : "bg-blue-50 text-[#3b82f6]"
+                      }`}
+                    >
+                      <ChevronDown
+                        className={`h-5 w-5 transition-transform duration-300 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                      />
                     </span>
                   </button>
 
-                  {isOpen && (
-                    <div className="px-5 pb-6 pt-1 text-xs md:text-sm text-slate-600 font-sans leading-relaxed border-t border-slate-100 bg-slate-50/30">
-                      {item.a}
-                    </div>
-                  )}
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                      >
+                        <div className="border-t border-slate-100 px-6 pb-6 pt-4 md:px-7">
+                          <p className="text-sm leading-7 text-slate-600 md:text-base">
+                            {faq.a}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               );
             })}
@@ -1539,47 +1184,93 @@ export function MaintenanceSiteInternet() {
         </div>
       </section>
 
-      {/* 14. CTA FINAL - High-converting subscription closing */}
-      <section className="relative py-28 bg-[#090d1a] text-white overflow-hidden text-center border-t border-slate-900">
-        <div className="absolute inset-0 z-0 opacity-40">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-blue-600/15 blur-[120px]" />
-          <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-indigo-600/10 blur-[120px]" />
+      {/* CTA FINAL */}
+      <section className="relative isolate overflow-hidden bg-[#0f172a] py-24 text-white md:py-32">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.35),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.18),_transparent_30%),linear-gradient(180deg,_#0f172a_0%,_#111827_55%,_#020617_100%)]" />
+          <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#3b82f6]/20 blur-[120px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20" />
         </div>
 
-        <div className="container mx-auto px-6 max-w-4xl relative z-10 space-y-8 text-center">
-          
-          <span className="px-3.5 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 font-bold uppercase tracking-wider text-[10px] rounded-full inline-block font-mono">
-            Diagnostic & Audit technique d'entrée offert
+        <div className="container relative mx-auto max-w-4xl px-6 text-center">
+          <span className="mb-6 inline-flex rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-300">
+            Maintenance site internet
           </span>
-          
-          <h2 className="text-3xl md:text-4.5xl font-display font-bold text-white max-w-2xl mx-auto leading-tight">
-            Offrez à votre entreprise locale l'assurance de sécurité qu'elle mérite
+
+          <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-white md:text-5xl">
+            Vous voulez garder votre site fiable, rapide et sécurisé ?
           </h2>
-          
-          <p className="text-slate-300 text-sm md:text-base max-w-xl mx-auto font-light leading-relaxed">
-            Demandez un diagnostic gratuit complet de l'état actuel de votre site. Nos experts analyseront d'éventuels ralentissements, formulaires cassés ou failles de sécurité, et vous remettront notre plan de recommandations sans le moindre engagement.
+
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
+            Présentez-nous votre site, sa technologie et vos besoins. VSW
+            Digital vous aide à choisir une formule de maintenance adaptée.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-2">
-            <Link 
-              to="/contact" 
-              id="cta-final-maintenance"
-              className="px-8 py-4 bg-blue-650 hover:bg-blue-600 text-white rounded-xl font-bold text-xs tracking-wider uppercase transition-all duration-300 shadow-xl shadow-blue-500/15 hover:shadow-blue-500/25 flex items-center gap-2"
+          <div className="mt-10">
+            <Link
+              to="/contact"
+              className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-8 py-4 font-semibold text-white shadow-2xl shadow-blue-500/30 transition-all hover:-translate-y-0.5 hover:bg-blue-400"
             >
-              <span>Demander mon audit gratuit de rentrée</span>
-              <ArrowRight className="w-4 h-4" />
+              Demander un diagnostic maintenance
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
-
-          <div className="pt-8 border-t border-slate-900 text-center max-w-md mx-auto">
-            <p className="text-slate-500 font-mono text-[9px] tracking-widest uppercase">
-              🛡️ ABONNEMENT RÉSILIABLE PAR UN SIMPLE EMAIL EN 24H • ACCOMPAGNEMENT DE TOUT SITE SÉCURISÉ
-            </p>
-          </div>
-
         </div>
       </section>
+    </main>
+  );
+}
 
+function QuizStepBlock({
+  label,
+  title,
+  options,
+  onSelect,
+  onBack,
+}: {
+  label: string;
+  title: string;
+  options: { key: string; label: string; desc: string }[];
+  onSelect: (value: string) => void;
+  onBack?: () => void;
+}) {
+  return (
+    <div>
+      <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+        {label}
+      </span>
+
+      <h3 className="mt-3 font-display text-2xl font-bold text-[#0f172a]">
+        {title}
+      </h3>
+
+      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        {options.map((option) => (
+          <button
+            key={option.key}
+            type="button"
+            onClick={() => onSelect(option.key)}
+            className="rounded-2xl border border-slate-200 bg-white p-5 text-left transition-all hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/10"
+          >
+            <strong className="block font-display text-sm text-[#0f172a]">
+              {option.label}
+            </strong>
+            <span className="mt-2 block text-sm leading-6 text-slate-600">
+              {option.desc}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {onBack && (
+        <button
+          type="button"
+          onClick={onBack}
+          className="mt-6 text-sm font-semibold text-slate-500 transition-colors hover:text-[#3b82f6]"
+        >
+          ← Retour
+        </button>
+      )}
     </div>
   );
 }

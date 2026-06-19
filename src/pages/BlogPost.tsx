@@ -1,84 +1,147 @@
-import { useEffect, useState, useRef } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { BLOG_POSTS } from '../data/blog-posts';
-import { BlogArticleHeader } from '../components/blog/BlogArticleHeader';
-import { BlogTableOfContents } from '../components/blog/BlogTableOfContents';
-import { BlogArticleContent } from '../components/blog/BlogArticleContent';
-import { BlogFaq } from '../components/blog/BlogFaq';
-import { RelatedArticles } from '../components/blog/RelatedArticles';
-import { BlogCta } from '../components/blog/BlogCta';
-import { ArrowLeft, Share2, Bookmark, FolderOpen, ChevronRight, HelpCircle, BadgeAlert } from 'lucide-react';
+import { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { BLOG_POSTS } from "../data/blog-posts";
+import { BlogArticleHeader } from "../components/blog/BlogArticleHeader";
+import { BlogTableOfContents } from "../components/blog/BlogTableOfContents";
+import { BlogArticleContent } from "../components/blog/BlogArticleContent";
+import { BlogFaq } from "../components/blog/BlogFaq";
+import { RelatedArticles } from "../components/blog/RelatedArticles";
+import { BlogCta } from "../components/blog/BlogCta";
+import {
+  ArrowLeft,
+  ChevronRight,
+  Copy,
+  FolderOpen,
+  Share2,
+} from "lucide-react";
+import type { BlogSection } from "../types/blog";
 
-export function BlogPost() {
-  const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
-  const [copiedLink, setCopiedLink] = useState(false);
-  const [activeHeadingId, setActiveHeadingId] = useState('');
-  
-  // Find current post
-  const post = BLOG_POSTS.find(p => p.slug === slug);
+function normalizeSlug(slug?: string) {
+  return (slug || "").replace(/^\/blog\//, "").replace(/^\//, "");
+}
 
-  // Parse structured sections automatically
-  const sections: import('../types/blog').BlogSection[] = [];
-  if (post) {
-    if (post.sections && post.sections.length > 0) {
-      sections.push(...post.sections);
-    } else if (post.content && post.content.length > 0) {
-      let currentSection: import('../types/blog').BlogSection | null = null;
-      let sectionIndex = 1;
+function buildSections(post: (typeof BLOG_POSTS)[number] | undefined) {
+  const sections: BlogSection[] = [];
 
-      post.content.forEach((paragraph) => {
-        if (paragraph.startsWith('###')) {
-          if (currentSection) {
-            sections.push(currentSection);
-          }
-          const heading = paragraph.replace('###', '').trim();
-          currentSection = {
-            id: `section-${sectionIndex++}`,
-            heading: heading,
-            content: []
-          };
-        } else {
-          if (!currentSection) {
-            currentSection = {
-              id: `section-${sectionIndex++}`,
-              heading: "Introduction",
-              content: []
-            };
-          }
-          currentSection.content.push(paragraph);
-        }
-      });
+  if (!post) return sections;
+
+  if (post.sections && post.sections.length > 0) {
+    return post.sections;
+  }
+
+  if (!post.content || post.content.length === 0) {
+    return sections;
+  }
+
+  let currentSection: BlogSection | null = null;
+  let sectionIndex = 1;
+
+  post.content.forEach((paragraph) => {
+    if (paragraph.startsWith("###")) {
       if (currentSection) {
         sections.push(currentSection);
       }
+
+      const heading = paragraph.replace("###", "").trim();
+
+      currentSection = {
+        id: `section-${sectionIndex++}`,
+        heading,
+        content: [],
+      };
+
+      return;
     }
+
+    if (!currentSection) {
+      currentSection = {
+        id: `section-${sectionIndex++}`,
+        heading: "Introduction",
+        content: [],
+      };
+    }
+
+    currentSection.content.push(paragraph);
+  });
+
+  if (currentSection) {
+    sections.push(currentSection);
   }
 
-  // Core headings monitoring for active TOC highlight
+  return sections;
+}
+
+function upsertMetaAttribute(
+  selector: string,
+  attributeName: "name" | "property",
+  attributeValue: string,
+  content: string
+) {
+  let element = document.querySelector<HTMLMetaElement>(selector);
+
+  if (!element) {
+    element = document.createElement("meta");
+    element.setAttribute(attributeName, attributeValue);
+    document.head.appendChild(element);
+  }
+
+  element.setAttribute("content", content);
+
+  return element;
+}
+
+function upsertCanonical(url: string) {
+  let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+
+  if (!canonical) {
+    canonical = document.createElement("link");
+    canonical.setAttribute("rel", "canonical");
+    document.head.appendChild(canonical);
+  }
+
+  canonical.setAttribute("href", url);
+
+  return canonical;
+}
+
+export function BlogPost() {
+  const { slug } = useParams<{ slug: string }>();
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [activeHeadingId, setActiveHeadingId] = useState("");
+
+  const cleanSlug = normalizeSlug(slug);
+
+  const post = useMemo(() => {
+    return BLOG_POSTS.find(
+      (article) => normalizeSlug(article.slug) === cleanSlug
+    );
+  }, [cleanSlug]);
+
+  const sections = useMemo(() => buildSections(post), [post]);
+
   useEffect(() => {
     if (!post || sections.length === 0) return;
 
-    const observerOption = {
+    const observerOptions = {
       root: null,
-      rootMargin: '-100px 0px -40% 0px',
-      threshold: 0
+      rootMargin: "-120px 0px -45% 0px",
+      threshold: 0,
     };
 
-    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach(entry => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           setActiveHeadingId(entry.target.id);
         }
       });
-    };
+    }, observerOptions);
 
-    const observer = new IntersectionObserver(handleIntersection, observerOption);
-    
-    // Observe sections
-    sections.forEach(section => {
-      const el = document.getElementById(section.id);
-      if (el) observer.observe(el);
+    sections.forEach((section) => {
+      const element = document.getElementById(section.id);
+
+      if (element) {
+        observer.observe(element);
+      }
     });
 
     return () => {
@@ -86,223 +149,279 @@ export function BlogPost() {
     };
   }, [post, sections]);
 
-  // SEO & Schema.org Metadata Injection
   useEffect(() => {
     if (!post) return;
 
-    // Scroll back to top
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: "instant" });
 
-    // Ensure Title
-    document.title = post.metaTitle;
+    const title = post.metaTitle || `${post.title} | Blog VSW Digital`;
 
-    // Dynamically insert or replace Meta Description
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) {
-      metaDesc = document.createElement('meta');
-      metaDesc.setAttribute('name', 'description');
-      document.head.appendChild(metaDesc);
-    }
-    metaDesc.setAttribute('content', post.metaDescription);
+    const description =
+      post.metaDescription ||
+      post.summary ||
+      post.introduction ||
+      "Article du blog VSW Digital sur le web, le SEO, Google Ads, les applications web et l’automatisation.";
 
-    // Canonical link
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonical);
-    }
-    const currentUrl = `${window.location.origin}/blog/${post.slug}`;
-    canonical.setAttribute('href', currentUrl);
+    const currentUrl = `${window.location.origin}/blog/${normalizeSlug(
+      post.slug
+    )}`;
 
-    // OpenGraph Title
-    let ogTitle = document.querySelector('meta[property="og:title"]');
-    if (!ogTitle) {
-      ogTitle = document.createElement('meta');
-      ogTitle.setAttribute('property', 'og:title');
-      document.head.appendChild(ogTitle);
-    }
-    ogTitle.setAttribute('content', post.metaTitle);
+    document.title = title;
 
-    // OpenGraph Description
-    let ogDesc = document.querySelector('meta[property="og:description"]');
-    if (!ogDesc) {
-      ogDesc = document.createElement('meta');
-      ogDesc.setAttribute('property', 'og:description');
-      document.head.appendChild(ogDesc);
-    }
-    ogDesc.setAttribute('content', post.metaDescription);
+    upsertMetaAttribute(
+      'meta[name="description"]',
+      "name",
+      "description",
+      description
+    );
 
-    // OpenGraph URL
-    let ogUrl = document.querySelector('meta[property="og:url"]');
-    if (!ogUrl) {
-      ogUrl = document.createElement('meta');
-      ogUrl.setAttribute('property', 'og:url');
-      document.head.appendChild(ogUrl);
-    }
-    ogUrl.setAttribute('content', currentUrl);
+    upsertCanonical(currentUrl);
 
-    // Inject Schema JSON-LD Article Markup
+    upsertMetaAttribute(
+      'meta[property="og:title"]',
+      "property",
+      "og:title",
+      title
+    );
+
+    upsertMetaAttribute(
+      'meta[property="og:description"]',
+      "property",
+      "og:description",
+      description
+    );
+
+    upsertMetaAttribute(
+      'meta[property="og:url"]',
+      "property",
+      "og:url",
+      currentUrl
+    );
+
+    upsertMetaAttribute(
+      'meta[property="og:type"]',
+      "property",
+      "og:type",
+      "article"
+    );
+
     const articleSchema = {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
-      "headline": post.title,
-      "description": post.metaDescription,
-      "datePublished": "2026-06-15T08:00:00+02:00", // dates configured on static assets
-      "dateModified": post.updatedDate ? "2026-06-18T10:00:00+02:00" : undefined,
-      "author": {
+      headline: post.title,
+      description,
+      datePublished: post.date || undefined,
+      dateModified: post.updatedDate || post.date || undefined,
+      author: {
         "@type": "Organization",
-        "name": "VSW Digital",
-        "url": window.location.origin
+        name: "VSW Digital",
+        url: window.location.origin,
       },
-      "publisher": {
+      publisher: {
         "@type": "Organization",
-        "name": "VSW Digital",
-        "url": window.location.origin,
-        "logo": {
+        name: "VSW Digital",
+        url: window.location.origin,
+        logo: {
           "@type": "ImageObject",
-          "url": `${window.location.origin}/logo.png`
-        }
+          url: `${window.location.origin}/images/logo-vsw.webp`,
+        },
       },
-      "mainEntityOfPage": {
+      mainEntityOfPage: {
         "@type": "WebPage",
-        "@id": currentUrl
-      }
+        "@id": currentUrl,
+      },
     };
 
-    const schemaId = `article-jsonld-${post.slug}`;
-    const existing = document.getElementById(schemaId);
-    if (existing) {
-      existing.remove();
+    const schemaId = `article-jsonld-${normalizeSlug(post.slug)}`;
+    const existingSchema = document.getElementById(schemaId);
+
+    if (existingSchema) {
+      existingSchema.remove();
     }
-    const script = document.createElement('script');
+
+    const script = document.createElement("script");
     script.id = schemaId;
-    script.type = 'application/ld+json';
-    script.innerHTML = JSON.stringify(articleSchema);
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify(articleSchema);
     document.head.appendChild(script);
 
     return () => {
-      // Clean up injected tags on route change
-      const addedSchema = document.getElementById(schemaId);
-      if (addedSchema) addedSchema.remove();
+      const schema = document.getElementById(schemaId);
+
+      if (schema) {
+        schema.remove();
+      }
     };
   }, [post]);
 
+  const handleShare = async () => {
+    const currentUrl = window.location.href;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: post?.title || "Article VSW Digital",
+          text:
+            post?.summary ||
+            post?.introduction ||
+            "Article du blog VSW Digital",
+          url: currentUrl,
+        });
+
+        return;
+      }
+
+      await navigator.clipboard.writeText(currentUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch (error) {
+      try {
+        await navigator.clipboard.writeText(currentUrl);
+        setCopiedLink(true);
+        setTimeout(() => setCopiedLink(false), 2000);
+      } catch {
+        console.error("Impossible de copier le lien :", error);
+      }
+    }
+  };
+
   if (!post) {
-    // Elegant Post Not Found screen
     return (
-      <div className="min-h-screen bg-neutral-50 flex flex-col justify-center items-center px-6 py-20 text-center">
-        <div className="max-w-md bg-white border border-neutral-200 rounded-3xl p-8 shadow-sm">
-          <FolderOpen className="w-12 h-12 text-blue-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-neutral-900 mb-2">Dossier introuvable</h2>
-          <p className="text-neutral-500 text-sm md:text-base leading-relaxed mb-6 font-light">
-            L'article que vous recherchez n'existe pas ou a été déplacé vers une autre rubrique thématique.
+      <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6 py-20 text-center">
+        <div className="max-w-md rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-[#3b82f6]">
+            <FolderOpen className="h-9 w-9" />
+          </div>
+
+          <h1 className="font-display text-2xl font-bold text-[#0f172a]">
+            Article introuvable
+          </h1>
+
+          <p className="mt-3 text-sm leading-7 text-slate-600">
+            L’article que vous recherchez n’existe pas ou a été déplacé vers une
+            autre rubrique du blog.
           </p>
+
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-sm transition-all shadow-sm"
+            className="mt-7 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-blue-400"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Retour au blog VSW Digital</span>
+            <ArrowLeft className="h-4 w-4" />
+            Retour au blog
           </Link>
         </div>
-      </div>
+      </main>
     );
   }
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
-    });
-  };
-
   return (
-    <div className="bg-neutral-50/40 min-h-screen font-sans selection:bg-blue-600 selection:text-white">
-      
-      {/* Editorial Header */}
+    <main className="min-h-screen bg-slate-50 text-slate-900 selection:bg-[#3b82f6] selection:text-white">
       <BlogArticleHeader post={post} />
 
-      {/* Floating social share and navigational quick access bar */}
-      <div className="bg-white border-b border-neutral-200/80 sticky top-16 z-40 select-none">
-        <div className="container mx-auto px-6 max-w-7xl h-12 flex items-center justify-between">
-          <Link 
-            to="/blog" 
-            className="text-xs font-semibold text-neutral-600 hover:text-blue-600 transition-colors flex items-center gap-1.5 font-mono"
+      {/* Barre sticky */}
+      <div className="sticky top-16 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
+        <div className="container mx-auto flex h-14 max-w-7xl items-center justify-between px-6">
+          <Link
+            to="/blog"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 transition-colors hover:text-[#3b82f6]"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="h-4 w-4" />
             <span>Retour aux articles</span>
           </Link>
 
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleShare}
-              className={`text-xs font-semibold px-3 py-1.5 rounded-lg border flex items-center gap-1.5 transition-all ${
-                copiedLink 
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
-                  : 'bg-neutral-50 hover:bg-neutral-100 text-neutral-600 border-neutral-200/80'
-              }`}
-            >
-              <Share2 className="w-3.5 h-3.5" />
-              <span>{copiedLink ? "Lien copié !" : "Partager"}</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handleShare}
+            className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition-all ${
+              copiedLink
+                ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                : "border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            {copiedLink ? (
+              <>
+                <Copy className="h-4 w-4" />
+                Lien copié
+              </>
+            ) : (
+              <>
+                <Share2 className="h-4 w-4" />
+                Partager
+              </>
+            )}
+          </button>
         </div>
       </div>
 
-      {/* Main Two-Column Content Layout Grid */}
-      <main className="container mx-auto px-6 max-w-7xl pt-10 pb-20">
-        
-        {/* Navigation Breadcrumb */}
-        <div className="flex items-center gap-1.5 text-xs text-neutral-400 mb-8 font-mono">
-          <Link to="/" className="hover:text-neutral-600">VSW Digital</Link>
-          <ChevronRight className="w-3 h-3 text-neutral-300" />
-          <Link to="/blog" className="hover:text-neutral-600">Blog</Link>
-          <ChevronRight className="w-3 h-3 text-neutral-300" />
-          <span className="text-neutral-600 font-semibold line-clamp-1">{post.title}</span>
-        </div>
+      <div className="container mx-auto max-w-7xl px-6 py-10 md:py-14">
+        {/* Fil d’Ariane */}
+        <nav
+          aria-label="Fil d’Ariane"
+          className="mb-8 flex items-center gap-1.5 text-xs text-slate-400"
+        >
+          <Link to="/" className="transition-colors hover:text-slate-600">
+            VSW Digital
+          </Link>
+          <ChevronRight className="h-3 w-3 text-slate-300" />
+          <Link to="/blog" className="transition-colors hover:text-slate-600">
+            Blog
+          </Link>
+          <ChevronRight className="h-3 w-3 text-slate-300" />
+          <span className="line-clamp-1 font-semibold text-slate-600">
+            {post.title}
+          </span>
+        </nav>
 
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-14">
-          
-          {/* Left Main column - Content Block (8-cols width) */}
-          <article className="lg:col-span-8 bg-white border border-neutral-200/75 rounded-2xl p-6 md:p-10 shadow-sm">
-            
-            {/* Embedded TOC on Mobile screens only */}
-            <div className="block lg:hidden mb-8 border-b border-neutral-100 pb-8">
-              <BlogTableOfContents 
-                sections={sections} 
-                activeHeadingId={activeHeadingId}
-                onClickSection={(id) => setActiveHeadingId(id)}
-              />
-            </div>
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
+          {/* Contenu article */}
+          <article className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm md:p-10">
+            {sections.length > 0 ? (
+              <>
+                <div className="mb-8 block border-b border-slate-100 pb-8 lg:hidden">
+                  <BlogTableOfContents
+                    sections={sections}
+                    activeHeadingId={activeHeadingId}
+                    onClickSection={(id) => setActiveHeadingId(id)}
+                  />
+                </div>
 
-            {/* Main Rich text body */}
-            <BlogArticleContent sections={sections} />
+                <BlogArticleContent sections={sections} />
+              </>
+            ) : (
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-amber-800">
+                <h2 className="font-display text-xl font-bold">
+                  Contenu indisponible
+                </h2>
+                <p className="mt-2 text-sm leading-7">
+                  Cet article existe dans la bibliothèque, mais son contenu n’a
+                  pas encore été renseigné.
+                </p>
+              </div>
+            )}
 
-            {/* Accordion FAQ with local structured data JSON-LD */}
-            <BlogFaq faqList={post.faq} articleTitle={post.title} />
+            {post.faq && post.faq.length > 0 && (
+              <BlogFaq faqList={post.faq} articleTitle={post.title} />
+            )}
 
-            {/* Direct Contextual conversion CTA block */}
             <BlogCta />
-
           </article>
 
-          {/* Right Sticky Sidebar Column - Table of Contents (4-cols width) */}
-          <aside className="hidden lg:col-span-4 lg:block">
-            <BlogTableOfContents 
-              sections={sections} 
-              activeHeadingId={activeHeadingId}
-              onClickSection={(id) => setActiveHeadingId(id)}
-            />
+          {/* Sidebar */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-36">
+              {sections.length > 0 && (
+                <BlogTableOfContents
+                  sections={sections}
+                  activeHeadingId={activeHeadingId}
+                  onClickSection={(id) => setActiveHeadingId(id)}
+                />
+              )}
+            </div>
           </aside>
-
         </div>
 
-        {/* Carousel block showcasing related editorial articles */}
         <RelatedArticles currentPost={post} allPosts={BLOG_POSTS} />
-
-      </main>
-
-    </div>
+      </div>
+    </main>
   );
 }

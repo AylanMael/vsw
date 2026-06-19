@@ -1,54 +1,44 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Sparkles, 
-  ChevronDown, 
-  ChevronUp,
-  AlertTriangle, 
-  TrendingUp, 
-  Smartphone, 
-  Wrench, 
-  Search, 
-  FileText, 
-  Layout, 
-  Settings, 
-  Layers, 
-  Cpu, 
-  ArrowRight, 
-  Activity, 
-  Clock, 
-  ArrowUpRight, 
-  Zap, 
-  ShieldCheck, 
-  Check, 
-  Building, 
-  Users,
-  Grid,
-  RefreshCw,
-  Gauge,
-  HelpCircle,
-  Eye,
-  AlertOctagon,
+import { useEffect, useState } from "react";
+import type { ComponentType } from "react";
+import { Link } from "react-router-dom";
+import { AnimatePresence, motion } from "motion/react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  ArrowUpRight,
   Award,
   BookOpen,
-  ThumbsUp,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  Eye,
+  FileText,
+  Gauge,
+  Layout,
+  Layers,
+  RefreshCw,
+  Search,
+  ShieldCheck,
+  Smartphone,
+  Sparkles,
   Star,
   Terminal,
-  CheckCircle2,
-  XCircle
-} from 'lucide-react';
+  TrendingUp,
+  Users,
+  XCircle,
+  Zap,
+} from "lucide-react";
 
 interface NeedSign {
   id: string;
-  icon: any;
+  icon: ComponentType<{ className?: string }>;
   title: string;
   desc: string;
 }
 
 interface Benefit {
   id: string;
-  icon: any;
+  icon: ComponentType<{ className?: string }>;
   title: string;
   desc: string;
 }
@@ -75,690 +65,1209 @@ interface FaqItem {
   a: string;
 }
 
-// Signs list adapted for small businesses & physical/B2B services
 const needSigns: NeedSign[] = [
   {
-    id: 'sign-1',
+    id: "sign-1",
     icon: AlertTriangle,
-    title: 'Absence de demandes en ligne',
-    desc: 'Malgré les visites de clients potentiels, votre téléphone ne sonne presque jamais et votre messagerie reste vide.'
+    title: "Peu de demandes en ligne",
+    desc: "Votre site reçoit peut-être des visites, mais il ne génère pas assez d’appels, de formulaires ou de demandes qualifiées.",
   },
   {
-    id: 'sign-2',
+    id: "sign-2",
     icon: Layout,
-    title: 'Identité visuelle obsolète',
-    desc: 'La mise en page a vieilli. L’écriture, les couleurs et les graphismes datent d’une autre époque d’Internet.'
+    title: "Identité visuelle vieillissante",
+    desc: "Le design, les couleurs, la mise en page ou la structure ne reflètent plus le niveau réel de votre entreprise.",
   },
   {
-    id: 'sign-3',
+    id: "sign-3",
     icon: Smartphone,
-    title: 'Affichage laborieux sur mobile',
-    desc: 'Les boutons sont trop petits, les pages se décalent et le menu est quasiment impossible à utiliser avec un doigt.'
+    title: "Mauvaise expérience mobile",
+    desc: "Les boutons sont trop petits, le menu est peu lisible, les pages se décalent ou les formulaires sont difficiles à remplir.",
   },
   {
-    id: 'sign-4',
+    id: "sign-4",
     icon: Award,
-    title: 'Vos rivaux paraissent plus récents',
-    desc: 'Leurs sites inspirent confiance instantanément avec des designs clairs, captant les meilleures parts de votre marché local.'
+    title: "Concurrents plus crédibles",
+    desc: "Vos concurrents présentent mieux leurs services, leurs avis, leurs preuves de confiance et leurs réalisations.",
   },
   {
-    id: 'sign-5',
+    id: "sign-5",
     icon: Eye,
-    title: 'Invisibilité complète sur Google',
-    desc: 'Si vous tapez votre métier suivi de votre secteur géographique, vous n’apparaissez pas dans les premiers résultats.'
+    title: "Visibilité faible sur Google",
+    desc: "Vos pages sont mal structurées, trop courtes, peu optimisées ou absentes sur les requêtes importantes de votre activité.",
   },
   {
-    id: 'sign-6',
+    id: "sign-6",
     icon: FileText,
-    title: 'Informations obsolètes',
-    desc: 'Vos tarifs, vos prestations actuelles, vos photos ou votre secteur d’intervention ne correspondent plus à la réalité.'
+    title: "Informations obsolètes",
+    desc: "Vos prestations, tarifs, photos, secteurs d’intervention ou messages commerciaux ne correspondent plus à votre activité actuelle.",
   },
-  {
-    id: 'sign-7',
-    icon: Settings,
-    title: 'Complexité de modification',
-    desc: 'Vous dépendez de technologies obsolètes où la moindre correction de texte risque de dérégler tout l’affichage.'
-  },
-  {
-    id: 'sign-8',
-    icon: TrendingUp,
-    title: 'Gaspillage publicitaire Google Ads',
-    desc: 'Le trafic payé s’évapore car la page sur laquelle atterrissent les internautes ne charge pas assez vite (fuite de budget).'
-  }
 ];
 
 const benefits: Benefit[] = [
   {
-    id: 'benefit-1',
+    id: "benefit-1",
     icon: ShieldCheck,
-    title: 'Mise en confiance absolue',
-    desc: 'Un design moderne et certifié rassure immédiatement le prospect exigeant dès les 3 premières secondes de navigation.'
+    title: "Image plus professionnelle",
+    desc: "Un site modernisé inspire davantage confiance et donne une impression plus sérieuse dès les premières secondes.",
   },
   {
-    id: 'benefit-2',
+    id: "benefit-2",
     icon: Users,
-    title: 'Taux de contact décuplé',
-    desc: 'Des appels à l’action clairs, des numéros cliquables sur smartphone et un formulaire conçu pour éliminer l’effort.'
+    title: "Parcours plus clair",
+    desc: "Les visiteurs comprennent plus vite vos services, vos avantages et la bonne action à effectuer : appeler, demander un devis ou prendre contact.",
   },
   {
-    id: 'benefit-3',
+    id: "benefit-3",
     icon: Search,
-    title: 'Préservation & Relance du SEO',
-    desc: 'Conservez vos ancrages historiques sémantiques forts tout en actualisant les balises Hn exigées par les robots Google.'
+    title: "Base SEO préservée",
+    desc: "Les pages utiles sont identifiées, les anciennes URL sont redirigées proprement et la nouvelle structure est pensée pour Google.",
   },
   {
-    id: 'benefit-4',
+    id: "benefit-4",
     icon: Gauge,
-    title: 'Vitesse de chargement fulgurante',
-    desc: 'En réduisant le poids technique d’anciennes structures, le site s’affiche en moins de 1.5s, éradiquant les rebonds.'
+    title: "Meilleure performance",
+    desc: "Le site peut être allégé, mieux structuré, plus rapide sur mobile et plus agréable à utiliser.",
   },
   {
-    id: 'benefit-5',
+    id: "benefit-5",
     icon: Sparkles,
-    title: 'Image de marque premium',
-    desc: 'Alignez la qualité de votre présence Web sur celle de votre savoir-faire technique déployé sur le terrain.'
+    title: "Positionnement plus premium",
+    desc: "La refonte permet d’aligner votre présence digitale avec la qualité réelle de vos services.",
   },
   {
-    id: 'benefit-6',
+    id: "benefit-6",
     icon: Layers,
-    title: 'Robustesse & Évolutivité',
-    desc: 'Bâtissez une base technique modulaire à l’épreuve du temps, prête à accueillir un blog SEO ou un espace client sécurisé.'
-  }
+    title: "Base évolutive",
+    desc: "Votre site peut ensuite évoluer vers du SEO, des pages locales, un blog, des landing pages ou un espace client.",
+  },
 ];
 
 const processSteps: ProcessStep[] = [
   {
-    id: 'p-1',
-    num: '01',
-    title: 'Audit & Diagnostic complet',
-    desc: 'Analyse approfondie de votre site actuel, de ses performances réelles, de sa sémantique et de ses positions organiques.',
-    badge: 'Analyse'
+    id: "p-1",
+    num: "01",
+    title: "Audit du site existant",
+    desc: "Analyse du design, de la structure, des pages, des performances, du SEO existant et des points bloquants.",
+    badge: "Analyse",
   },
   {
-    id: 'p-2',
-    num: '02',
-    title: 'Cartographie des objectifs',
-    desc: 'Définition claire des clients cibles indispensables à votre rentabilité commerciale et hiérarchisation des prestations clés.',
-    badge: 'Stratégie'
+    id: "p-2",
+    num: "02",
+    title: "Définition des objectifs",
+    desc: "Identification des services prioritaires, des clients ciblés, des zones d’intervention et des actions attendues.",
+    badge: "Stratégie",
   },
   {
-    id: 'p-3',
-    num: '03',
-    title: 'Sauvegarde du Capital SEO',
-    desc: 'Identification rigoureuse des URLs bien positionnées pour orchestrer un plan de redirection 301 strict et préserver vos acquis.',
-    badge: 'Sécurité'
+    id: "p-3",
+    num: "03",
+    title: "Préservation SEO",
+    desc: "Repérage des pages importantes, préparation des redirections et protection des contenus qui apportent déjà de la valeur.",
+    badge: "SEO",
   },
   {
-    id: 'p-4',
-    num: '04',
-    title: 'Maquette UX/UI Moderne',
-    desc: 'Création d’un design clair et épuré avec une ergonomie pensée d’abord pour le téléphone (Mobile-First) et la captation de leads.',
-    badge: 'Design'
+    id: "p-4",
+    num: "04",
+    title: "Maquette UX/UI",
+    desc: "Création d’une interface moderne, lisible, mobile-first et orientée conversion.",
+    badge: "Design",
   },
   {
-    id: 'p-5',
-    num: '05',
-    title: 'Optimisation & Performance',
-    desc: 'Intégration optimisée en code propre : compactions d’images, élimination des scripts bloquants et temps d’affichage ultra bas.',
-    badge: 'Technique'
+    id: "p-5",
+    num: "05",
+    title: "Intégration optimisée",
+    desc: "Développement ou reconstruction du site avec une attention portée à la vitesse, à la lisibilité et à la sécurité.",
+    badge: "Technique",
   },
   {
-    id: 'p-6',
-    num: '06',
-    title: 'Mise en ligne & Mappage 301',
-    desc: 'Bascule fluide sans interruption de service, déclaration Search Console et transmission rapide du nouveau sitemap à Google.',
-    badge: 'Lancement'
-  }
+    id: "p-6",
+    num: "06",
+    title: "Mise en ligne contrôlée",
+    desc: "Publication du nouveau site, vérification des formulaires, redirections, sitemap, Search Console et éléments essentiels.",
+    badge: "Lancement",
+  },
 ];
 
 const sectors = [
-  'Artisans & BTP', 'PME régionales', 'Commerces locaux', 'Entreprises de rénovation',
-  'Sociétés de déménagement', 'Services de sécurité privée', 'Cabinets de conseil',
-  'Organismes de formation', 'Services aux entreprises', 'Transport & Logistique',
-  'Professions libérales', 'Services de nettoyage', 'Coopératives & Industries locales'
+  "Artisans & BTP",
+  "PME locales",
+  "Commerces",
+  "Rénovation",
+  "Déménagement",
+  "Sécurité privée",
+  "Formation",
+  "Transport",
+  "Professions libérales",
+  "Services B2B",
+  "Réparation",
+  "Domiciliation",
 ];
 
 const offers: Offer[] = [
   {
-    id: 'off-1',
-    title: 'Audit de Refonte Technique',
-    desc: 'L’analyse indispensable pour faire le tri entre le capital immatériel à sauvegarder et les freins sémantiques ou techniques à éradiquer d’urgence.',
+    id: "off-1",
+    title: "Audit de refonte",
+    desc: "Pour savoir s’il faut réellement refaire votre site, optimiser l’existant ou préserver certaines pages importantes.",
     features: [
-      'Diagnostic complet de vitesse (Core Web Vitals)',
-      'Détection des freins à l’indexation mobile',
-      'Audit sémantique et cartographie des pages fortes',
-      'Analyse sectorielle de votre concurrence directe',
-      'Livrable avec plan d’attaque stratégique'
-    ]
+      "Analyse du site existant",
+      "Diagnostic design, mobile et conversion",
+      "Lecture SEO des pages existantes",
+      "Identification des pages à conserver",
+      "Plan d’action de refonte priorisé",
+    ],
   },
   {
-    id: 'off-2',
-    title: 'Refonte Essentielle Image',
-    desc: 'Redessiner entièrement votre univers de marque pour lui donner un aspect rassurant, moderne et haut de gamme, parfaitement optimisé pour une conversion directe.',
-    recommended: false,
-    badge: 'Le plus accessible',
+    id: "off-2",
+    title: "Refonte image & conversion",
+    desc: "Pour moderniser votre site, améliorer la confiance et rendre le parcours utilisateur plus clair.",
+    badge: "Accessible",
     features: [
-      'Nouveau design premium responsive (Mobile-First)',
-      'Intégration de vos preuves de confiance (avis, agréments)',
-      'Formulaires sécurisés d’appels de devis fluides',
-      'Optimisation des boutons d’appel et de géolocalisation',
-      'Redirection 301 de vos pages existantes principales',
-      'Panneau d’administration simple et robuste'
-    ]
+      "Nouveau design responsive",
+      "Amélioration du parcours mobile",
+      "Mise en avant des preuves de confiance",
+      "Formulaires et CTA plus visibles",
+      "Redirections des pages principales",
+      "Base technique propre et maintenable",
+    ],
   },
   {
-    id: 'off-3',
-    title: 'Refonte Intégrale SEO & Conversion',
-    desc: 'L’arme absolue des PME ambitieuses. Nous repensons l’architecture, réécrivons les arguments commerciaux, et structurons tout le code pour drainer des leads quotidiennement.',
+    id: "off-3",
+    title: "Refonte SEO & croissance",
+    desc: "Pour reconstruire une présence digitale plus complète avec une structure SEO, des contenus et une logique de conversion.",
     recommended: true,
-    badge: 'Performance Maximale',
+    badge: "Recommandé",
     features: [
-      'Stratégie complète d’architecture sémantique (Hn)',
-      'Rédaction de pages de services spécifiques géolocalisées',
-      'Optimisation technique de vitesse ultra-poussée (< 1.2s)',
-      'Sauvegarde avancée de 100% de votre historique Google',
-      'Données structurées Schema.org pour le SEO local',
-      'Raccordement d’outils de suivi (Google Search Console & Analytics)',
-      'Garantie et support post-lancement de 30 jours'
-    ]
-  }
+      "Architecture SEO complète",
+      "Pages services optimisées",
+      "Pages locales selon besoin",
+      "Plan de redirection 301",
+      "Optimisation technique et mobile",
+      "Connexion Search Console et Analytics",
+      "Accompagnement post-lancement",
+    ],
+  },
 ];
 
 const faqs: FaqItem[] = [
   {
-    q: "Qu’est-ce qui différencie une refonte d’une simple correction de site ?",
-    a: "Changer un texte ou une photo est une simple modification. Une refonte est une opération structurelle : on repense le parcours utilisateur, on assainit le code source souvent encombré de vieux modules, et on réorganise les pages pour que le site réponde aux critères modernes de Google et aux habitudes de lecture rapides sur téléphone."
+    q: "Quelle est la différence entre une refonte et une simple modification ?",
+    a: "Une simple modification consiste à changer un texte, une image ou un bloc. Une refonte repense la structure, le design, le parcours utilisateur, le SEO, les contenus et parfois la technologie du site.",
   },
   {
-    q: "Ma visibilité Google va-t-elle s’effondrer au moment de la refonte ?",
-    a: "C’est le danger majeur si la refonte est confiée à un débutant. Chez VSW Digital, nous appliquons un protocole rigoureux de redirection pour s'assurer que l'intégralité de vos positions fortes soit retenue : nous répertorions systématiquement vos anciennes adresses de pages (URLs) et indiquons à Google, via une instruction technique inviolable (redirection 301), où se trouve la nouvelle page modernisée. Vos acquis sémantiques historiques sont préservés."
+    q: "Est-ce que je risque de perdre mon référencement Google ?",
+    a: "Une refonte mal préparée peut faire perdre du trafic. C’est pourquoi nous analysons les pages existantes, préparons les redirections 301 et conservons les contenus ou URL qui ont de la valeur.",
   },
   {
-    q: "Pouvez-vous garantir une première page ou une première position sur Google ?",
-    a: "Toute agence prétendant vous garantir une position magique ou le premier rang national sur un mot-clé précis cherche à vous séduire avec des arguments trompeurs. L'algorithme de Google change constamment et nul ne le possède. En revanche, nous garantissons l'application de la totalité des bonnes pratiques exigées par Google : un site ultra-rapide, une sémantique de balises Hn irréprochable, une ergonomie mobile parfaite, et un maillage interne logique. Ce sont ces fondations techniques épurées qui mènent naturellement à une hausse durable de vos positions locales."
+    q: "Peut-on garantir une première position sur Google après refonte ?",
+    a: "Non. Aucune agence sérieuse ne peut garantir une position précise sur Google. En revanche, une refonte bien menée permet de créer une base technique, éditoriale et structurelle plus saine pour progresser.",
   },
   {
-    q: "Peut-on conserver notre nom de domaine actuel ?",
-    a: "Absolument. Vous restez l'unique propriétaire de votre nom de domaine (comme mon-entreprise.fr). Nous paramétrons simplement vos accès DNS le jour du lancement pour raccorder de manière invisible et sécurisée votre nom de domaine existant à la nouvelle infrastructure moderne."
+    q: "Puis-je conserver mon nom de domaine actuel ?",
+    a: "Oui. Le nom de domaine peut être conservé. La refonte concerne le site, sa structure, ses contenus et son hébergement si nécessaire.",
   },
   {
-    q: "Quelles technologies utilisez-vous pour la refonte ?",
-    a: "Nous ne croyons pas aux solutions toutes faites. Si votre entreprise a besoin d'autonomie pour ajouter des actualités simples, nous installons un WordPress configuré d'une manière propre, légère et sécurisée. Si vous exigez une réactivité maximale sur mobile, une fluidité haut de gamme et une sécurité absolue de vos données, nous développons sur-mesure en Next.js, React et Tailwind CSS."
+    q: "Quelle technologie choisir pour une refonte ?",
+    a: "Cela dépend de votre besoin. WordPress est adapté aux sites administrables et orientés contenus. React ou Next.js sont pertinents pour des interfaces plus modernes, rapides ou personnalisées.",
   },
   {
-    q: "Combien de temps prend généralement une refonte ?",
-    a: "Une refonte essentielle de mise en conformité visuelle et mobile s'achève sur une période de 3 à 4 semaines de collaboration. Un projet d'architecture sémantique complète optimisé pour le SEO géolocalisé s’étend généralement de 5 à 7 semaines."
+    q: "Combien de temps prend une refonte ?",
+    a: "Le délai dépend du nombre de pages, du niveau de design, des contenus, du SEO et des fonctionnalités. Une refonte simple peut être plus rapide qu’un projet complet avec stratégie SEO.",
   },
   {
-    q: "Doit-on tout réécrire à partir de zéro ?",
-    a: "Non. Nous étudions ce qui fonctionne dans vos textes. Vos témoignages clients, vos cas d’études, vos jolies réalisations chantiers et vos historiques d'entreprises seront conservés soigneusement, tout en étant habillés d'un écrin fluide moderne pour catalyser la confiance."
-  }
+    q: "Faut-il tout réécrire ?",
+    a: "Pas forcément. Les contenus utiles, avis, réalisations, historiques et pages bien positionnées peuvent être conservés, améliorés et mieux structurés.",
+  },
 ];
 
 export function RefonteSiteInternet() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  
-  // Interactive Before/After state (0 to 100 position percent)
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [sliderPos, setSliderPos] = useState<number>(50);
-  
-  // Dynamic diagnosis state
   const [checkedAnswers, setCheckedAnswers] = useState<Record<string, boolean>>({
     slow: false,
     mobile: false,
     no_leads: false,
     outdated: false,
     unfindable: false,
-    incorrect: false
+    incorrect: false,
   });
 
   useEffect(() => {
     document.title = "Refonte de site internet professionnel | VSW Digital";
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const metaDescription = document.querySelector('meta[name="description"]');
+
+    if (metaDescription) {
+      metaDescription.setAttribute(
+        "content",
+        "VSW Digital accompagne la refonte de sites internet professionnels : design moderne, performance, SEO, mobile, conversion et redirections."
+      );
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  const toggleFaq = (index: number) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
-
   const handleCheckboxChange = (key: string) => {
-    setCheckedAnswers(prev => ({
+    setCheckedAnswers((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }));
   };
 
-  // Compute diagnosis score and text
   const numChecked = Object.values(checkedAnswers).filter(Boolean).length;
-  
-  const getDiagnosisRecommendation = () => {
-    if (numChecked === 0) {
-      return {
-        title: "Indice de santé globale : Stable",
-        text: "Votre site web ne présente pas d’anomalies pénalisantes majeures déclarées. Un audit régulier gratuit reste utile pour identifier de petits leviers sémantiques ou vérifier l'état de votre sécurité.",
-        colorClass: "text-emerald-500 bg-emerald-50 border-emerald-200",
-        urgency: "Sain"
-      };
-    } else if (numChecked <= 2) {
-      return {
-        title: "Indice de santé globale : Vulnérable",
-        text: "Attention : Votre site souffre de légers dysfonctionnements (vitesse mobile ou design fatigué). À terme, cela décourage une partie de vos prospects les plus exigeants qui comparent vos services.",
-        colorClass: "text-amber-600 bg-amber-50 border-amber-200",
-        urgency: "Urgence Modérée"
-      };
-    } else {
-      return {
-        title: "Indice de santé globale : Critique",
-        text: "Urgence commerciale et technique : Votre site actuel freine activement la confiance de vos visiteurs et n'atteint pas ses objectifs SEO ou de lead. Vos dépenses et efforts de visibilité locaux s'évaporent.",
-        colorClass: "text-rose-600 bg-rose-50 border-rose-200",
-        urgency: "Urgence Critique"
-      };
-    }
-  };
 
-  const diagnosis = getDiagnosisRecommendation();
+  const diagnosis =
+    numChecked === 0
+      ? {
+          title: "Site globalement stable",
+          text: "Vous ne signalez pas de problème majeur. Un audit reste utile pour vérifier les performances, le SEO et les points d’amélioration possibles.",
+          colorClass: "border-emerald-200 bg-emerald-50 text-emerald-700",
+          urgency: "Surveillance",
+        }
+      : numChecked <= 2
+        ? {
+            title: "Refonte ou optimisation à envisager",
+            text: "Votre site présente quelques signes de fatigue. Une optimisation ciblée ou une refonte légère peut suffire selon l’état réel du site.",
+            colorClass: "border-amber-200 bg-amber-50 text-amber-700",
+            urgency: "À analyser",
+          }
+        : {
+            title: "Refonte probablement pertinente",
+            text: "Plusieurs signaux indiquent que votre site peut freiner la confiance, le SEO ou la génération de demandes. Un audit de refonte est recommandé.",
+            colorClass: "border-rose-200 bg-rose-50 text-rose-700",
+            urgency: "Prioritaire",
+          };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white font-sans antialiased text-navy-900 leading-normal selection:bg-blue-100">
-      
-      {/* 1. HERO & INTERACTIVE BEFORE/AFTER SECTION */}
-      <section className="relative py-28 bg-[#0a0f1d] text-white overflow-hidden border-b border-slate-900">
-        {/* Ambient atmospheric shapes */}
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute top-12 left-10 w-[450px] h-[450px] rounded-full bg-blue-600/10 blur-[130px]" />
-          <div className="absolute bottom-20 right-10 w-[500px] h-[500px] rounded-full bg-indigo-600/10 blur-[140px]" />
-          {/* Technical blueprint grid representation */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)]" />
+    <main className="flex min-h-screen flex-col overflow-hidden bg-white text-slate-900">
+      {/* HERO */}
+      <section className="relative isolate overflow-hidden bg-[#0f172a] py-24 text-white md:py-32">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.35),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.18),_transparent_30%),linear-gradient(180deg,_#0f172a_0%,_#111827_55%,_#020617_100%)]" />
+          <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#3b82f6]/20 blur-[120px]" />
+          <div className="absolute -bottom-32 right-0 h-[420px] w-[420px] rounded-full bg-cyan-400/10 blur-[110px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20" />
         </div>
 
-        <div className="container mx-auto px-6 max-w-7xl relative z-10">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Left side text */}
-            <div className="lg:col-span-6 space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 px-3/5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-semibold tracking-wider uppercase text-blue-400">
-                <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-                <span>Transformation Numérique de Confiance</span>
-              </div>
-              
-              <h1 id="main-h1" className="text-4xl md:text-5xl lg:text-5.5xl font-display font-bold tracking-tight leading-tight text-white">
-                Refonte de site internet pour moderniser votre image et améliorer vos résultats
-              </h1>
-              
-              <p className="text-slate-300 text-base md:text-lg leading-relaxed max-w-xl font-sans font-light">
-                Un outil obsolète ou trop lent repousse activement vos clients potentiels. VSW Digital réinvente l’architecture de votre site pour restaurer sa crédibilité, propulser sa rapidité de chargement, et maximiser l'acquisition de contacts utiles sans fausses promesses.
-              </p>
+        <div className="container mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-[1.05fr_0.95fr]">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mx-auto max-w-4xl text-center lg:mx-0 lg:text-left"
+          >
+            <span className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-blue-200 shadow-2xl shadow-blue-500/10 backdrop-blur">
+              <Sparkles className="h-4 w-4 text-[#3b82f6]" />
+              Refonte de site internet
+            </span>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link 
-                  to="/contact" 
-                  id="cta-audit-site-hero"
-                  className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold tracking-wide transition-all duration-300 text-center shadow-lg shadow-blue-500/10 hover:shadow-blue-500/25 flex items-center justify-center gap-2"
-                >
-                  <span>Demander un diagnostic de mon site</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </Link>
-                <a 
-                  href="#notre-methode" 
-                  id="cta-method-hero"
-                  className="px-8 py-4 bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 text-slate-300 rounded-xl font-bold tracking-wide transition-all duration-300 text-center flex items-center justify-center"
-                >
-                  Découvrir notre méthode
-                </a>
-              </div>
+            <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-[-0.04em] text-white md:text-6xl lg:text-7xl">
+              Modernisez votre site pour{" "}
+              <span className="bg-gradient-to-r from-[#3b82f6] via-sky-300 to-cyan-300 bg-clip-text text-transparent">
+                gagner en crédibilité
+              </span>
+            </h1>
 
-              {/* Real numbers in quiet typography */}
-              <div className="grid grid-cols-3 gap-6 pt-6 border-t border-slate-800/80 max-w-lg text-left">
-                <div>
-                  <span className="block text-xl md:text-2xl font-display font-bold text-white">-75%</span>
-                  <span className="block text-slate-400 text-[10px] font-mono leading-none tracking-wider uppercase">Poids technique</span>
-                </div>
-                <div>
-                  <span className="block text-xl md:text-2xl font-display font-bold text-white">&lt; 1.5s</span>
-                  <span className="block text-slate-400 text-[10px] font-mono leading-none tracking-wider uppercase">Temps de chargement</span>
-                </div>
-                <div>
-                  <span className="block text-xl md:text-2xl font-display font-bold text-white">100%</span>
-                  <span className="block text-slate-400 text-[10px] font-mono leading-none tracking-wider uppercase">Sécurisé &amp; RGPD</span>
-                </div>
-              </div>
+            <p className="mt-7 max-w-3xl text-lg leading-8 text-slate-300 md:text-xl lg:mx-0">
+              VSW Digital refond votre site pour améliorer son image, sa
+              lisibilité, sa performance mobile, sa structure SEO et sa capacité
+              à générer des demandes qualifiées.
+            </p>
+
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              {["Design moderne", "SEO préservé", "Mobile-first"].map((item) => (
+                <span
+                  key={item}
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm text-slate-200 backdrop-blur"
+                >
+                  <Check className="h-4 w-4 text-[#3b82f6]" />
+                  {item}
+                </span>
+              ))}
             </div>
 
-            {/* Right column - Premium Interactive Before/After slider mock up */}
-            <div className="lg:col-span-6 flex flex-col items-center">
-              <div className="w-full max-w-lg bg-slate-900/60 border border-slate-800/80 rounded-3xl p-4 md:p-6 shadow-2xl backdrop-blur-md relative overflow-hidden">
-                <div className="flex justify-between items-center mb-4 border-b border-slate-800/80 pb-3">
-                  <div className="flex items-center gap-2">
-                    <RefreshCw className="w-4 h-4 text-blue-400 animate-spin-slow" />
-                    <span className="text-slate-300 text-xs font-bold uppercase tracking-wider font-mono">Simulateur de Refonte</span>
-                  </div>
-                  <span className="text-[10px] font-mono text-slate-500 bg-slate-950 px-2 py-0.5 rounded">GLISSIÈRE INTERACTIVE</span>
+            <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+              <Link
+                to="/contact"
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-8 py-4 font-semibold text-white shadow-2xl shadow-blue-500/30 transition-all hover:-translate-y-0.5 hover:bg-blue-400"
+              >
+                Demander un diagnostic
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Link>
+
+              <a
+                href="#notre-methode"
+                className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/15"
+              >
+                Découvrir la méthode
+              </a>
+            </div>
+          </motion.div>
+
+          {/* Avant / après */}
+          <motion.div
+            initial={{ opacity: 0, x: 28, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ delay: 0.15, duration: 0.75 }}
+            className="relative mx-auto w-full max-w-xl"
+          >
+            <div className="absolute -inset-6 rounded-[2rem] bg-[#3b82f6]/20 blur-3xl" />
+
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.07] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
+              <div className="mb-5 flex items-center justify-between rounded-2xl border border-white/10 bg-[#020617]/70 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <RefreshCw className="h-4 w-4 text-[#3b82f6]" />
+                  <span className="text-xs font-semibold text-slate-300">
+                    Avant / Après
+                  </span>
                 </div>
+                <span className="rounded-full bg-blue-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-300">
+                  Interactif
+                </span>
+              </div>
 
-                <p className="text-slate-400 text-[11px] mb-4 text-left leading-normal">
-                  Faites glisser le curseur pour comparer l’état visuel et technique de votre présence avant et après notre intervention :
-                </p>
+              <div className="relative h-72 overflow-hidden rounded-2xl border border-white/10 bg-slate-950">
+                {/* Après */}
+                <div className="absolute inset-0 flex flex-col justify-between bg-gradient-to-br from-slate-900 to-blue-950 p-5 text-left">
+                  <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs">
+                    <span className="font-bold text-white">
+                      Entreprise Moderne
+                    </span>
+                    <span className="rounded-full bg-emerald-400/10 px-2 py-1 text-[10px] font-bold text-emerald-400">
+                      Optimisé
+                    </span>
+                  </div>
 
-                {/* BEFORE / AFTER CONTAINER FRAME */}
-                <div className="relative h-64 md:h-72 w-full rounded-2xl overflow-hidden select-none border border-slate-850 bg-slate-950">
-                  
-                  {/* AFTER STAGE (Background - VSW Digital Design) */}
-                  <div className="absolute inset-0 w-full h-full p-4 flex flex-col justify-between bg-gradient-to-br from-slate-900 to-blue-950 text-left">
-                    {/* Fake modern header */}
-                    <div className="flex justify-between items-center bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg text-[9px] text-white">
-                      <span className="font-bold">MonEntreprise Premium</span>
-                      <span className="text-emerald-400 flex items-center gap-1 font-mono uppercase bg-emerald-500/10 px-1.5 py-0.5 rounded font-bold text-[8px]">
-                        <Zap className="w-2.5 h-2.5" /> 99/100 Vitesse
+                  <div className="space-y-3">
+                    <span className="inline-flex rounded-full bg-blue-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-300">
+                      Nouvelle version
+                    </span>
+                    <h4 className="font-display text-2xl font-bold leading-tight text-white">
+                      Une présentation claire, rapide et rassurante
+                    </h4>
+                    <p className="text-sm leading-6 text-slate-300">
+                      Services lisibles, preuves de confiance, boutons visibles
+                      et parcours pensé pour convertir.
+                    </p>
+
+                    <div className="flex gap-2">
+                      <span className="rounded-xl bg-[#3b82f6] px-3 py-2 text-xs font-bold text-white">
+                        Demander un devis
                       </span>
-                    </div>
-
-                    {/* Fake modern content */}
-                    <div className="my-auto space-y-1.5 py-2">
-                      <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-500/10 text-blue-400 text-[8px] rounded uppercase font-bold tracking-wider">
-                        Qualité Certifiée
-                      </div>
-                      <h4 className="font-display font-medium text-white text-lg leading-tight block">
-                        Ingénierie de précision sur-mesure pour votre habitation
-                      </h4>
-                      <p className="text-[9px] text-slate-300 line-clamp-2 leading-relaxed">
-                        Chaque maison est unique. Nos artisans certifiés RGE conçoivent et modifient vos installations avec une garantie longue durée.
-                      </p>
-                      
-                      {/* Interactive clickables simulation */}
-                      <div className="flex gap-2 pt-1">
-                        <span className="px-2.5 py-1 bg-blue-600 rounded text-[8px] font-bold text-white shadow-sm flex items-center gap-1">
-                          Demander un devis gratuit <ArrowRight className="w-2 h-2 text-white" />
-                        </span>
-                        <span className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[8px] font-medium text-slate-300">
-                          Nos Réalisations
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Fake trust elements */}
-                    <div className="grid grid-cols-4 gap-1.5 border-t border-white/10 pt-2 text-[7px] text-slate-400">
-                      <span className="flex items-center gap-0.5 text-slate-300 font-bold"><Check className="w-2 h-2 text-emerald-400" /> Assurance Decennale</span>
-                      <span className="flex items-center gap-0.5 text-slate-300 font-bold"><Check className="w-2 h-2 text-emerald-400" /> Label RGE Eco</span>
-                      <span className="flex items-center gap-0.5 text-slate-300 font-bold"><Check className="w-2 h-2 text-emerald-400" /> Matériel Français</span>
-                      <span className="flex items-center gap-0.5 text-slate-300 font-bold font-mono text-emerald-400"><Star className="w-2 h-2 text-amber-400 fill-amber-400" /> 4.9/5 Avis</span>
+                      <span className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-slate-300">
+                        Voir les services
+                      </span>
                     </div>
                   </div>
 
-                  {/* BEFORE STAGE (Overlay - Old Clunky Design) */}
-                  <div 
-                    className="absolute inset-0 h-full p-4 flex flex-col justify-between bg-[#ecebe5] text-slate-800 transition-all select-none border-r-2 border-slate-400/80"
-                    style={{ width: `${sliderPos}%` }}
-                  >
-                    {/* Fake header old */}
-                    <div className="flex justify-between items-center bg-stone-300/40 border border-stone-400/50 px-3 py-1.5 rounded text-[8px] text-slate-600">
-                      <span className="font-bold tracking-widest uppercase">MONENTREPRISE123.COM</span>
-                      <span className="text-rose-600 flex items-center gap-1 font-mono uppercase bg-rose-500/10 px-1.5 py-0.5 rounded font-bold text-[7px]">
-                        <AlertOctagon className="w-2.5 h-2.5" /> 23/100 LENT
-                      </span>
-                    </div>
-
-                    {/* Fake text old */}
-                    <div className="my-auto space-y-2 py-2 text-left">
-                      <h4 className="font-serif text-sm text-stone-900 leading-tight underline font-bold">
-                        Bievenu sur le blog corporatif de Jean et Cie sas
-                      </h4>
-                      <p className="text-[8px] text-stone-600 leading-relaxed font-mono">
-                        Page mise à jour en novembre 2017. Nous proposons de faire nos travaux selon disponiblité. Téléphone de contact: 06.00... (voir bas de page). Page non-responsive.
-                      </p>
-                      
-                      {/* broken structure */}
-                      <div className="p-1.5 bg-amber-500/10 border border-amber-300/40 rounded text-[7px] text-rose-700 flex items-center gap-1 font-mono">
-                        <AlertTriangle className="w-2.5 h-2.5 text-rose-600 shrink-0" /> Erreur d'affichage : Images non optimisées
-                      </div>
-                    </div>
-
-                    {/* Low trust footer old */}
-                    <div className="border-t border-stone-300 pt-2 text-[7px] text-stone-500 text-left">
-                      📍 Nous appeler durant les jours ouvrés • Mentions légales non conformes • Copyrigth 2012
-                    </div>
-                  </div>
-
-                  {/* Range Input Overlay for Drag control */}
-                  <input 
-                    type="range" 
-                    min="1" 
-                    max="99" 
-                    value={sliderPos}
-                    onChange={(e) => setSliderPos(Number(e.target.value))}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30 pointer-events-auto"
-                    aria-label="Séparateur avant après la refonte"
-                  />
-
-                  {/* Vertical separator visual bar */}
-                  <div 
-                    className="absolute top-0 bottom-0 pointer-events-none w-0.5 bg-white z-20 flex items-center justify-center shadow-lg"
-                    style={{ left: `${sliderPos}%` }}
-                  >
-                    <div className="w-7 h-7 rounded-full bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center border-2 border-white pointer-events-none shadow-xl transform -translate-x-1/2">
-                      <RefreshCw className="w-3.5 h-3.5 text-white animate-spin-slow" />
-                    </div>
+                  <div className="grid grid-cols-3 gap-2 border-t border-white/10 pt-3 text-[10px] text-slate-300">
+                    <span className="flex items-center gap-1">
+                      <Check className="h-3 w-3 text-emerald-400" />
+                      Mobile
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Check className="h-3 w-3 text-emerald-400" />
+                      SEO
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Star className="h-3 w-3 text-amber-400" />
+                      Confiance
+                    </span>
                   </div>
                 </div>
 
-                {/* Snap presets toggles below */}
-                <div className="flex justify-between items-center mt-4 pt-3 border-t border-slate-800/80 text-[10px] text-slate-400">
-                  <button 
-                    onClick={() => setSliderPos(95)}
-                    className="px-2.5 py-1.5 bg-slate-950 hover:bg-rose-950/40 text-rose-400 rounded-md font-medium border border-rose-950/40 transition-colors"
-                  >
-                    🔍 Voir l'ancien site
-                  </button>
-                  <span className="font-mono text-[9px] text-slate-500">GLISSEZ LA BARRE</span>
-                  <button 
-                    onClick={() => setSliderPos(5)}
-                    className="px-2.5 py-1.5 bg-slate-950 hover:bg-blue-950/40 text-blue-400 rounded-md font-medium border border-blue-950/40 transition-colors"
-                  >
-                    ✨ Voir la refonte
-                  </button>
+                {/* Avant */}
+                <div
+                  className="absolute inset-y-0 left-0 flex flex-col justify-between overflow-hidden border-r-2 border-white bg-stone-100 p-5 text-left text-slate-800"
+                  style={{ width: `${sliderPos}%` }}
+                >
+                  <div className="flex items-center justify-between rounded-xl border border-stone-300 bg-stone-200 px-3 py-2 text-[10px]">
+                    <span className="font-bold uppercase tracking-wider">
+                      Ancien site
+                    </span>
+                    <span className="rounded-full bg-rose-100 px-2 py-1 font-bold text-rose-600">
+                      À revoir
+                    </span>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-serif text-lg font-bold leading-tight underline">
+                      Bienvenue sur notre site
+                    </h4>
+                    <p className="text-xs leading-5 text-stone-600">
+                      Informations anciennes, design peu lisible, boutons peu
+                      visibles, affichage mobile difficile.
+                    </p>
+
+                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-[10px] text-rose-700">
+                      <AlertTriangle className="mr-1 inline h-3 w-3" />
+                      Expérience mobile à améliorer
+                    </div>
+                  </div>
+
+                  <div className="border-t border-stone-300 pt-3 text-[10px] text-stone-500">
+                    Informations obsolètes • formulaire peu visible
+                  </div>
+                </div>
+
+                <input
+                  type="range"
+                  min="5"
+                  max="95"
+                  value={sliderPos}
+                  onChange={(e) => setSliderPos(Number(e.target.value))}
+                  className="absolute inset-0 z-30 h-full w-full cursor-ew-resize opacity-0"
+                  aria-label="Comparer avant et après la refonte"
+                />
+
+                <div
+                  className="pointer-events-none absolute bottom-0 top-0 z-20 w-0.5 bg-white"
+                  style={{ left: `${sliderPos}%` }}
+                >
+                  <div className="absolute top-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white bg-[#3b82f6] text-white shadow-xl">
+                    <RefreshCw className="h-4 w-4" />
+                  </div>
                 </div>
               </div>
-            </div>
 
-          </div>
+              <div className="mt-5 flex items-center justify-between gap-3 text-xs text-slate-400">
+                <button
+                  type="button"
+                  onClick={() => setSliderPos(90)}
+                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-rose-300 transition-colors hover:bg-white/10"
+                >
+                  Voir l’ancien
+                </button>
+                <span>Glissez la barre</span>
+                <button
+                  type="button"
+                  onClick={() => setSliderPos(10)}
+                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-blue-300 transition-colors hover:bg-white/10"
+                >
+                  Voir la refonte
+                </button>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* 2. INTERACTIVE DIAGNOSTIC AUTO-CHECKUP SECTION */}
-      <section className="py-24 bg-white border-b border-slate-100 flex items-center text-left">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase block">Auto-évaluation gratuite en 3 secondes</span>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-slate-900 tracking-tight">
-              Votre site actuel freine-t-il la croissance de votre entreprise ?
+      {/* DIAGNOSTIC */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-14 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Auto-évaluation
+            </span>
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Votre site actuel freine-t-il votre croissance ?
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base">
-              Sélectionnez les signes d’alerte correspondants à votre situation actuelle pour obtenir instantanément une analyse personnalisée et objective de vos urgences technologiques.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Cochez les signes d’alerte qui correspondent à votre situation
+              pour obtenir une première lecture indicative.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-12 items-start max-w-5xl mx-auto">
-            
-            {/* Left Box - Selection Checkbox List */}
-            <div className="lg:col-span-7 bg-slate-50 border border-slate-200/80 p-6 md:p-8 rounded-[2rem] space-y-5">
-              <h3 className="font-display font-bold text-slate-900 text-lg mb-2">Cochez les anomalies constatées :</h3>
-              
-              <div className="space-y-3.5">
+          <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-6 md:p-8">
+              <h3 className="mb-6 font-display text-xl font-bold text-[#0f172a]">
+                Signes constatés
+              </h3>
+
+              <div className="space-y-3">
                 {[
-                  { key: 'slow', label: 'Mon site prend plus de 3 ou 4 secondes à charger sur mobile' },
-                  { key: 'mobile', label: 'Certaines images débordent ou mes boutons sont trop petits sur smartphone' },
-                  { key: 'no_leads', label: 'Je ne reçois presque plus de nouveaux contacts ou formulaires de mon site' },
-                  { key: 'outdated', label: 'Le style graphique paraît démodé et ne reflète plus la valeur réelle de mon travail' },
-                  { key: 'unfindable', label: 'Je n’apparais pas sur Google en cherchant mon métier + ma ville' },
-                  { key: 'incorrect', label: 'Mes prestations, services, labels ou informations n’y sont pas à jour' }
+                  {
+                    key: "slow",
+                    label:
+                      "Mon site prend plusieurs secondes à charger sur mobile",
+                  },
+                  {
+                    key: "mobile",
+                    label:
+                      "Les images, boutons ou menus s’affichent mal sur smartphone",
+                  },
+                  {
+                    key: "no_leads",
+                    label:
+                      "Je reçois peu de demandes ou de formulaires depuis mon site",
+                  },
+                  {
+                    key: "outdated",
+                    label:
+                      "Le design ne reflète plus le sérieux de mon entreprise",
+                  },
+                  {
+                    key: "unfindable",
+                    label:
+                      "Je suis peu visible sur Google sur mes services principaux",
+                  },
+                  {
+                    key: "incorrect",
+                    label:
+                      "Mes services, tarifs, photos ou informations ne sont plus à jour",
+                  },
                 ].map((item) => (
-                  <label 
-                    key={item.key} 
-                    className={`flex items-start gap-3.5 p-3.5 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
-                      checkedAnswers[item.key] 
-                        ? 'bg-blue-50/50 border-blue-300 text-slate-900 shadow-sm' 
-                        : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                  <label
+                    key={item.key}
+                    className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-all ${
+                      checkedAnswers[item.key]
+                        ? "border-blue-300 bg-blue-50"
+                        : "border-slate-200 bg-white hover:border-blue-200"
                     }`}
                   >
-                    <input 
+                    <input
                       type="checkbox"
                       checked={checkedAnswers[item.key]}
                       onChange={() => handleCheckboxChange(item.key)}
-                      className="mt-1 h-4.5 w-4.5 border-slate-300 text-blue-600 focus:ring-blue-500 rounded cursor-pointer"
+                      className="mt-1 h-4 w-4 accent-[#3b82f6]"
                     />
-                    <span className="text-xs md:text-sm font-medium leading-relaxed">{item.label}</span>
+                    <span className="text-sm leading-6 text-slate-700">
+                      {item.label}
+                    </span>
                   </label>
                 ))}
               </div>
             </div>
 
-            {/* Right Box - Dynamic scoring recommendations */}
-            <div className="lg:col-span-5 h-full flex flex-col justify-between">
-              <div className="bg-slate-950 text-white rounded-[2rem] p-6 md:p-8 relative overflow-hidden flex-1 flex flex-col justify-between shadow-xl">
-                <div className="absolute top-0 right-0 p-4 opacity-5">
-                  <Terminal className="w-32 h-32" />
-                </div>
-
-                <div className="space-y-6 relative z-10">
-                  <div className="inline-flex gap-2 items-center px-2.5 py-1 bg-white/5 border border-white/10 rounded-md font-mono text-[9px] uppercase tracking-wider">
-                    <span>Diagnostic instantané</span>
-                  </div>
-
-                  <div className="space-y-2 text-left">
-                    <span className="text-slate-400 text-xs font-mono uppercase tracking-wider block">Constat de conformité :</span>
-                    <h4 className="text-xl font-display font-medium text-white flex items-center gap-2">
-                      <span>Anomalie(s) détectée(s) :</span>
-                      <span className="font-extrabold text-[#3b82f6] text-2xl font-mono">{numChecked}</span>
-                    </h4>
-                  </div>
-
-                  <div className="text-left space-y-3.5">
-                    <div className={`p-4 rounded-xl border font-sans text-xs flex flex-col gap-2 ${diagnosis.colorClass}`}>
-                      <div className="flex items-center gap-2 font-bold font-display uppercase tracking-wider text-[11px]">
-                        <AlertTriangle className="w-4 h-4" />
-                        <span>{diagnosis.title} ({diagnosis.urgency})</span>
-                      </div>
-                      <p className="leading-relaxed opacity-95">{diagnosis.text}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-8 border-t border-slate-800/80 mt-8 text-left space-y-4 relative z-10">
-                  <p className="text-slate-400 text-[11px] leading-relaxed">
-                    💡 Un audit par nos ingénieurs permet d’aller plus loin : étude sémantique, repérage d’erreurs de redirection DNS et décompte de perte de trafic.
-                  </p>
-                  
-                  <Link 
-                    to="/contact" 
-                    className="w-full text-center block px-6 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold tracking-wider transition-all duration-300 shadow-lg shadow-blue-500/10 flex items-center justify-center gap-1.5"
-                  >
-                    <span>Demander mon plan d'action d'audit</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
+            <div className="rounded-[2rem] bg-[#0f172a] p-8 text-white shadow-2xl shadow-slate-900/20">
+              <div className="mb-6 inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-300">
+                Diagnostic indicatif
               </div>
-            </div>
 
-          </div>
-        </div>
-      </section>
-
-      {/* 3. CORE PILLARS SECTION - SEO, Vitesse, Design */}
-      <section className="py-24 bg-slate-50 border-b border-slate-100 flex items-center text-left">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase block">Garanties de Méthodologie</span>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-slate-900 tracking-tight">
-              Les 3 piliers d’une refonte de site réussie
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base">
-              Une refonte professionnelle ne consiste pas à repeindre la façade. Elle consiste à nettoyer les fondations pour garantir indexation, performance et conversion durable.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 items-stretch">
-            {/* Pillar 1 */}
-            <div className="bg-white border border-slate-200/60 rounded-3xl p-6 md:p-8 hover:shadow-lg transition-transform hover:-translate-y-1 duration-200 flex flex-col justify-between space-y-6 text-left">
               <div className="space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                  <ShieldCheck className="w-6 h-6" />
-                </div>
-                <h3 className="font-display font-bold text-slate-900 text-lg leading-tight">1. Protection du capital SEO</h3>
-                <p className="text-slate-600 text-xs leading-relaxed font-sans">
-                  Si vos pages existantes plaisent déjà à Google, pas question de les détruire. Notre plan de <strong>redirection 301</strong> s’assure que l’ancien historique de vos URLs est proprement transmis à votre nouvelle vitrine, sans perte de trafic ni coupures de liens.
+                <p className="text-sm uppercase tracking-wider text-slate-400">
+                  Anomalies sélectionnées
                 </p>
-              </div>
-              <ul className="space-y-2 border-t border-slate-100 pt-4 text-[11px] text-slate-500 font-mono">
-                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Plan complet de redirection 301</li>
-                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Conservation de la force sémantique</li>
-                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Recalibrage des balises de titres sémantiques</li>
-              </ul>
-            </div>
 
-            {/* Pillar 2 */}
-            <div className="bg-white border border-slate-200/60 rounded-3xl p-6 md:p-8 hover:shadow-lg transition-transform hover:-translate-y-1 duration-200 flex flex-col justify-between space-y-6 text-left">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                  <Gauge className="w-6 h-6" />
-                </div>
-                <h3 className="font-display font-bold text-slate-900 text-lg leading-tight">2. Allègement &amp; Vitesse mobile</h3>
-                <p className="text-slate-600 text-xs leading-relaxed font-sans">
-                  Plus de 60% de votre trafic recherche vos services de rénovation, de logistique ou de conseil depuis un smartphone dehors. Nous forçons l’utilisation de formats d'images légers (WebP/AVIF), et épurons le code pour charger vos pages en moins de 1.5s réelles.
+                <p className="font-display text-5xl font-bold text-white">
+                  {numChecked}
                 </p>
-              </div>
-              <ul className="space-y-2 border-t border-slate-100 pt-4 text-[11px] text-slate-500 font-mono">
-                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Moins de 1.5 seconde de temps de chargement</li>
-                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Core Web Vitals entièrement au vert</li>
-                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Ergonomie Mobile fluidifiée à 100%</li>
-              </ul>
-            </div>
 
-            {/* Pillar 3 */}
-            <div className="bg-white border border-slate-200/60 rounded-3xl p-6 md:p-8 hover:shadow-lg transition-transform hover:-translate-y-1 duration-200 flex flex-col justify-between space-y-6 text-left">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                  <Users className="w-6 h-6" />
+                <div
+                  className={`rounded-2xl border p-5 text-sm leading-7 ${diagnosis.colorClass}`}
+                >
+                  <div className="mb-2 flex items-center gap-2 font-bold">
+                    <AlertTriangle className="h-4 w-4" />
+                    <span>
+                      {diagnosis.title} — {diagnosis.urgency}
+                    </span>
+                  </div>
+                  <p>{diagnosis.text}</p>
                 </div>
-                <h3 className="font-display font-bold text-slate-900 text-lg leading-tight">3. Stratégie de conversion locale</h3>
-                <p className="text-slate-600 text-xs leading-relaxed font-sans">
-                  Un beau site inutile n'aide pas votre croissance. Nous plaçons vos éléments de réassurance (labels de qualité, décennale, avis certifiés) en tête de lecture et simplifions l'accès au bouton d'appel direct ou au tunnel de devis.
-                </p>
+
+                <Link
+                  to="/contact"
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-6 py-4 font-semibold text-white transition-all hover:bg-blue-400"
+                >
+                  Demander un diagnostic complet
+                  <ArrowRight className="h-5 w-5" />
+                </Link>
               </div>
-              <ul className="space-y-2 border-t border-slate-100 pt-4 text-[11px] text-slate-500 font-mono">
-                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Éléments de réassurance en tête</li>
-                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Tunnels de contact épurés et sécurisés</li>
-                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Suivi de formulaires d'intentions de devis</li>
-              </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4. MODERNIZED BENEFITS - What is being upgraded specifically */}
-      <section className="py-24 bg-white border-b border-slate-100 text-left">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase block">Valeur ajoutée de la métamorphose</span>
-            <h2 className="text-3xl font-display font-bold text-slate-900 tracking-tight">
-              Qu’allez-vous gagner en réalisant votre refonte chez nous ?
+      {/* SIGNES */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-rose-100 bg-rose-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-rose-500">
+              Quand refondre ?
+            </span>
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Les signes qu’une refonte devient nécessaire
             </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base">
-              Découvrez les bénéfices concrets et mesurables pour votre organisation après notre processus de mise aux normes techniques.
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Une refonte devient pertinente lorsque le site ne soutient plus
+              votre image, votre visibilité ou vos objectifs commerciaux.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {benefits.map((benefit) => {
-              const Icon = benefit.icon;
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {needSigns.map((sign, index) => {
+              const Icon = sign.icon;
+
               return (
-                <div key={benefit.id} className="group bg-slate-50/50 border border-slate-200/60 rounded-2xl p-6 hover:border-blue-300 hover:bg-white transition-all duration-300">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center shrink-0 mb-4 transition-colors">
-                    <Icon className="w-5 h-5" />
+                <motion.article
+                  key={sign.id}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.04 }}
+                  className="rounded-[1.6rem] border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-1 hover:border-rose-200 hover:shadow-xl"
+                >
+                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-500 ring-1 ring-rose-100">
+                    <Icon className="h-7 w-7" />
                   </div>
-                  <h3 className="font-bold text-slate-900 font-display text-base mb-2 leading-tight">
+
+                  <h3 className="font-display text-xl font-bold text-[#0f172a]">
+                    {sign.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {sign.desc}
+                  </p>
+                </motion.article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* PILIERS */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Piliers
+            </span>
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Les fondations d’une refonte réussie
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Une refonte ne consiste pas seulement à changer le design. Elle
+              doit préserver le SEO, améliorer le mobile et clarifier le parcours
+              de conversion.
+            </p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {[
+              {
+                icon: ShieldCheck,
+                title: "Préserver le capital SEO",
+                desc: "Identifier les pages importantes, conserver les contenus utiles et préparer les redirections nécessaires.",
+                points: [
+                  "Plan de redirection 301",
+                  "Pages fortes conservées",
+                  "Structure SEO améliorée",
+                ],
+              },
+              {
+                icon: Gauge,
+                title: "Améliorer la vitesse mobile",
+                desc: "Alléger les pages, optimiser les images, réduire les éléments inutiles et améliorer le confort de navigation.",
+                points: [
+                  "Images optimisées",
+                  "Code plus propre",
+                  "Navigation mobile plus fluide",
+                ],
+              },
+              {
+                icon: Users,
+                title: "Clarifier la conversion",
+                desc: "Rendre les services plus lisibles, renforcer la confiance et simplifier l’accès au contact.",
+                points: [
+                  "CTA visibles",
+                  "Formulaires simplifiés",
+                  "Preuves de confiance",
+                ],
+              },
+            ].map((pillar, index) => {
+              const Icon = pillar.icon;
+
+              return (
+                <motion.article
+                  key={pillar.title}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.06 }}
+                  className="rounded-[1.8rem] border border-slate-200 bg-slate-50 p-8 transition-all hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-500/10"
+                >
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-[#3b82f6] ring-1 ring-blue-100">
+                    <Icon className="h-7 w-7" />
+                  </div>
+
+                  <h3 className="font-display text-2xl font-bold text-[#0f172a]">
+                    {pillar.title}
+                  </h3>
+
+                  <p className="mt-4 text-sm leading-7 text-slate-600">
+                    {pillar.desc}
+                  </p>
+
+                  <div className="mt-6 space-y-3 border-t border-slate-200 pt-5">
+                    {pillar.points.map((point) => (
+                      <div key={point} className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-emerald-500" />
+                        <span className="text-sm text-slate-600">{point}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* BENEFICES */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Bénéfices
+            </span>
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Ce que votre entreprise peut gagner avec une refonte
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Une refonte bien menée peut améliorer la perception de votre
+              entreprise, la lisibilité de vos offres et l’efficacité de vos
+              demandes de contact.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {benefits.map((benefit, index) => {
+              const Icon = benefit.icon;
+
+              return (
+                <motion.article
+                  key={benefit.id}
+                  initial={{ opacity: 0, y: 22 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.04 }}
+                  className="group rounded-[1.6rem] border border-slate-200 bg-white p-7 shadow-sm transition-all hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/10"
+                >
+                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-[#3b82f6] ring-1 ring-blue-100 transition-all group-hover:bg-[#3b82f6] group-hover:text-white">
+                    <Icon className="h-7 w-7" />
+                  </div>
+
+                  <h3 className="font-display text-xl font-bold text-[#0f172a]">
                     {benefit.title}
                   </h3>
-                  <p className="text-xs text-slate-650 leading-relaxed font-sans">
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
                     {benefit.desc}
                   </p>
+                </motion.article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* METHODE */}
+      <section id="notre-methode" className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Méthode
+            </span>
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Une refonte structurée, sans repartir à l’aveugle
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Nous avançons étape par étape pour protéger l’existant, moderniser
+              l’image et améliorer la performance.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {processSteps.map((step, index) => (
+              <motion.article
+                key={step.id}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.04 }}
+                className="rounded-[1.6rem] border border-slate-200 bg-slate-50 p-7 transition-all hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-xl hover:shadow-blue-500/10"
+              >
+                <div className="mb-5 flex items-center justify-between">
+                  <span className="font-display text-4xl font-black text-[#3b82f6]/20">
+                    {step.num}
+                  </span>
+                  <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#3b82f6]">
+                    {step.badge}
+                  </span>
+                </div>
+
+                <h3 className="font-display text-xl font-bold text-[#0f172a]">
+                  {step.title}
+                </h3>
+
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  {step.desc}
+                </p>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TECHNOLOGIES */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Technologie
+            </span>
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              WordPress ou React / Next.js : le choix dépend du besoin
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Nous ne choisissons pas une technologie par effet de mode. Le choix
+              dépend de votre autonomie souhaitée, de votre budget, de vos
+              contenus et de vos besoins d’évolution.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <article className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
+              <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#3b82f6]">
+                WordPress
+              </span>
+
+              <h3 className="mt-5 font-display text-2xl font-bold text-[#0f172a]">
+                Pour un site administrable et orienté contenu
+              </h3>
+
+              <p className="mt-4 text-sm leading-7 text-slate-600">
+                WordPress est adapté si vous voulez modifier facilement vos
+                pages, publier des articles ou gérer des contenus avec une
+                interface connue.
+              </p>
+
+              <div className="mt-6 space-y-3 border-t border-slate-100 pt-5">
+                {[
+                  "Administration simple",
+                  "Blog et pages SEO",
+                  "Bonne solution pour sites vitrines",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-emerald-500" />
+                    <span className="text-sm text-slate-600">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </article>
+
+            <article className="rounded-[2rem] border border-slate-800 bg-[#0f172a] p-8 text-white shadow-2xl shadow-slate-900/20">
+              <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-300">
+                React / Next.js
+              </span>
+
+              <h3 className="mt-5 font-display text-2xl font-bold text-white">
+                Pour une interface plus rapide, moderne et personnalisée
+              </h3>
+
+              <p className="mt-4 text-sm leading-7 text-slate-300">
+                React ou Next.js sont pertinents pour une expérience plus
+                fluide, un design sur mesure, une meilleure évolutivité ou des
+                fonctionnalités plus avancées.
+              </p>
+
+              <div className="mt-6 space-y-3 border-t border-white/10 pt-5">
+                {[
+                  "Interface très personnalisée",
+                  "Performance et fluidité",
+                  "Base évolutive vers application web",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-emerald-400" />
+                    <span className="text-sm text-slate-300">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTEURS */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-6xl px-6 text-center">
+          <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+            Secteurs
+          </span>
+
+          <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+            Des refontes adaptées aux métiers de terrain
+          </h2>
+
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+            Chaque secteur a ses codes : preuve de confiance, devis, téléphone,
+            zones d’intervention, avis, réalisations ou formulaires spécifiques.
+          </p>
+
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            {sectors.map((sector) => (
+              <span
+                key={sector}
+                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 transition-all hover:border-blue-200 hover:bg-white"
+              >
+                {sector}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* OFFRES */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-7xl px-6">
+          <div className="mx-auto mb-16 max-w-4xl text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              Accompagnements
+            </span>
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Des niveaux de refonte selon votre besoin réel
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              La refonte peut être légère, visuelle, technique, SEO ou complète.
+              L’audit permet de choisir le bon niveau d’intervention.
+            </p>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {offers.map((offer, index) => (
+              <motion.article
+                key={offer.id}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.06 }}
+                className={`relative rounded-[1.8rem] border bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-2xl ${
+                  offer.recommended
+                    ? "border-blue-200 shadow-blue-500/10"
+                    : "border-slate-200"
+                }`}
+              >
+                {offer.badge && (
+                  <span
+                    className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
+                      offer.recommended
+                        ? "bg-[#3b82f6] text-white"
+                        : "bg-blue-50 text-[#3b82f6]"
+                    }`}
+                  >
+                    {offer.badge}
+                  </span>
+                )}
+
+                <h3 className="mt-5 font-display text-2xl font-bold text-[#0f172a]">
+                  {offer.title}
+                </h3>
+
+                <p className="mt-4 text-sm leading-7 text-slate-600">
+                  {offer.desc}
+                </p>
+
+                <div className="mt-7 space-y-3 border-t border-slate-100 pt-6">
+                  {offer.features.map((feature) => (
+                    <div key={feature} className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#3b82f6]" />
+                      <span className="text-sm leading-6 text-slate-600">
+                        {feature}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <Link
+                  to="/contact"
+                  className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-6 py-4 font-semibold text-white transition-all hover:bg-blue-400"
+                >
+                  Demander un devis
+                  <ArrowRight className="h-5 w-5" />
+                </Link>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PHILOSOPHIE */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container mx-auto max-w-6xl px-6">
+          <div className="grid items-center gap-12 lg:grid-cols-[1fr_0.9fr]">
+            <div>
+              <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+                Notre philosophie
+              </span>
+
+              <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+                Une refonte utile, pas seulement plus jolie
+              </h2>
+
+              <p className="mt-6 text-base leading-8 text-slate-600">
+                Nous cherchons à construire un site plus clair, plus rapide,
+                plus fiable et mieux aligné avec vos objectifs commerciaux. Le
+                design n’est pas décoratif : il doit guider, rassurer et aider le
+                visiteur à passer à l’action.
+              </p>
+
+              <div className="mt-8 space-y-4">
+                {[
+                  {
+                    icon: TrendingUp,
+                    title: "Orientation conversion",
+                    desc: "Chaque section doit aider le visiteur à comprendre votre valeur et à vous contacter.",
+                  },
+                  {
+                    icon: ShieldCheck,
+                    title: "Protection de l’existant",
+                    desc: "Nous évitons de supprimer ce qui fonctionne déjà, notamment les pages utiles au SEO.",
+                  },
+                  {
+                    icon: BookOpen,
+                    title: "Explications claires",
+                    desc: "Vous comprenez les choix techniques sans jargon inutile.",
+                  },
+                ].map((item) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <div
+                      key={item.title}
+                      className="flex gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5"
+                    >
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-[#3b82f6]">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-bold text-[#0f172a]">
+                          {item.title}
+                        </h3>
+                        <p className="mt-1 text-sm leading-7 text-slate-600">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] bg-[#0f172a] p-8 text-white shadow-2xl shadow-slate-900/20">
+              <div className="mb-6 flex items-center gap-2 text-blue-300">
+                <Sparkles className="h-5 w-5" />
+                <span className="text-xs font-bold uppercase tracking-[0.2em]">
+                  Charte VSW Digital
+                </span>
+              </div>
+
+              <div className="space-y-6">
+                {[
+                  {
+                    title: "Pas de promesse SEO magique",
+                    desc: "Nous ne promettons pas une première place garantie. Nous construisons des bases solides.",
+                  },
+                  {
+                    title: "Pas de complexité inutile",
+                    desc: "La technologie doit servir le besoin réel, pas impressionner inutilement.",
+                  },
+                  {
+                    title: "Propriété et transparence",
+                    desc: "Vous gardez la maîtrise de votre site, de vos accès et de vos contenus.",
+                  },
+                ].map((item, index) => (
+                  <div key={item.title} className="border-l border-blue-500 pl-4">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      0{index + 1}
+                    </span>
+                    <h3 className="mt-1 font-display font-bold text-white">
+                      {item.title}
+                    </h3>
+                    <p className="mt-1 text-sm leading-7 text-slate-300">
+                      {item.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="container mx-auto max-w-4xl px-6">
+          <div className="mb-14 text-center">
+            <span className="mb-5 inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+              FAQ
+            </span>
+
+            <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+              Questions fréquentes sur la refonte
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+              Les réponses aux principales questions avant de moderniser votre
+              site internet.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {faqs.map((faq, index) => {
+              const isOpen = openFaq === index;
+
+              return (
+                <div
+                  key={faq.q}
+                  className={`overflow-hidden rounded-[1.4rem] border bg-white shadow-sm transition-all duration-300 ${
+                    isOpen
+                      ? "border-blue-200 shadow-xl shadow-blue-500/10"
+                      : "border-slate-200 hover:border-blue-200"
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    className="flex w-full items-center justify-between gap-5 px-6 py-5 text-left md:px-7"
+                  >
+                    <span className="font-display text-base font-bold leading-snug text-[#0f172a] md:text-lg">
+                      {faq.q}
+                    </span>
+
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
+                        isOpen
+                          ? "bg-[#3b82f6] text-white"
+                          : "bg-blue-50 text-[#3b82f6]"
+                      }`}
+                    >
+                      <ChevronDown
+                        className={`h-5 w-5 transition-transform duration-300 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                      >
+                        <div className="border-t border-slate-100 px-6 pb-6 pt-4 md:px-7">
+                          <p className="text-sm leading-7 text-slate-600 md:text-base">
+                            {faq.a}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               );
             })}
@@ -766,448 +1275,40 @@ export function RefonteSiteInternet() {
         </div>
       </section>
 
-      {/* 5. METHODOLOGYTIMELINE - Step by Step process */}
-      <section id="notre-methode" className="py-24 bg-slate-50 border-b border-slate-150 scroll-mt-6 text-left">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase block">Transparence Absolue</span>
-            <h2 className="text-3xl font-display font-bold text-slate-900 tracking-tight">
-              Notre protocole étape par étape pour sécuriser le lancement
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans">
-              Parce que la refonte de votre plateforme existante doit être planifiée sainement, nous suivons un enchaînement technique strict pour ne perdre aucun élément fort.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {processSteps.map((step) => (
-              <div key={step.id} className="bg-white border border-slate-200 rounded-2xl p-6 relative shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-                <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="font-mono text-3xl font-black text-blue-100 block leading-none">{step.num}</span>
-                    <span className="px-2.5 py-1 bg-blue-50 text-blue-600 text-[10px] font-mono rounded font-bold uppercase tracking-wider">
-                      {step.badge}
-                    </span>
-                  </div>
-                  <h3 className="font-bold text-slate-900 text-sm mb-2 font-display leading-snug">{step.title}</h3>
-                  <p className="text-slate-600 text-xs leading-relaxed font-sans">{step.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Quick quote box for safety of users */}
-          <div className="mt-12 bg-blue-50/50 border border-blue-150 rounded-2xl p-5 text-center max-w-2xl mx-auto font-mono text-[11px] text-blue-800 leading-relaxed">
-            👨‍💻 <strong>Rappel crucial :</strong> Sur les sites ayant de solides positions SEO de départ, notre plan de redirection d'urls garantit le transfert de force technique sémantique sans coupure au cours du déploiement.
-          </div>
+      {/* CTA FINAL */}
+      <section className="relative isolate overflow-hidden bg-[#0f172a] py-24 text-white md:py-32">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.35),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.18),_transparent_30%),linear-gradient(180deg,_#0f172a_0%,_#111827_55%,_#020617_100%)]" />
+          <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#3b82f6]/20 blur-[120px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20" />
         </div>
-      </section>
 
-      {/* 6. COMPARATIVE TECH EXPLANATION - WordPress vs Next.js/Tailwind */}
-      <section className="py-24 bg-white border-b border-slate-100 text-left">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase block">Guide Technologique</span>
-            <h2 className="text-3xl font-display font-bold text-slate-900 tracking-tight">
-              Quelle technologie de refonte convient à votre métier ?
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans">
-              Pas de solution unique imposée à la va-vite. Nous analysons rationnellement vos besoins opérationnels pour vous recommander l’outil le plus cohérent économiquement.
-            </p>
-          </div>
+        <div className="container relative mx-auto max-w-4xl px-6 text-center">
+          <span className="mb-6 inline-flex rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-300">
+            Refonte de site internet
+          </span>
 
-          <div className="grid md:grid-cols-2 gap-8 items-stretch max-w-5xl mx-auto">
-            {/* Box 1 - WordPress */}
-            <div className="bg-slate-50 border border-slate-200 rounded-[2rem] p-6 md:p-8 flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono text-[10px] uppercase font-bold rounded">
-                    WordPress Professionnel épuré
-                  </span>
-                  <span className="text-xs font-mono text-slate-400">Pour l'Autonomie</span>
-                </div>
-                
-                <h3 className="font-display font-medium text-slate-900 text-xl leading-snug">
-                  La solution idéale si vous écrivez ou modifiez vos actualités régulièrement.
-                </h3>
-                
-                <p className="text-slate-650 text-xs leading-relaxed font-sans">
-                  Si vous êtes un artisan local, une PME avec un blog régulier ou si vous souhaitez rajouter des articles par vous-même facilement au quotidien, un <strong>WordPress optimisé</strong> s'avère parfait. Nous le purgeons de toutes ses extensions lentes de base de données pour préserver sa rapidité de chargement.
-                </p>
+          <h2 className="font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-white md:text-5xl">
+            Votre site mérite-t-il une nouvelle base plus moderne ?
+          </h2>
 
-                <div className="border-t border-slate-200 pt-4 text-xs space-y-2 font-mono text-slate-500">
-                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Administration intuitive familière</div>
-                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Insertion autonome d'articles de blog</div>
-                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Nettoyage rigoureux de votre vieux WordPress</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Box 2 - Next.js & Tailwind */}
-            <div className="bg-blue-950/20 border border-blue-500/20 rounded-[2rem] p-6 md:p-8 flex flex-col justify-between space-y-6">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="px-3 py-1 bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 font-mono text-[10px] uppercase font-bold rounded">
-                    Next.js, React &amp; Tailwind CSS Sur-Mesure
-                  </span>
-                  <span className="text-xs font-mono text-blue-500">Pour la Performance</span>
-                </div>
-                
-                <h3 className="font-display font-medium text-slate-100 text-xl leading-snug">
-                  La vitesse maximale pour devancer vos concurrents locaux.
-                </h3>
-                
-                <p className="text-slate-300 text-xs leading-relaxed font-sans">
-                  Pour les services exigeants, les startups et les marques de prestige qui requièrent un design à forte crédibilité, l'architecture Next.js offre des performances fulgurantes. Vos pages se chargent de manière instantanée, offrant un score de <strong>100% Core Web Vitals</strong> pour séduire l’algorithme Google.
-                </p>
-
-                <div className="border-t border-blue-900/60 pt-4 text-xs space-y-2 font-mono text-slate-300">
-                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> Sécurité absolue impossible à pirater</div>
-                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> Vitesse de clic foudroyante sur mobile</div>
-                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> Code taillé au pixel près sans thèmes lourds</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. DETAILED BEFORE/AFTER LIST GRID */}
-      <section className="py-24 bg-slate-50 border-b border-slate-150 text-left">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase block">Mesure de l’évolution</span>
-            <h2 className="text-3xl font-display font-bold text-slate-900 tracking-tight">
-              Analyse comparative : Ce que change notre intervention
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans">
-              Comparez méthodiquement les différences techniques fondamentales constatées lors de la refonte d’un ancien outil.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Column BEFORE */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 space-y-6">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                <h3 className="font-bold text-rose-700 font-display text-base tracking-tight flex items-center gap-2">
-                  <XCircle className="w-5 h-5 text-rose-500 shrink-0" />
-                  <span>Ancien site fatigué / non-conforme</span>
-                </h3>
-                <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-2 py-0.5 rounded uppercase font-bold">Inactif</span>
-              </div>
-
-              <div className="space-y-4">
-                {[
-                  { title: "Lenteur alarmante au chargement", text: "Images lourdes non compressées, scripts d’extensions obsolètes ralentissant l'affichage (+4.5s d’attente sur réseau 4G mobile)." },
-                  { title: "Taux de rebond d'internautes important", text: "Absence de numéros ou de formulaires directs en haut. L’internaute pressé quitte instantanément la page s'il doit chercher vos coordonnées." },
-                  { title: "Faiblesse sémantique & Invisibilité", text: "Contenu flou ou trop court, structure de balises H1-H3 anarchique, réduisant à néant l’indexation géographique de votre zone de prospection." },
-                  { title: "Responsivité approximative et boutons trop petits", text: "Affichage décalé sur écran mobile, nécessité de zoomer pour lire les explications, entachant immédiatement votre crédibilité." }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex gap-3 items-start p-3 bg-slate-50 border border-slate-100 rounded-xl">
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-2 shrink-0"></span>
-                    <div>
-                      <strong className="text-slate-900 text-xs block mb-0.5">{item.title}</strong>
-                      <p className="text-slate-600 text-[11px] leading-relaxed">{item.text}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Column AFTER */}
-            <div className="bg-blue-950/20 border border-blue-500/20 rounded-3xl p-6 md:p-8 space-y-6">
-              <div className="flex items-center justify-between border-b border-blue-900/40 pb-4">
-                <h3 className="font-bold text-blue-300 font-display text-base tracking-tight flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                  <span>Après refonte VSW Digital</span>
-                </h3>
-                <span className="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded uppercase font-bold">Optimisé</span>
-              </div>
-
-              <div className="space-y-4">
-                {[
-                  { title: "Vitesse d'affichage sous les 1.5s", text: "Code compact, chargement différé des ressources secondaires et conversion de chaque image aux formats de nouvelle génération (WebP/AVIF)." },
-                  { title: "Tunnels de conversions clairs et visibles", text: "Boutons d’appels immédiats pour mobile, preuves de rigueur (avis, labels d'expertise, décennale) distillés stratégiquement pour rassurer." },
-                  { title: "Maillage local performant pour les robots", text: "Mots-clés étudiés, sémantique conforme et données structurées insérées proprement pour indexation optimale sur votre rayon géographique." },
-                  { title: "Design fluide et responsive pixel-perfect", text: "Une page étudiée pour s’adapter instantanément et avec la même élégance visuelle sur ordinateurs, tablettes pros et smartphones." }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex gap-3 items-start p-3 bg-[#0d1222] border border-blue-950 rounded-xl">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 shrink-0"></span>
-                    <div>
-                      <strong className="text-slate-100 text-xs block mb-0.5">{item.title}</strong>
-                      <p className="text-slate-300 text-[11px] leading-relaxed">{item.text}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. SECTORS TARGET - Who is this useful for */}
-      <section className="py-24 bg-white border-b border-slate-100 text-left">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase block">Expertise Métier</span>
-            <h2 className="text-3xl font-display font-bold text-slate-900 tracking-tight">
-              Pour quels secteurs d’activités la refonte est-elle primordiale ?
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base">
-              Rénovation, gros œuvre, conseils pros ou artisans régionaux : un prospect consciencieux parcourt toujours votre site web pour valider le sérieux de vos devis avant signature.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2.5 justify-center max-w-4xl mx-auto">
-            {sectors.map((sector, idx) => (
-              <span key={idx} className="px-4 py-2 bg-slate-50 border border-slate-200/60 text-slate-755 rounded-xl text-xs font-semibold shadow-sm hover:border-blue-400 hover:bg-white transition-all duration-200">
-                {sector}
-              </span>
-            ))}
-          </div>
-
-          <p className="text-center text-xs text-slate-400 font-mono mt-8">
-            ✓ Nous calibrons la tonalité commerciale et technique selon les priorités réglementaires de chaque corporation.
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
+            Présentez-nous votre site actuel, vos objectifs et vos difficultés.
+            VSW Digital vous aide à déterminer s’il faut optimiser l’existant ou
+            lancer une refonte complète.
           </p>
-        </div>
-      </section>
 
-      {/* 9. FORMULES / OFFRES INDICATIVES */}
-      <section className="py-24 bg-slate-50 border-b border-slate-100 text-left">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase block">Propositions Transparentes</span>
-            <h2 className="text-3xl font-display font-bold text-slate-900 tracking-tight">
-              Des paliers de refonte clairs selon votre maturité Web
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans">
-              Parce que chaque organisation a des priorités distinctes, nous dimensionnons nos accompagnements de refonte de manière méthodique, sans survente inutile.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
-            {offers.map((offer) => (
-              <div 
-                key={offer.id} 
-                className={`bg-white border rounded-[2rem] p-6 md:p-8 flex flex-col justify-between transition-all duration-300 relative ${
-                  offer.recommended 
-                    ? 'border-blue-550 shadow-xl ring-1 ring-blue-500/20' 
-                    : 'border-slate-200 hover:border-blue-300 hover:shadow-lg'
-                }`}
-              >
-                {offer.badge && (
-                  <span className={`absolute -top-3 left-6 px-3 py-1 text-[9px] font-mono uppercase tracking-widest font-black rounded-full border ${
-                    offer.recommended 
-                      ? 'bg-blue-600 text-white border-blue-500' 
-                      : 'bg-slate-100 text-slate-600 border-slate-200'
-                  }`}>
-                    {offer.badge}
-                  </span>
-                )}
-
-                <div className="space-y-6">
-                  <div className="space-y-1 text-left">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono">Options d’ingénierie</span>
-                    <h3 className="text-xl font-display font-bold text-slate-900">{offer.title}</h3>
-                  </div>
-                  <p className="text-slate-600 text-xs leading-relaxed">{offer.desc}</p>
-                  
-                  <div className="border-t border-slate-100 pt-5 space-y-3 text-left">
-                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Détails inclus :</p>
-                    <ul className="space-y-2.5">
-                      {offer.features.map((feat, fIdx) => (
-                        <li key={fIdx} className="flex items-start gap-2 text-xs text-slate-700">
-                          <Check className="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0" />
-                          <span>{feat}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="pt-8 border-t border-slate-100 mt-6">
-                  <Link
-                    to="/contact"
-                    className={`w-full text-center block px-6 py-3.5 rounded-xl text-xs font-bold tracking-wide transition-all ${
-                      offer.recommended 
-                        ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-500/10' 
-                        : 'bg-slate-950 hover:bg-blue-600 text-white'
-                    }`}
-                  >
-                    Demander mon devis détaillé
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 10. REAL COMPLIANCE / WHY VSW DIGITAL */}
-      <section className="py-24 bg-white border-b border-slate-100 text-left">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="grid lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
-            
-            <div className="space-y-6">
-              <span className="text-xs font-bold tracking-wider text-blue-600 uppercase block">Notre Philosophie</span>
-              <h2 className="text-3xl font-display font-bold text-slate-900 tracking-tight leading-tight">
-                Pourquoi confier la refonte de votre plateforme à VSW Digital ?
-              </h2>
-              <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base">
-                Refondre un site implique la sauvegarde de votre réputation locale. Notre méthode pragmatique associe rigueur technique et clarté budgétaire pour s'assurer que vous conservez vos acquis.
-              </p>
-
-              <div className="space-y-4">
-                <div className="flex gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                    <TrendingUp className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <strong className="text-slate-950 font-display text-sm block mb-0.5">Priorité à l'acquisition concrète :</strong>
-                    <span className="text-slate-600 text-xs leading-relaxed">Nous n'insérons pas de décoration graphique superflue. Chaque bloc visuel est conçu pour diriger le regard vers le contact.</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                    <ShieldCheck className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <strong className="text-slate-950 font-display text-sm block mb-0.5">Rigueur sur la redirection 301 :</strong>
-                    <span className="text-slate-600 text-xs leading-relaxed">Nous protégeons scrupuleusement l'historique d’indexation de vos pages de services d’une manière totalement transparente pour les robots de recherche.</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                    <BookOpen className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <strong className="text-slate-950 font-display text-sm block mb-0.5">Explications sans jargon d’ingénieur :</strong>
-                    <span className="text-slate-600 text-xs leading-relaxed">Nous vous exposons l'évolution de votre chantier numérique en termes simples, clairs et sans termes cryptiques.</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Our Charter box */}
-            <div className="relative">
-              <div className="bg-[#0c1223] rounded-3xl p-6 md:p-8 text-white relative overflow-hidden max-w-sm mx-auto shadow-2xl space-y-6">
-                <div className="absolute top-0 right-0 p-4 font-mono text-slate-800 text-6xl select-none font-black opacity-30">VSW</div>
-                
-                <h4 className="font-bold text-base font-display text-blue-400 flex items-center gap-1.5 border-b border-slate-800 pb-3">
-                  <Sparkles className="w-4 h-4" />
-                  <span>La Charte d'Éthique VSW Digital</span>
-                </h4>
-                
-                <div className="space-y-4">
-                  <div className="border-l border-blue-500 pl-4 space-y-1 text-left">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">01. Aucun abonnement caché</span>
-                    <p className="text-slate-300 text-[11px] leading-relaxed font-sans">Vous êtes l'unique propriétaire légal de votre site, de son hébergeur et de ses domaines dès le jour de la livraison.</p>
-                  </div>
-
-                  <div className="border-l border-blue-500 pl-4 space-y-1 text-left">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">02. Pas de faisses garanties SEO</span>
-                    <p className="text-slate-300 text-[11px] leading-relaxed font-sans">Nous ne promettons jamais de première place Google en 48h. Nous garantissons une base sémantique et technique rigoureuse validée par Google.</p>
-                  </div>
-
-                  <div className="border-l border-blue-500 pl-4 space-y-1 text-left">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block font-mono">03. Code d'Origine Contrôlé</span>
-                    <p className="text-slate-300 text-[11px] leading-relaxed font-sans">Aucun assemblage de thèmes lourds qui ralentissent son affichage. Chaque composant est configuré proprement.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* 11. FAQ ACCORDION SECTION */}
-      <section className="py-24 bg-slate-50 text-left border-b border-slate-150">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <div className="text-center mb-16 space-y-4">
-            <span className="text-xs font-bold tracking-wider text-blue-600 uppercase block">Réponses d’Experts</span>
-            <h2 className="text-3xl font-display font-bold text-slate-900 tracking-tight">
-              Questions posées fréquemment sur la refonte de site
-            </h2>
-            <p className="text-slate-600 leading-relaxed font-sans text-sm md:text-base">
-              Ressource de réponses claires et objectives sur les enjeux de transition de votre site existant vers une nouvelle ère.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <div 
-                key={index} 
-                className="border border-slate-200 rounded-2xl bg-white overflow-hidden transition-all duration-300 shadow-sm"
-              >
-                <button
-                  onClick={() => toggleFaq(index)}
-                  className="w-full flex items-center justify-between p-6 text-left focus:outline-none gap-4"
-                >
-                  <span className="font-bold text-slate-900 font-display text-[15px] leading-tight">
-                    {faq.q}
-                  </span>
-                  <div className="shrink-0 p-1 bg-slate-50 border border-slate-200 text-slate-500 rounded-md">
-                    {openFaq === index ? (
-                      <ChevronUp className="w-4 h-4 text-blue-600" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </div>
-                </button>
-
-                {openFaq === index && (
-                  <div className="px-6 pb-6 pt-1 border-t border-slate-100">
-                    <p className="text-slate-600 text-xs md:text-sm leading-relaxed font-sans whitespace-pre-line">
-                      {faq.a}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 12. LOWER CTA SECTION - HIGH VALUE CONTACT PUSH */}
-      <section className="py-24 bg-[#0a0f1d] text-white relative overflow-hidden border-t border-slate-900">
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute top-1/2 left-1/3 w-80 h-80 rounded-full bg-blue-600/10 blur-[100px]" />
-          <div className="absolute bottom-0 right-10 w-96 h-96 rounded-full bg-indigo-600/10 blur-[130px]" />
-        </div>
-
-        <div className="container mx-auto px-6 max-w-5xl relative z-10 text-center space-y-8">
-          <div className="max-w-3xl mx-auto space-y-4 text-center">
-            <span className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 font-bold uppercase tracking-wider text-[10px] rounded-lg inline-block">
-              Analyse &amp; Diagnostic sans engagement
-            </span>
-            <h2 className="text-3xl md:text-4.5xl font-display font-bold tracking-tight">
-              Prêt à transformer votre site existant en levier de croissance ?
-            </h2>
-            <p className="text-slate-300 leading-relaxed font-sans max-w-2xl mx-auto text-sm md:text-base">
-              Soumettez-nous simplement l’adresse de votre site web actuel. Nos équipes de techniciens réaliseront une analyse objective et constructive de ses indices réels de performances sans harcèlement commercial.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+          <div className="mt-10">
             <Link
               to="/contact"
-              id="cta-contact-bottom"
-              className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold tracking-wide transition-all duration-300 text-center shadow-lg shadow-blue-500/15 flex items-center justify-center gap-2"
+              className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-8 py-4 font-semibold text-white shadow-2xl shadow-blue-500/30 transition-all hover:-translate-y-0.5 hover:bg-blue-400"
             >
-              <span>Demander mon audit technique gratuit</span>
-              <ArrowRight className="w-4 h-4" />
+              Demander mon diagnostic de refonte
+              <ArrowUpRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
-          </div>
-
-          <div className="pt-6 text-slate-500 font-mono text-[10px] uppercase">
-            <span>RÉPONSE CLAIRE SOUS 24 HEURES • ÉCHANGE TOTALEMENT SANS ENGAGEMENT</span>
           </div>
         </div>
       </section>
-
-    </div>
+    </main>
   );
 }
