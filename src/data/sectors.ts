@@ -1,8 +1,12 @@
 export const sectors = [
-  { name: "Artisans & BTP" },
-  { name: "Commerçants locaux" },
-  { name: "Sociétés de sécurité" },
-  { name: "Déménagement" },
-  { name: "Prestataires de services" },
-  { name: "Formation" },
+  { name: "PME & entreprises locales" },
+  { name: "Artisans & rénovation" },
+  { name: "Sécurité privée" },
+  { name: "Déménagement & transport" },
+  { name: "Réparation téléphone" },
+  { name: "Formation & e-learning" },
+  { name: "Domiciliation d’entreprise" },
+  { name: "Commerces & restaurants" },
+  { name: "Immobilier & services" },
+  { name: "Automobile" },
 ];
