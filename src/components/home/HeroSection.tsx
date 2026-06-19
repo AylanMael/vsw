@@ -49,14 +49,14 @@ export function HeroSection() {
           className="flex flex-col justify-center gap-4 sm:flex-row"
         >
           <Link
-            href="/contact"
+            to="/contact"
             className="rounded-xl bg-navy-900 px-8 py-4 font-medium text-white shadow-xl shadow-navy-900/20 transition-all hover:bg-electric-blue hover:shadow-electric-blue/40"
           >
             Demander un audit gratuit
           </Link>
 
           <Link
-            href="/services"
+            to="/services"
             className="rounded-xl border border-navy-900/10 bg-white px-8 py-4 font-medium text-navy-900 shadow-sm transition-all hover:bg-gray-50"
           >
             Découvrir nos services

@@ -1,10 +1,10 @@
 {
-  "projectId": "sentrys",
-  "appId": "1:782055895046:web:982a61803cc4d9f4cb9387",
-  "apiKey": "AIzaSyABPFu91CWi0LkdBXD-1OXgHgheFYLwZFE",
-  "authDomain": "sentrys.firebaseapp.com",
+  "projectId": "vsw-digital",
+  "appId": "1:710263488011:web:aba3f01f18ac5264a4910e",
+  "apiKey": "AIzaSyDs3xUNhwnX9xDJ_IZiRwJCyxWllPz6Y2M",
+  "authDomain": "vsw-digital.firebaseapp.com",
   "firestoreDatabaseId": "ai-studio-ee0882b1-ced0-478b-8664-2bd99d77ce81",
-  "storageBucket": "sentrys.firebasestorage.app",
-  "messagingSenderId": "782055895046",
-  "measurementId": ""
+  "storageBucket": "vsw-digital.firebasestorage.app",
+  "messagingSenderId": "710263488011",
+  "measurementId": "G-23TF7N02L"
 }

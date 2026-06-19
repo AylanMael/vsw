@@ -1,4 +1,6 @@
-export const BLOG_POSTS = [
+import { BlogPost } from "../types/blog";
+
+export const BLOG_POSTS: BlogPost[] = [
   {
     slug: "landing-page-google-ads-conversion",
     title: "Landing page Google Ads : les éléments indispensables pour convertir",
@@ -15,7 +17,9 @@ export const BLOG_POSTS = [
     },
     introduction: "Vous lancez ou optimisez une campagne Google Ads et les clics affluent, mais les demandes de devis restent désespérément absentes ? Ce scénario est le quotidien de nombreux dirigeants de PME, artisans et indépendants. Trop souvent, le coupable désigné est la campagne elle-même : mots-clés mal choisis, enchères trop basses ou annonces peu engageantes. Pourtant, dans une immense majorité de cas, le véritable frein à la performance se situe ailleurs : sur votre page de destination.",
     sections: [],
-    faq: []
+    faq: [],
+    summary: "",
+    relatedSlugs: []
   },
   {
     slug: "application-web-sur-mesure-utilite",
@@ -33,7 +37,9 @@ export const BLOG_POSTS = [
     },
     introduction: "Votre site internet professionnel est indispensable pour présenter votre activité et attirer de nouveaux prospects. C'est votre vitrine, celle qui travaille pour vous 24h/24. Pourtant, lorsque votre entreprise grandit, cette vitrine ne suffit plus à gérer la réalité de votre quotidien opérationnel. Que faire quand vous jonglez entre des dizaines d'emails, des fichiers Excel devenus illisibles, des dossiers papier, des relances manuelles incessantes et des pièces jointes éparpillées ? C’est précisément à ce stade que l’application web sur mesure devient un levier stratégique.",
     sections: [],
-    faq: []
+    faq: [],
+    summary: "",
+    relatedSlugs: []
   },
   {
     slug: "espace-client-en-ligne-utilite",
@@ -54,6 +60,8 @@ export const BLOG_POSTS = [
     faq: [
         { q: "Qu'est-ce qu'un espace client en ligne ?", a: "Un portail sécurisé et dédié où vos clients peuvent accéder, consulter, déposer ou valider des informations et documents liés à leur dossier." },
         { q: "Quels sont les avantages pour ma PME ?", a: "Gain de temps sur la gestion documentaire, moins d'échanges dispersés, meilleure transparence pour vos clients et professionnalisation de votre image." }
-    ]
+    ],
+    summary: "",
+    relatedSlugs: []
   }
 ];
