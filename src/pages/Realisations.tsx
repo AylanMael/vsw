@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
+import { RealisationReferences } from "../components/realisations/RealisationReferences";
 import {
   Activity,
   AlertTriangle,
@@ -1096,6 +1097,8 @@ export function Realisations() {
           </div>
         </div>
       </section>
+
+      <RealisationReferences />
 
       {/* FAQ */}
       <section className="bg-slate-50 py-24 md:py-32">
