@@ -1,122 +1,164 @@
-
-import { motion } from 'motion/react';
-import { Layout, ShieldCheck, Search, FileText, Zap, Layers, ArrowRight } from 'lucide-react';
+import { motion } from "motion/react";
+import {
+  Layout,
+  ShieldCheck,
+  Search,
+  FileText,
+  Zap,
+  Layers,
+} from "lucide-react";
 
 const benefits = [
-  { 
-    icon: Layout, 
-    category: "Design d'écrans",
-    title: "Valoriser votre image de marque", 
-    desc: "Un design épuré, d'une grande modernité, conçu sur-mesure pour votre marque.",
-    details: ["Charte graphique unique", "Recherche de styles sur-mesure", "Animations soignées fluides"],
-    badgeColor: "bg-blue-50 text-blue-600 border-blue-100"
+  {
+    icon: Layout,
+    category: "Design",
+    title: "Valoriser votre image de marque",
+    desc: "Un design moderne, clair et adapté à votre activité pour donner une première impression plus professionnelle.",
+    details: [
+      "Direction visuelle cohérente",
+      "Interface adaptée à votre secteur",
+      "Animations discrètes et fluides",
+    ],
+    badgeColor: "bg-blue-50 text-blue-600 border-blue-100",
   },
-  { 
-    icon: ShieldCheck, 
-    category: "Crédibilité locale",
-    title: "Rassurer les visiteurs", 
-    desc: "Nous disposons intelligemment vos preuves de confiance clés au coeur de la navigation.",
-    details: ["Avis clients automatisés", "Garanties décennales & Qualibat", "Portfolio haute-définition"],
-    badgeColor: "bg-emerald-50 text-emerald-600 border-emerald-100"
+  {
+    icon: ShieldCheck,
+    category: "Confiance",
+    title: "Rassurer vos visiteurs",
+    desc: "Une présentation plus claire de vos preuves de confiance pour aider vos prospects à passer à l’action.",
+    details: [
+      "Avis clients mis en valeur",
+      "Références et réalisations visibles",
+      "Informations de contact accessibles",
+    ],
+    badgeColor: "bg-emerald-50 text-emerald-600 border-emerald-100",
   },
-  { 
-    icon: Search, 
-    category: "Visibilité ciblée",
-    title: "Surgir en tête de Google", 
-    desc: "Un socle technique d'une propreté absolue pour plaire immédiatement aux robots de Google.",
-    details: ["Balisage HTML5 sémantique", "Données structurées Schema.org", "Optimisation sémantique locale"],
-    badgeColor: "bg-purple-50 text-purple-600 border-purple-100"
+  {
+    icon: Search,
+    category: "SEO",
+    title: "Construire une base saine pour Google",
+    desc: "Une structure technique et éditoriale pensée pour améliorer la lisibilité de votre site par les moteurs de recherche.",
+    details: [
+      "Balisage HTML sémantique",
+      "Structure Hn cohérente",
+      "Optimisation SEO locale",
+    ],
+    badgeColor: "bg-purple-50 text-purple-600 border-purple-100",
   },
-  { 
-    icon: FileText, 
-    category: "Architecture claire",
-    title: "Structurer vos expertises", 
-    desc: "Une hiérarchie de pages claire pour présenter vos travaux et services par type ou zone.",
-    details: ["Pages d'expertises dédiées", "Silotage sémantique SEO", "Lecture aérée et structurée"],
-    badgeColor: "bg-amber-50 text-amber-600 border-amber-100"
+  {
+    icon: FileText,
+    category: "Structure",
+    title: "Présenter clairement vos services",
+    desc: "Une organisation de pages plus lisible pour expliquer vos prestations, vos zones d’intervention et vos points forts.",
+    details: [
+      "Pages services dédiées",
+      "Parcours utilisateur plus clair",
+      "Contenus mieux hiérarchisés",
+    ],
+    badgeColor: "bg-amber-50 text-amber-600 border-amber-100",
   },
-  { 
-    icon: Zap, 
-    category: "Machine à contacts",
-    title: "Générer des devis qualifiés", 
-    desc: "Placer stratégiquement vos formulaires de contact là où vos visiteurs sont prêts à s'engager.",
-    details: ["Formulaires d'estimation rapides", "Numéro cliquable permanent", "Boutons CTA à fort impact"],
-    badgeColor: "bg-rose-50 text-rose-600 border-rose-100"
+  {
+    icon: Zap,
+    category: "Conversion",
+    title: "Faciliter les demandes de contact",
+    desc: "Des appels à l’action bien placés pour permettre aux visiteurs intéressés de vous contacter plus facilement.",
+    details: [
+      "Formulaires simples",
+      "Téléphone cliquable",
+      "Boutons d’action visibles",
+    ],
+    badgeColor: "bg-rose-50 text-rose-600 border-rose-100",
   },
-  { 
-    icon: Layers, 
-    category: "Actif durable",
-    title: "S'assurer un code évolutif", 
-    desc: "Pas de systèmes bridés. Vous êtes propriétaire d'un code standardisé, évolutif et robuste.",
-    details: ["Évite l'obsolescence technique", "Prêt pour CRM ou espace client", "Facilité de modification future"],
-    badgeColor: "bg-cyan-50 text-cyan-600 border-cyan-100"
+  {
+    icon: Layers,
+    category: "Évolutivité",
+    title: "Préparer votre site pour la suite",
+    desc: "Une base technique propre et évolutive pour pouvoir ajouter de nouvelles pages, fonctionnalités ou outils plus tard.",
+    details: [
+      "Code maintenable",
+      "Base prête pour évolutions",
+      "Connexion possible à des outils métier",
+    ],
+    badgeColor: "bg-cyan-50 text-cyan-600 border-cyan-100",
   },
 ];
 
 export function CreationBenefits() {
   return (
-    <section className="py-24 bg-white border-b border-gray-100 relative">
-      <div className="container mx-auto px-6">
-        
+    <section className="relative border-b border-slate-100 bg-white py-24 md:py-32">
+      <div className="container mx-auto max-w-7xl px-6">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <span className="text-xs font-mono font-bold tracking-widest text-electric-blue uppercase bg-electric-blue/5 px-3 py-1 rounded-full border border-electric-blue/10">
-            Maximiser votre R.O.I.
+        <div className="mx-auto mb-16 max-w-4xl text-center">
+          <span className="inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+            Bénéfices concrets
           </span>
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-navy-900 mt-4 mb-6 leading-tight">
-            Des bénéfices concrets pour devancer vos concurrents
+
+          <h2 className="mt-5 font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+            Un site professionnel pensé pour inspirer confiance et générer des demandes
           </h2>
-          <p className="text-navy-900/60 leading-relaxed text-sm md:text-base">
-            Oubliez les thèmes génériques empilant les plugins lourds et non maintenus. Nous construisons pour votre PME un véritable actif commercial sur-mesure, stable et conçu pour durer 10 ans sans perdre sa jeunesse.
+
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+            Un bon site ne se limite pas à un joli design. Il doit présenter
+            clairement votre activité, rassurer vos visiteurs, faciliter la prise
+            de contact et poser une base technique saine pour votre visibilité.
           </p>
         </div>
 
         {/* Grid cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {benefits.map((b, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.4, delay: i * 0.05 }}
-              whileHover={{ y: -6 }} 
-              className="group p-8 bg-white border border-gray-100 rounded-3xl hover:border-electric-blue/20 hover:shadow-2xl hover:shadow-electric-blue/5 transition-all duration-300 flex flex-col justify-between"
-            >
-              <div>
-                {/* Header card info */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="p-3 bg-gray-50 group-hover:bg-electric-blue/5 rounded-2xl inline-block group-hover:scale-110 transition-all duration-300 border border-gray-100 group-hover:border-electric-blue/10">
-                    <b.icon className="h-6 w-6 text-electric-blue" />
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {benefits.map((benefit, index) => {
+            const Icon = benefit.icon;
+
+            return (
+              <motion.article
+                key={benefit.title}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+                whileHover={{ y: -6 }}
+                className="group flex flex-col justify-between rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:border-blue-200 hover:shadow-2xl hover:shadow-blue-500/10"
+              >
+                <div>
+                  {/* Header card info */}
+                  <div className="mb-6 flex items-center justify-between gap-4">
+                    <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-[#3b82f6] transition-all duration-300 group-hover:scale-105 group-hover:border-blue-200 group-hover:bg-blue-50">
+                      <Icon className="h-6 w-6" />
+                    </div>
+
+                    <span
+                      className={`rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${benefit.badgeColor}`}
+                    >
+                      {benefit.category}
+                    </span>
                   </div>
-                  <span className={`text-[10px] font-mono tracking-wide uppercase px-2.5 py-1 rounded-md border ${b.badgeColor}`}>
-                    {b.category}
-                  </span>
+
+                  <h3 className="font-display text-xl font-bold text-[#0f172a] transition-colors duration-200 group-hover:text-[#3b82f6]">
+                    {benefit.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                    {benefit.desc}
+                  </p>
                 </div>
 
-                {/* Title and paragraph */}
-                <h3 className="text-lg font-bold font-display mb-3 text-navy-900 group-hover:text-electric-blue transition-colors duration-200">
-                  {b.title}
-                </h3>
-                <p className="text-xs text-navy-900/65 leading-relaxed mb-6">
-                  {b.desc}
-                </p>
-              </div>
-
-              {/* Sub features bullet points */}
-              <div className="border-t border-gray-50 pt-5 mt-auto">
-                <ul className="space-y-2.5">
-                  {b.details.map((detail, dIdx) => (
-                    <li key={dIdx} className="flex items-center gap-2 text-[11px] font-medium text-navy-900/80">
-                      <div className="w-1.5 h-1.5 rounded-full bg-electric-blue/70" />
-                      <span>{detail}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-            </motion.div>
-          ))}
+                {/* Sub features bullet points */}
+                <div className="mt-7 border-t border-slate-100 pt-5">
+                  <ul className="space-y-3">
+                    {benefit.details.map((detail) => (
+                      <li
+                        key={detail}
+                        className="flex items-center gap-3 text-sm font-medium text-slate-700"
+                      >
+                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#3b82f6]" />
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.article>
+            );
+          })}
         </div>
       </div>
     </section>

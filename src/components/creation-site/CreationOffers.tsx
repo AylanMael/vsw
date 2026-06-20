@@ -1,163 +1,220 @@
-
-import { CheckCircle, Sparkles, HelpCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { CheckCircle, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const offers = [
-  { 
-    title: "Vitrine Essentiel", 
-    tagline: "Présence locale rapide",
-    idealFor: "Artisans, professions libérales ou commerces de proximité démarrant leur activité.",
+  {
+    title: "Vitrine Essentiel",
+    tagline: "Présence professionnelle simple",
+    idealFor:
+      "Artisans, indépendants, professions libérales ou commerces qui veulent une présence claire et crédible.",
     price: "1 290 €",
-    duration: "10-15 jours",
+    duration: "2 à 3 semaines",
     features: [
       "4 à 5 pages clés de présentation",
-      "Webdesign moderne & 100% Mobile",
-      "Formulaire de devis & contact protégé",
-      "Optimisation SEO locale de base",
-      "Boutons d'appels directs pour mobiles",
-      "Hébergement ultra-rapide sécurisé"
+      "Design moderne et responsive",
+      "Formulaire de contact",
+      "Base SEO technique",
+      "Téléphone cliquable sur mobile",
+      "Conseil pour hébergement et nom de domaine",
     ],
     isPopular: false,
-    ctaText: "Choisir l'offre Essentiel",
-    badge: "Le pack démarrage"
+    ctaText: "Demander cette formule",
+    badge: "Pack démarrage",
   },
-  { 
-    title: "Vitrine Pro SEO", 
-    tagline: "Maximiser vos chantiers",
-    idealFor: "PME et artisans établis souhaitant surpasser leurs concurrents sur Google.",
+  {
+    title: "Vitrine Pro SEO",
+    tagline: "Site structuré pour PME locale",
+    idealFor:
+      "PME, artisans et entreprises de services qui veulent mieux présenter leurs offres et renforcer leur visibilité locale.",
     price: "2 290 €",
-    duration: "3-4 semaines",
+    duration: "3 à 5 semaines",
     features: [
-      "Pages d'expertises illimitées (silos)",
-      "Rédaction de contenus optimisée SEO",
-      "Campagne d'indexation locale ciblée",
-      "Score mobile Google PageSpeed > 90/100",
-      "Intégration d'avis Google automatisés",
-      "Rapport trimestriel d'analytics & leads",
-      "Sauvegarde & Sécurité renforcée"
+      "Pages services structurées",
+      "Rédaction ou optimisation des contenus",
+      "Structure SEO locale",
+      "Optimisation mobile et performance",
+      "Mise en valeur des avis ou références",
+      "Connexion possible à Search Console",
+      "Conseils de suivi après lancement",
     ],
     isPopular: true,
-    ctaText: "Choisir l'offre Pro SEO",
-    badge: "Idéal PME locale"
+    ctaText: "Demander la formule Pro",
+    badge: "Idéal PME locale",
   },
-  { 
-    title: "Premium Évolutif", 
-    tagline: "Sur-mesure de pointe",
-    idealFor: "Entreprises installées voulant une image haut de gamme ou des fonctions complexes.",
+  {
+    title: "Premium Évolutif",
+    tagline: "Projet avancé ou sur mesure",
+    idealFor:
+      "Entreprises qui souhaitent un site plus complet, une image haut de gamme ou des fonctionnalités spécifiques.",
     price: "Sur devis",
-    duration: "4-6 semaines",
+    duration: "4 à 8 semaines",
     features: [
-      "Design 100% sur-mesure d'ingénieur",
-      "Structure multi-langues ou multi-villes",
-      "Espace client privé ou portail collaboratif",
-      "Interconnexion de formulaires avec votre CRM",
-      "Tracking marketing avancé (Meta/Google)",
-      "Optimisation de vitesse extrême",
-      "Accompagnement mensuel inclus 3 mois"
+      "Design personnalisé plus avancé",
+      "Structure multi-services, multi-villes ou multilingue",
+      "Espace client ou portail possible",
+      "Connexion possible à un CRM ou outil métier",
+      "Suivi des conversions Google / Meta",
+      "Optimisation technique selon le projet",
+      "Accompagnement après lancement selon besoin",
     ],
     isPopular: false,
-    ctaText: "Demander une étude Premium",
-    badge: "Le sur-mesure absolu"
+    ctaText: "Demander une étude",
+    badge: "Projet sur mesure",
   },
 ];
 
 export function CreationOffers() {
   return (
-    <section className="py-24 bg-white border-b border-gray-100 relative">
-      <div className="container mx-auto px-6">
-        
+    <section className="relative border-b border-slate-100 bg-white py-24 md:py-32">
+      <div className="container mx-auto max-w-7xl px-6">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <span className="text-xs font-mono font-bold tracking-widest text-electric-blue uppercase bg-electric-blue/5 px-3 py-1 rounded-full border border-electric-blue/10">
-            Transparence & Rigueur
+        <div className="mx-auto mb-16 max-w-4xl text-center">
+          <span className="inline-flex rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6]">
+            Formules indicatives
           </span>
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-navy-900 mt-4 mb-6 leading-tight">
-            Des formules conçues pour s'adapter à votre projet
+
+          <h2 className="mt-5 font-display text-3xl font-bold leading-tight tracking-[-0.03em] text-[#0f172a] md:text-5xl">
+            Des formules adaptées à votre niveau de projet
           </h2>
-          <p className="text-navy-900/60 leading-relaxed text-sm md:text-base">
-            Aucun coût caché ni abonnement captif. Nos devis sont fixes, transparents et taillés sur-mesure selon la complexité et les objectifs d'affaires de votre entreprise.
+
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
+            Ces offres donnent un premier repère de budget. Le devis final
+            dépend du nombre de pages, du niveau de design, des contenus, des
+            fonctionnalités et des intégrations souhaitées.
           </p>
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid lg:grid-cols-3 gap-8 items-stretch">
-          {offers.map((o, i) => (
-            <div 
-              key={i} 
-              className={`relative p-8 rounded-3xl flex flex-col justify-between transition-all duration-300 ${
-                o.isPopular 
-                  ? "bg-navy-900 text-white shadow-2xl shadow-blue-900/10 scale-105 lg:translate-y-[-8px] border-2 border-electric-blue" 
-                  : "bg-slate-50 text-navy-900 border border-gray-100 hover:border-gray-200"
+        <div className="grid items-stretch gap-8 lg:grid-cols-3">
+          {offers.map((offer) => (
+            <article
+              key={offer.title}
+              className={`relative flex flex-col justify-between rounded-[2rem] p-8 transition-all duration-300 ${
+                offer.isPopular
+                  ? "border-2 border-[#3b82f6] bg-[#0f172a] text-white shadow-2xl shadow-blue-500/10 lg:-translate-y-2"
+                  : "border border-slate-200 bg-slate-50 text-[#0f172a] hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/10"
               }`}
             >
-              
-              {/* Popular Badge */}
-              {o.isPopular && (
-                <div className="absolute top-0 right-1/2 translate-x-1/2 translate-y-[-50%] bg-electric-blue text-white text-[10px] font-mono tracking-widest uppercase font-bold px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-electric-blue/30">
-                  <Sparkles className="h-3 w-3 animate-pulse" />
-                  Recommandé par nos clients
+              {offer.isPopular && (
+                <div className="absolute right-1/2 top-0 flex translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-full bg-[#3b82f6] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-lg shadow-blue-500/30">
+                  <Sparkles className="h-3 w-3" />
+                  Recommandé
                 </div>
               )}
 
               <div>
-                {/* Badge card info */}
-                <span className={`inline-block text-[10px] font-mono tracking-widest uppercase font-bold px-2.5 py-1 rounded-md mb-6 ${
-                  o.isPopular ? "bg-white/10 text-electric-blue border border-white/10" : "bg-white text-navy-900/50 border border-black/5"
-                }`}>
-                  {o.badge}
+                {/* Badge */}
+                <span
+                  className={`mb-6 inline-flex rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] ${
+                    offer.isPopular
+                      ? "border-white/10 bg-white/10 text-blue-200"
+                      : "border-slate-200 bg-white text-slate-500"
+                  }`}
+                >
+                  {offer.badge}
                 </span>
 
-                <h3 className="text-2xl font-bold font-display mb-1">{o.title}</h3>
-                <p className={`text-xs mb-6 ${o.isPopular ? "text-white/60" : "text-navy-900/50"}`}>{o.tagline}</p>
-                
-                {/* Price Display */}
-                <div className="mb-6 pb-6 border-b border-gray-100/10 flex items-baseline gap-2">
-                  <span className="text-3xl md:text-4xl font-mono font-bold">{o.price}</span>
-                  {o.price !== "Sur devis" && <span className="text-xs text-muted-foreground">HT</span>}
-                </div>
+                <h3 className="font-display text-2xl font-bold">
+                  {offer.title}
+                </h3>
 
-                {/* Ideal for target */}
-                <p className={`text-xs mb-8 leading-relaxed font-medium ${
-                  o.isPopular ? "text-white/80" : "text-navy-900/70"
-                }`}>
-                  {o.idealFor}
+                <p
+                  className={`mt-2 text-sm ${
+                    offer.isPopular ? "text-slate-300" : "text-slate-500"
+                  }`}
+                >
+                  {offer.tagline}
                 </p>
 
-                {/* Delivery duration info */}
-                <div className={`text-xs font-mono mb-8 flex items-center gap-2 ${
-                  o.isPopular ? "text-emerald-400" : "text-electric-blue"
-                }`}>
-                  <span className="w-2 h-2 rounded-full bg-current" />
-                  <span>Délai d'exécution : {o.duration}</span>
+                {/* Price */}
+                <div
+                  className={`my-7 flex items-baseline gap-2 border-b pb-7 ${
+                    offer.isPopular
+                      ? "border-white/10"
+                      : "border-slate-200"
+                  }`}
+                >
+                  <span className="font-display text-4xl font-bold">
+                    {offer.price}
+                  </span>
+
+                  {offer.price !== "Sur devis" && (
+                    <span
+                      className={`text-sm font-semibold ${
+                        offer.isPopular ? "text-slate-400" : "text-slate-500"
+                      }`}
+                    >
+                      HT
+                    </span>
+                  )}
                 </div>
 
-                {/* Features list */}
-                <ul className="space-y-4 mb-8">
-                  {o.features.map((f, j) => (
-                    <li key={j} className="flex items-start gap-3 text-xs leading-relaxed">
-                      <CheckCircle className={`h-5 w-5 shrink-0 mt-0.5 ${
-                        o.isPopular ? "text-electric-blue" : "text-emerald-500"
-                      }`} />
-                      <span className={o.isPopular ? "text-white/95" : "text-navy-900"}>{f}</span>
+                {/* Ideal for */}
+                <p
+                  className={`mb-7 text-sm leading-7 ${
+                    offer.isPopular ? "text-slate-300" : "text-slate-600"
+                  }`}
+                >
+                  {offer.idealFor}
+                </p>
+
+                {/* Duration */}
+                <div
+                  className={`mb-8 flex items-center gap-2 text-sm font-semibold ${
+                    offer.isPopular ? "text-emerald-300" : "text-[#3b82f6]"
+                  }`}
+                >
+                  <span className="h-2 w-2 rounded-full bg-current" />
+                  <span>Délai indicatif : {offer.duration}</span>
+                </div>
+
+                {/* Features */}
+                <ul className="mb-8 space-y-4">
+                  {offer.features.map((feature) => (
+                    <li
+                      key={feature}
+                      className="flex items-start gap-3 text-sm leading-6"
+                    >
+                      <CheckCircle
+                        className={`mt-0.5 h-5 w-5 shrink-0 ${
+                          offer.isPopular
+                            ? "text-blue-300"
+                            : "text-emerald-500"
+                        }`}
+                      />
+
+                      <span
+                        className={
+                          offer.isPopular ? "text-slate-100" : "text-slate-700"
+                        }
+                      >
+                        {feature}
+                      </span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              {/* Call to action button */}
-              <Link 
-                to="/contact" 
-                className={`w-full text-center py-4 rounded-xl font-medium transition-all duration-300 ${
-                  o.isPopular 
-                    ? "bg-electric-blue text-white hover:bg-white hover:text-navy-900 shadow-lg shadow-electric-blue/20" 
-                    : "bg-white border border-navy-900/10 text-navy-900 hover:bg-navy-900 hover:text-white hover:border-navy-900 shadow-sm"
+              <Link
+                to="/contact"
+                className={`mt-auto flex w-full items-center justify-center rounded-2xl px-6 py-4 text-center font-semibold transition-all duration-300 ${
+                  offer.isPopular
+                    ? "bg-[#3b82f6] text-white shadow-lg shadow-blue-500/20 hover:bg-blue-400"
+                    : "border border-slate-200 bg-white text-[#0f172a] shadow-sm hover:border-[#0f172a] hover:bg-[#0f172a] hover:text-white"
                 }`}
               >
-                {o.ctaText}
+                {offer.ctaText}
               </Link>
-            </div>
+            </article>
           ))}
         </div>
+
+        {/* Note */}
+        <p className="mx-auto mt-8 max-w-3xl text-center text-sm leading-7 text-slate-500">
+          Les prix et délais sont donnés à titre indicatif. Un devis précis est
+          établi après analyse du besoin, des contenus, des fonctionnalités et
+          des contraintes techniques du projet.
+        </p>
       </div>
     </section>
   );

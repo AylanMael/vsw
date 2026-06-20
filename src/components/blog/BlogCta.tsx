@@ -1,63 +1,69 @@
-import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles, ShieldCheck, HeartHandshake } from 'lucide-react';
+import { Link } from "react-router-dom";
+import {
+  ArrowRight,
+  Sparkles,
+  ShieldCheck,
+  HeartHandshake,
+} from "lucide-react";
 
 export function BlogCta() {
   return (
-    <section className="relative my-20 rounded-3xl overflow-hidden bg-[#0a0f21] text-white py-12 px-6 md:p-14 border border-white/[0.08] shadow-2xl">
-      {/* Dynamic atmospheric ambient colors */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-1/2 left-1/4 w-[350px] h-[350px] rounded-full bg-blue-600/15 blur-[100px] -translate-y-1/2" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-indigo-500/10 blur-[120px]" />
-        {/* Fine background grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] opacity-20" />
+    <section className="relative my-20 overflow-hidden rounded-[2rem] border border-white/[0.08] bg-[#0f172a] px-6 py-12 text-white shadow-2xl md:p-14">
+      {/* Background */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/4 top-1/2 h-[350px] w-[350px] -translate-y-1/2 rounded-full bg-[#3b82f6]/15 blur-[100px]" />
+        <div className="absolute -bottom-[10%] -right-[10%] h-[400px] w-[400px] rounded-full bg-cyan-400/10 blur-[120px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] opacity-20" />
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center text-center space-y-6">
-        
-        {/* Custom badge label */}
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/25 text-[10px] font-bold tracking-widest uppercase text-blue-400 font-mono">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>APPROCHE DE PROXIMITÉ</span>
+      <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center space-y-6 text-center">
+        {/* Badge */}
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-500/25 bg-blue-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-300">
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>Approche pragmatique</span>
         </span>
 
-        {/* Title & Description of CTA */}
-        <h3 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold tracking-tight text-white max-w-2xl leading-tight">
+        {/* Title */}
+        <h3 className="max-w-2xl font-display text-2xl font-bold leading-tight tracking-[-0.03em] text-white sm:text-3xl md:text-4xl">
           Vous souhaitez améliorer votre présence digitale ?
         </h3>
 
-        <p className="text-slate-300 text-sm md:text-base leading-relaxed max-w-2xl font-light">
-          VSW Digital vous aide à identifier les actions prioritaires pour améliorer votre site, votre visibilité, vos leads ou vos outils métier de façon pragmatique et rentable.
+        <p className="max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
+          VSW Digital vous aide à identifier les actions prioritaires pour
+          améliorer votre site, votre visibilité, vos demandes de contact ou vos
+          outils métier, avec une approche claire et progressive.
         </p>
 
-        {/* Action button */}
-        <div className="pt-4 flex flex-col sm:flex-row gap-4 items-center justify-center w-full">
+        {/* Buttons */}
+        <div className="flex w-full flex-col items-center justify-center gap-4 pt-4 sm:w-auto sm:flex-row">
           <Link
             to="/contact"
-            className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold tracking-wide transition-all duration-300 shadow-xl shadow-blue-500/10 hover:shadow-blue-500/30 hover:-translate-y-0.5 flex items-center justify-center gap-1.5 text-sm md:text-base border border-blue-550/20"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-blue-400/20 bg-[#3b82f6] px-8 py-4 text-sm font-semibold text-white shadow-xl shadow-blue-500/10 transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-400 hover:shadow-blue-500/20 sm:w-auto md:text-base"
           >
             <span>Demander un audit digital</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="h-4 w-4" />
           </Link>
+
           <Link
             to="/services"
-            className="w-full sm:w-auto px-8 py-4 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.10] text-slate-100 rounded-xl font-semibold tracking-wide transition-all duration-300 flex items-center justify-center text-sm md:text-base"
+            className="inline-flex w-full items-center justify-center rounded-2xl border border-white/[0.10] bg-white/[0.04] px-8 py-4 text-sm font-semibold text-slate-100 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.08] sm:w-auto md:text-base"
           >
             Découvrir nos services
           </Link>
         </div>
 
-        {/* Confidence metrics footer */}
-        <div className="grid grid-cols-2 md:grid-cols-2 gap-4 pt-10 border-t border-white/[0.06] mt-8 w-full max-w-xl text-[11px] text-slate-400 font-mono">
+        {/* Trust footer */}
+        <div className="mt-8 grid w-full max-w-xl grid-cols-1 gap-4 border-t border-white/[0.08] pt-8 text-xs text-slate-400 sm:grid-cols-2">
           <div className="flex items-center justify-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-            <span>Diagnostic et Audit Neutres</span>
+            <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-400" />
+            <span>Diagnostic clair et sans engagement</span>
           </div>
+
           <div className="flex items-center justify-center gap-2">
-            <HeartHandshake className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-            <span>Soutien de Proximité PME / Artisans</span>
+            <HeartHandshake className="h-4 w-4 shrink-0 text-emerald-400" />
+            <span>Accompagnement PME, artisans et indépendants</span>
           </div>
         </div>
-
       </div>
     </section>
   );
