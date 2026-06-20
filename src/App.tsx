@@ -16,6 +16,8 @@ import { AuditDigital } from './pages/AuditDigital';
 import { APropos } from './pages/APropos';
 import { Blog } from './pages/Blog';
 import { BlogPost } from './pages/BlogPost';
+import { MentionsLegales } from './pages/MentionsLegales';
+import { PolitiqueConfidentialite } from './pages/PolitiqueConfidentialite';
 
 export default function App() {
   return (
@@ -38,6 +40,8 @@ export default function App() {
           <Route path="a-propos" element={<APropos />} />
           <Route path="blog" element={<Blog />} />
           <Route path="blog/:slug" element={<BlogPost />} />
+          <Route path="mentions-legales" element={<MentionsLegales />} />
+          <Route path="politique-confidentialite" element={<PolitiqueConfidentialite />} />
           <Route path="contact" element={<Contact />} />
         </Route>
       </Routes>
