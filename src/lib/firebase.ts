@@ -14,5 +14,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+const dbId = import.meta.env.VITE_FIREBASE_DATABASE_ID || firebaseAppletConfig.firestoreDatabaseId;
+export const db = dbId && dbId !== '(default)' ? getFirestore(app, dbId) : getFirestore(app);
 export const analytics = getAnalytics(app);
