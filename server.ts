@@ -433,8 +433,27 @@ Sitemap: https://vsw-digital.fr/sitemap.xml
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    
+    // 1. Configurer un cache fort et immuable pour les ressources statiques (Vite génère des hashs uniques pour les assets)
+    app.use("/assets", express.static(path.join(distPath, "assets"), {
+      maxAge: "1y",
+      immutable: true,
+      fallthrough: false
+    }));
+
+    // 2. Servir les autres fichiers statiques de la racine (robots.txt, sitemap.xml, favicon.ico, etc.)
+    app.use(express.static(distPath, {
+      maxAge: "1h",
+      index: false
+    }));
+
+    // 3. Servir le fichier d'entrée index.html avec STRICTEMENT AUCUN CACHE pour éviter la page blanche suite à une mise à jour
     app.get('*', (req, res) => {
+      res.set({
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0"
+      });
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
