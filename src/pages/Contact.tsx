@@ -236,6 +236,30 @@ export function Contact() {
           typeof window !== "undefined" ? window.navigator.userAgent : null,
       });
 
+      // Appel de l'API backend pour l'envoi d'e-mails (Workspace contact@vsw-digital.fr)
+      try {
+        await fetch("/api/contact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fullName,
+            email,
+            phone: phone || null,
+            company: company || null,
+            website: website || null,
+            projectType,
+            budget: budget || null,
+            timeline: timeline || null,
+            message,
+          }),
+        });
+      } catch (apiError) {
+        console.error("Erreur d'envoi d'e-mail via l'API :", apiError);
+        // On ne bloque pas la réussite de la soumission puisque les données sont bien enregistrées dans Firestore
+      }
+
       setSubmitStatus("success");
       setFullName("");
       setEmail("");
