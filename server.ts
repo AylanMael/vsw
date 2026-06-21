@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
 import nodemailer from "nodemailer";
+import fs from "fs";
 import { BLOG_POSTS } from "./src/data/blog-posts";
 
 const getCurrentDirname = () => {
@@ -57,6 +58,8 @@ function formatSitemapDate(dateStr?: string): string {
   return new Date().toISOString().split("T")[0];
 }
 
+let lastMailDiagnostic: any = { status: "Aucune tentative d'envoi n'a encore été enregistrée." };
+
 async function startServer() {
   const app = express();
   // IMPORTANT: Use the PORT provided by the environment, default to 3000.
@@ -68,6 +71,10 @@ async function startServer() {
   // API routes
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
+  });
+
+  app.get("/api/mail-diagnostic", (req, res) => {
+    res.json(lastMailDiagnostic);
   });
 
   // POST endpoint for contact form submissions
@@ -132,6 +139,14 @@ async function startServer() {
 
     if (!smtpPass) {
       console.warn("⚠️ SMTP_PASS assumes dry-run as it is not configured in secrets. Mail sending simulated successfully.");
+      lastMailDiagnostic = {
+        timestamp: new Date().toISOString(),
+        prospect_email: email,
+        smtp_user: smtpUser,
+        smtp_host: smtpHost,
+        success: false,
+        error: "SMTP_PASS non configuré dans les secrets d'application."
+      };
       res.json({
         success: true,
         emailSent: false,
@@ -140,24 +155,13 @@ async function startServer() {
       return;
     }
 
-    try {
-      const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: smtpPort,
-        secure: smtpPort === 465,
-        auth: {
-          user: smtpUser,
-          pass: smtpPass,
-        },
-      });
-
-      // 1. Notification à l'administrateur (réception)
-      const adminMailOptions = {
-        from: `"${process.env.SMTP_FROM_NAME || "VSW Digital"}" <${smtpUser}>`,
-        to: smtpUser,
-        replyTo: email,
-        subject: `[Nouveau Lead VSW] ${fullName} - ${projectTypeLabel}`,
-        html: `
+    // 1. Notification à l'administrateur (réception)
+    const adminMailOptions = {
+      from: `"${process.env.SMTP_FROM_NAME || "VSW Digital"}" <${smtpUser}>`,
+      to: smtpUser,
+      replyTo: email,
+      subject: `[Nouveau Lead VSW] ${fullName} - ${projectTypeLabel}`,
+      html: `
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background-color: #ffffff; color: #334155;">
   <div style="background-color: #0f172a; padding: 24px; text-align: center;">
     <h2 style="color: #ffffff; margin: 0; font-size: 20px;">Nouveau contact reçu</h2>
@@ -214,15 +218,15 @@ async function startServer() {
     © ${new Date().getFullYear()} VSW Digital. Tous droits réservés.
   </div>
 </div>
-        `,
-      };
+      `,
+    };
 
-      // 2. Accusé de réception automatique (pour le client)
-      const clientMailOptions = {
-        from: `"${process.env.SMTP_FROM_NAME || "VSW Digital"}" <${smtpUser}>`,
-        to: email,
-        subject: `Accusé de réception - Votre projet avec VSW Digital`,
-        html: `
+    // 2. Accusé de réception automatique (pour le client)
+    const clientMailOptions = {
+      from: `"${process.env.SMTP_FROM_NAME || "VSW Digital"}" <${smtpUser}>`,
+      to: email,
+      subject: `Accusé de réception - Votre projet avec VSW Digital`,
+      html: `
 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background-color: #ffffff; color: #334155;">
   <div style="background-color: #0f172a; padding: 24px; text-align: center;">
     <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.02em;">VSW Digital</h1>
@@ -260,22 +264,94 @@ async function startServer() {
     Ce message est un accusé de réception automatique de votre demande. Pour nous écrire, répondez simplement à cet e-mail.
   </div>
 </div>
-        `,
-      };
+      `,
+    };
 
-      // Execute both emails
+    let emailSent = false;
+    let errors: string[] = [];
+
+    // Tentative 1 : SMTP configuré par défaut (ex: Port 465 SSL)
+    try {
+      console.log(`Tentative d'envoi d'e-mail via SMTP ${smtpHost}:${smtpPort} (secure: ${smtpPort === 465})...`);
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
+        },
+        connectionTimeout: 8000,
+        greetingTimeout: 5000,
+      });
+
+      await transporter.verify();
+      
       await Promise.all([
         transporter.sendMail(adminMailOptions),
         transporter.sendMail(clientMailOptions),
       ]);
 
-      console.log(`📧 Emails envoyés avec succès pour contact : ${email}`);
+      emailSent = true;
+      console.log(`📧 Emails envoyés avec succès via le port primaire ${smtpPort}`);
+    } catch (err1) {
+      const errMsg1 = err1 instanceof Error ? err1.message : String(err1);
+      console.error(`❌ Échec de l'envoi primaire (${smtpHost}:${smtpPort}) :`, errMsg1);
+      errors.push(`Primaire (${smtpHost}:${smtpPort}) : ${errMsg1}`);
+
+      // Tentative 2: Repli sur le port alternatif (si 465, alors 587 avec STARTTLS, et inversement)
+      const fallbackPort = smtpPort === 465 ? 587 : 465;
+      try {
+        console.log(`🔄 Repli : tentative d'envoi via SMTP ${smtpHost}:${fallbackPort} (secure: ${fallbackPort === 465})...`);
+        const fallbackTransporter = nodemailer.createTransport({
+          host: smtpHost,
+          port: fallbackPort,
+          secure: fallbackPort === 465, // si 587, secure doit être false (STARTTLS)
+          auth: {
+            user: smtpUser,
+            pass: smtpPass,
+          },
+          connectionTimeout: 8000,
+          greetingTimeout: 5000,
+        });
+
+        await fallbackTransporter.verify();
+
+        await Promise.all([
+          fallbackTransporter.sendMail(adminMailOptions),
+          fallbackTransporter.sendMail(clientMailOptions),
+        ]);
+
+        emailSent = true;
+        console.log(`📧 Emails envoyés avec succès via le port de repli ${fallbackPort}`);
+      } catch (err2) {
+        const errMsg2 = err2 instanceof Error ? err2.message : String(err2);
+        console.error(`❌ Échec de l'envoi de repli (Port ${fallbackPort}) :`, errMsg2);
+        errors.push(`Repli (${smtpHost}:${fallbackPort}) : ${errMsg2}`);
+      }
+    }
+
+    // Sauvegarde du diagnostic
+    lastMailDiagnostic = {
+      timestamp: new Date().toISOString(),
+      prospect_email: email,
+      project_type: projectTypeLabel,
+      smtp_user: smtpUser,
+      smtp_host: smtpHost,
+      primary_port_tried: smtpPort,
+      success: emailSent,
+      errors: errors,
+      smtp_pass_provided: !!smtpPass,
+      smtp_pass_length: smtpPass ? smtpPass.length : 0,
+    };
+
+    if (emailSent) {
       res.json({ success: true, emailSent: true });
-    } catch (emailError) {
-      console.error("❌ Erreur de livraison de mail :", emailError);
+    } else {
       res.status(500).json({
+        success: false,
         error: "Impossible d'envoyer l'e-mail de notification.",
-        details: emailError instanceof Error ? emailError.message : String(emailError)
+        details: errors.join(" | ")
       });
     }
   });

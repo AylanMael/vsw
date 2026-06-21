@@ -238,7 +238,7 @@ export function Contact() {
 
       // Appel de l'API backend pour l'envoi d'e-mails (Workspace contact@vsw-digital.fr)
       try {
-        await fetch("/api/contact", {
+        const response = await fetch("/api/contact", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -255,9 +255,15 @@ export function Contact() {
             message,
           }),
         });
+
+        if (!response.ok) {
+          const resData = await response.json().catch(() => ({}));
+          console.error("Erreur serveur lors de l'envoi d'e-mail :", resData);
+        } else {
+          console.log("E-mail envoyé avec succès via le backend.");
+        }
       } catch (apiError) {
-        console.error("Erreur d'envoi d'e-mail via l'API :", apiError);
-        // On ne bloque pas la réussite de la soumission puisque les données sont bien enregistrées dans Firestore
+        console.error("Erreur de connexion réseau à l'API d'envoi d'e-mail :", apiError);
       }
 
       setSubmitStatus("success");
