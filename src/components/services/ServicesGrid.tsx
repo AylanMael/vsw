@@ -10,6 +10,7 @@ import {
   BarChart,
   ArrowRight,
   Sparkles,
+  Brain,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -43,6 +44,12 @@ const services = [
     title: "Cloud & automatisation",
     desc: "Gagnez du temps avec des workflows, notifications, bases de données et solutions cloud sécurisées.",
     link: "/cloud-automatisation",
+  },
+  {
+    icon: Brain,
+    title: "IA & automatisation",
+    desc: "Solutions concrètes pour traiter vos demandes, exploiter vos contenus et automatiser vos tâches avec supervision.",
+    link: "/ia-automatisation-intelligente",
   },
   {
     icon: RefreshCw,

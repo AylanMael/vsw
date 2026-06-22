@@ -5,6 +5,7 @@ import { MainLayout } from './components/layout/MainLayout';
 const Home = lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
 const Services = lazy(() => import('./pages/Services').then(m => ({ default: m.Services })));
 const CreationSiteInternet = lazy(() => import('./pages/CreationSiteInternet').then(m => ({ default: m.CreationSiteInternet })));
+const IaAutomatisation = lazy(() => import('./pages/IaAutomatisation').then(m => ({ default: m.IaAutomatisation })));
 const ReferencementSeo = lazy(() => import('./pages/ReferencementSeo').then(m => ({ default: m.ReferencementSeo })));
 const ApplicationsWeb = lazy(() => import('./pages/ApplicationsWeb').then(m => ({ default: m.ApplicationsWeb })));
 const DemoEspaceClient = lazy(() => import('./pages/DemoEspaceClient').then(m => ({ default: m.DemoEspaceClient })));
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="creation-site-internet" element={<CreationSiteInternet />} />
             <Route path="refonte-site-internet" element={<RefonteSiteInternet />} />
             <Route path="maintenance-site-internet" element={<MaintenanceSiteInternet />} />
+            <Route path="ia-automatisation-intelligente" element={<IaAutomatisation />} />
             <Route path="referencement-seo" element={<ReferencementSeo />} />
             <Route path="applications-web" element={<ApplicationsWeb />} />
             <Route path="application-web-sur-mesure" element={<ApplicationsWeb />} />
