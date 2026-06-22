@@ -11,9 +11,9 @@ export function SeoEstimator() {
 
   // Price matrix components
   const basePrices = {
-    'low': 690,
-    'medium': 1290,
-    'high': 2190
+    'low': 150, // Audit
+    'medium': 450, // Custom project
+    'high': 890 // Advanced project/refonte
   };
 
   const clusterPrices = {

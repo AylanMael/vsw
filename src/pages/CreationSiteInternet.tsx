@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Calculator } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { CreationHero } from "../components/creation-site/CreationHero";
 import { CreationBenefits } from "../components/creation-site/CreationBenefits";
 import { CreationStack } from "../components/creation-site/CreationStack";
 import { CreationMethod } from "../components/creation-site/CreationMethod";
-import { CreationEstimator } from "../components/creation-site/CreationEstimator";
 import { CreationOffers } from "../components/creation-site/CreationOffers";
 import { CreationFaq } from "../components/creation-site/CreationFaq";
 
@@ -15,7 +14,6 @@ export function CreationSiteInternet() {
       <CreationBenefits />
       <CreationStack />
       <CreationMethod />
-      <CreationEstimator />
       <CreationOffers />
       <CreationFaq />
 
@@ -56,14 +54,6 @@ export function CreationSiteInternet() {
                 Demander un audit gratuit
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
-
-              <a
-                href="#estimator"
-                className="group inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur transition-all hover:-translate-y-0.5 hover:bg-white/15"
-              >
-                <Calculator className="h-5 w-5 text-blue-300" />
-                Simuler mon tarif en ligne
-              </a>
             </div>
 
             <p className="mx-auto mt-6 max-w-xl text-sm leading-7 text-slate-400">

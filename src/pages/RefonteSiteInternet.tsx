@@ -58,6 +58,7 @@ interface Offer {
   badge?: string;
   recommended?: boolean;
   features: string[];
+  price?: string;
 }
 
 interface FaqItem {
@@ -206,45 +207,15 @@ const sectors = [
 const offers: Offer[] = [
   {
     id: "off-1",
-    title: "Audit de refonte",
-    desc: "Pour savoir s’il faut réellement refaire votre site, optimiser l’existant ou préserver certaines pages importantes.",
+    title: "Refonte de site internet",
+    desc: "Modernisation d’un site existant pour améliorer l’image, la lisibilité, la structure, le mobile et les parcours de contact.",
     features: [
-      "Analyse du site existant",
-      "Diagnostic design, mobile et conversion",
-      "Lecture SEO des pages existantes",
-      "Identification des pages à conserver",
-      "Plan d’action de refonte priorisé",
+      "Le tarif dépend de l’état du site existant,",
+      "du volume de pages, des contenus à reprendre,",
+      "des fonctionnalités et du niveau",
+      "d’optimisation souhaité.",
     ],
-  },
-  {
-    id: "off-2",
-    title: "Refonte image & conversion",
-    desc: "Pour moderniser votre site, améliorer la confiance et rendre le parcours utilisateur plus clair.",
-    badge: "Accessible",
-    features: [
-      "Nouveau design responsive",
-      "Amélioration du parcours mobile",
-      "Mise en avant des preuves de confiance",
-      "Formulaires et CTA plus visibles",
-      "Redirections des pages principales",
-      "Base technique propre et maintenable",
-    ],
-  },
-  {
-    id: "off-3",
-    title: "Refonte SEO & croissance",
-    desc: "Pour reconstruire une présence digitale plus complète avec une structure SEO, des contenus et une logique de conversion.",
-    recommended: true,
-    badge: "Recommandé",
-    features: [
-      "Architecture SEO complète",
-      "Pages services optimisées",
-      "Pages locales selon besoin",
-      "Plan de redirection 301",
-      "Optimisation technique et mobile",
-      "Connexion Search Console et Analytics",
-      "Accompagnement post-lancement",
-    ],
+    price: "À partir de 690 €",
   },
 ];
 
@@ -1065,6 +1036,12 @@ export function RefonteSiteInternet() {
                 <h3 className="mt-5 font-display text-2xl font-bold text-[#0f172a]">
                   {offer.title}
                 </h3>
+
+                {offer.price && (
+                  <p className="mt-2 font-display text-xl font-bold text-[#3b82f6]">
+                    {offer.price}
+                  </p>
+                )}
 
                 <p className="mt-4 text-sm leading-7 text-slate-600">
                   {offer.desc}

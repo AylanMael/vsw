@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 const offers = [
   {
     title: "Audit Google Ads",
+    price: "À partir de 150 €",
     desc: "Analyse de vos campagnes existantes pour identifier les dépenses peu utiles, les problèmes de ciblage et les pistes d’amélioration.",
     features: [
       "Analyse des campagnes existantes",
@@ -16,13 +17,14 @@ const offers = [
     isPopular: false,
   },
   {
-    title: "Lancement de campagne",
+    title: "Création / lancement",
+    price: "À partir de 390 €",
     desc: "Création d’une campagne structurée pour tester votre marché, cibler les bonnes recherches et mesurer les premières actions utiles.",
     features: [
       "Recherche de mots-clés",
-      "Structuration des groupes d’annonces",
+      "Structuration groupes d’annonces",
       "Rédaction des annonces",
-      "Configuration du suivi",
+      "Configuration suivi conversions",
     ],
     ctaText: "Lancer une campagne",
     badge: "Création",
@@ -30,10 +32,11 @@ const offers = [
   },
   {
     title: "Gestion mensuelle",
+    price: "À partir de 250 € / mois",
     desc: "Suivi régulier de vos campagnes pour analyser les données, ajuster les annonces et améliorer progressivement le pilotage du budget.",
     features: [
       "Suivi des performances",
-      "Ajustement des mots-clés",
+      "Ajustement mots-clés",
       "Tests d’annonces",
       "Reporting mensuel",
     ],
@@ -102,6 +105,10 @@ export function GoogleAdsOffers() {
                   {offer.title}
                 </h3>
 
+                <p className="mt-2 font-display text-xl font-bold text-blue-300">
+                  {offer.price}
+                </p>
+
                 <p className="mt-4 text-sm leading-7 text-slate-400">
                   {offer.desc}
                 </p>
@@ -137,9 +144,9 @@ export function GoogleAdsOffers() {
 
         {/* Note */}
         <p className="mx-auto mt-8 max-w-3xl text-center text-sm leading-7 text-slate-400">
-          Les résultats d’une campagne Google Ads dépendent du secteur, de la
-          concurrence, du budget, de la qualité des annonces, du suivi des
-          conversions et de la page de destination.
+          Tarifs indicatifs hors taxes. Le prix final dépend du périmètre exact,
+          des contenus à créer ou reprendre, des fonctionnalités demandées, des
+          intégrations techniques et du niveau d'accompagnement souhaité.
         </p>
       </div>
     </section>

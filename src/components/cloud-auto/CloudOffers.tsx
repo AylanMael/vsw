@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 const offers = [
   {
     title: "Automatisation simple",
+    price: "Sur devis",
     desc: "Pour connecter une tâche précise : formulaire, notification, enregistrement ou suivi basique.",
     features: [
       "Formulaire connecté",
@@ -17,6 +18,7 @@ const offers = [
   },
   {
     title: "Workflow métier",
+    price: "Sur devis",
     desc: "Pour structurer un processus complet avec étapes, statuts, documents et suivi interne.",
     features: [
       "Base de données",
@@ -31,6 +33,7 @@ const offers = [
   },
   {
     title: "Solution cloud avancée",
+    price: "Sur devis",
     desc: "Pour concevoir une solution plus complète avec rôles utilisateurs, API, fonctions backend et évolutions futures.",
     features: [
       "Architecture évolutive",
@@ -103,6 +106,10 @@ export function CloudOffers() {
                 <h3 className="font-display text-2xl font-bold text-white transition-colors group-hover:text-blue-300">
                   {offer.title}
                 </h3>
+
+                <p className="mt-2 font-display text-xl font-bold text-blue-300">
+                  {offer.price}
+                </p>
 
                 <p className="mt-4 text-sm leading-7 text-slate-400">
                   {offer.desc}

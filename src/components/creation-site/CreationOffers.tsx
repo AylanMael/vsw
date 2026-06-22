@@ -3,63 +3,84 @@ import { Link } from "react-router-dom";
 
 const offers = [
   {
-    title: "Vitrine Essentiel",
-    tagline: "Présence professionnelle simple",
+    title: "Mini Site Starter",
+    tagline: "Site one-page pour lancer sa présence",
     idealFor:
-      "Artisans, indépendants, professions libérales ou commerces qui veulent une présence claire et crédible.",
-    price: "1 290 €",
-    duration: "2 à 3 semaines",
+      "Artisans, associations ou projets simples nécessitant une présence rapide et professionnelle.",
+    price: "À partir de 490 €",
+    duration: "1 à 2 semaines",
     features: [
-      "4 à 5 pages clés de présentation",
-      "Design moderne et responsive",
-      "Formulaire de contact",
-      "Base SEO technique",
-      "Téléphone cliquable sur mobile",
-      "Conseil pour hébergement et nom de domaine",
+      "1 page professionnelle",
+      "4 à 6 sections",
+      "Design responsive",
+      "Intégration logo / couleurs",
+      "Bouton contact ou formulaire",
+      "Base SEO minimale",
+      "Mise en ligne",
     ],
     isPopular: false,
-    ctaText: "Demander cette formule",
+    ctaText: "Étudier mon projet",
+    badge: "Pack lancement",
+  },
+  {
+    title: "Vitrine Essentiel",
+    tagline: "Site vitrine efficace",
+    idealFor:
+      "Indépendants ou petites entreprises pour présenter leur activité avec quelques pages clés.",
+    price: "À partir de 690 €",
+    duration: "2 à 3 semaines",
+    features: [
+      "3 à 5 pages",
+      "Design responsive",
+      "Pages services principales",
+      "Formulaire de contact",
+      "Base SEO technique",
+      "Optimisation mobile",
+      "Mise en ligne",
+    ],
+    isPopular: false,
+    ctaText: "Étudier mon projet",
     badge: "Pack démarrage",
   },
   {
-    title: "Vitrine Pro SEO",
-    tagline: "Site structuré pour PME locale",
+    title: "Vitrine Pro",
+    tagline: "Site structuré pour générer des demandes",
     idealFor:
-      "PME, artisans et entreprises de services qui veulent mieux présenter leurs offres et renforcer leur visibilité locale.",
-    price: "2 290 €",
+      "PME et entreprises de services pour structurer leurs offres et rassurer leurs visiteurs.",
+    price: "À partir de 890 €",
     duration: "3 à 5 semaines",
     features: [
+      "5 à 8 pages",
       "Pages services structurées",
-      "Rédaction ou optimisation des contenus",
-      "Structure SEO locale",
-      "Optimisation mobile et performance",
-      "Mise en valeur des avis ou références",
-      "Connexion possible à Search Console",
-      "Conseils de suivi après lancement",
+      "Amélioration des contenus",
+      "Structure SEO",
+      "Appels à l'action ciblés",
+      "Suivi Analytics de base",
+      "Accompagnement lancement",
     ],
     isPopular: true,
-    ctaText: "Demander la formule Pro",
+    ctaText: "Parler de mon projet",
     badge: "Idéal PME locale",
   },
   {
-    title: "Premium Évolutif",
-    tagline: "Projet avancé ou sur mesure",
+    title: "Site SEO Local",
+    tagline: "Visibilité locale durable",
     idealFor:
-      "Entreprises qui souhaitent un site plus complet, une image haut de gamme ou des fonctionnalités spécifiques.",
-    price: "Sur devis",
-    duration: "4 à 8 semaines",
+      "Entreprises visant une croissance de leur visibilité géographique sur le long terme.",
+    price: "À partir de 1 090 €",
+    duration: "4 à 6 semaines",
     features: [
-      "Design personnalisé plus avancé",
-      "Structure multi-services, multi-villes ou multilingue",
-      "Espace client ou portail possible",
-      "Connexion possible à un CRM ou outil métier",
-      "Suivi des conversions Google / Meta",
-      "Optimisation technique selon le projet",
-      "Accompagnement après lancement selon besoin",
+      "Pages services et/ou locales",
+      "Structure SEO avancée",
+      "Optimisation des balises",
+      "Maillage interne",
+      "Préparation Search Console",
+      "Conseils Google Business",
+      "Suivi conversions de base",
     ],
     isPopular: false,
-    ctaText: "Demander une étude",
-    badge: "Projet sur mesure",
+    ctaText: "Parler de mon projet",
+    badge: "Visibilité locale",
   },
 ];
 
@@ -78,20 +99,20 @@ export function CreationOffers() {
           </h2>
 
           <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600">
-            Ces offres donnent un premier repère de budget. Le devis final
-            dépend du nombre de pages, du niveau de design, des contenus, des
-            fonctionnalités et des intégrations souhaitées.
+            Tarifs indicatifs hors taxes. Le prix final dépend du périmètre exact,
+            des contenus à créer ou reprendre, des fonctionnalités demandées, des
+            intégrations techniques et du niveau d'accompagnement souhaité.
           </p>
         </div>
 
         {/* Pricing Cards Grid */}
-        <div className="grid items-stretch gap-8 lg:grid-cols-3">
+        <div className="grid items-stretch gap-8 md:grid-cols-2 lg:grid-cols-4">
           {offers.map((offer) => (
             <article
               key={offer.title}
               className={`relative flex flex-col justify-between rounded-[2rem] p-8 transition-all duration-300 ${
                 offer.isPopular
-                  ? "border-2 border-[#3b82f6] bg-[#0f172a] text-white shadow-2xl shadow-blue-500/10 lg:-translate-y-2"
+                  ? "border-2 border-[#3b82f6] bg-[#0f172a] text-white shadow-2xl shadow-blue-500/10"
                   : "border border-slate-200 bg-slate-50 text-[#0f172a] hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/10"
               }`}
             >
@@ -114,9 +135,7 @@ export function CreationOffers() {
                   {offer.badge}
                 </span>
 
-                <h3 className="font-display text-2xl font-bold">
-                  {offer.title}
-                </h3>
+                <h3 className="font-display text-xl font-bold">{offer.title}</h3>
 
                 <p
                   className={`mt-2 text-sm ${
@@ -128,25 +147,13 @@ export function CreationOffers() {
 
                 {/* Price */}
                 <div
-                  className={`my-7 flex items-baseline gap-2 border-b pb-7 ${
-                    offer.isPopular
-                      ? "border-white/10"
-                      : "border-slate-200"
+                  className={`my-7 flex items-end gap-1 border-b pb-7 ${
+                    offer.isPopular ? "border-white/10" : "border-slate-200"
                   }`}
                 >
-                  <span className="font-display text-4xl font-bold">
+                  <span className="font-display text-2xl font-bold">
                     {offer.price}
                   </span>
-
-                  {offer.price !== "Sur devis" && (
-                    <span
-                      className={`text-sm font-semibold ${
-                        offer.isPopular ? "text-slate-400" : "text-slate-500"
-                      }`}
-                    >
-                      HT
-                    </span>
-                  )}
                 </div>
 
                 {/* Ideal for */}
@@ -165,7 +172,7 @@ export function CreationOffers() {
                   }`}
                 >
                   <span className="h-2 w-2 rounded-full bg-current" />
-                  <span>Délai indicatif : {offer.duration}</span>
+                  <span>{offer.duration}</span>
                 </div>
 
                 {/* Features */}
@@ -177,9 +184,7 @@ export function CreationOffers() {
                     >
                       <CheckCircle
                         className={`mt-0.5 h-5 w-5 shrink-0 ${
-                          offer.isPopular
-                            ? "text-blue-300"
-                            : "text-emerald-500"
+                          offer.isPopular ? "text-blue-300" : "text-emerald-500"
                         }`}
                       />
 
@@ -208,13 +213,6 @@ export function CreationOffers() {
             </article>
           ))}
         </div>
-
-        {/* Note */}
-        <p className="mx-auto mt-8 max-w-3xl text-center text-sm leading-7 text-slate-500">
-          Les prix et délais sont donnés à titre indicatif. Un devis précis est
-          établi après analyse du besoin, des contenus, des fonctionnalités et
-          des contraintes techniques du projet.
-        </p>
       </div>
     </section>
   );

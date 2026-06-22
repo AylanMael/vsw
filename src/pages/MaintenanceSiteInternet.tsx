@@ -264,7 +264,7 @@ const offers: MaintenanceOffer[] = [
     title: "Essentiel",
     desc: "Pour les sites vitrines simples qui ont besoin d’une base de sécurité, de sauvegardes et d’un suivi technique régulier.",
     monthlyPrice: 49,
-    yearlyPrice: 39,
+    yearlyPrice: 49,
     badge: "Base sécurité",
     features: [
       "Mises à jour mensuelles contrôlées",
@@ -278,10 +278,10 @@ const offers: MaintenanceOffer[] = [
   },
   {
     id: "pro",
-    title: "Professionnel",
+    title: "Pro",
     desc: "Pour les PME dont le site est un vrai canal commercial et qui souhaitent un suivi plus complet.",
-    monthlyPrice: 119,
-    yearlyPrice: 99,
+    monthlyPrice: 89,
+    yearlyPrice: 89,
     badge: "Recommandé PME",
     recommended: true,
     features: [
@@ -293,14 +293,14 @@ const offers: MaintenanceOffer[] = [
       "1h mensuelle d’ajustements de contenus",
       "Support prioritaire par e-mail ou téléphone",
     ],
-    ctaText: "Choisir Professionnel",
+    ctaText: "Choisir Pro",
   },
   {
     id: "premium",
-    title: "Premium & Évolution",
+    title: "Sérénité",
     desc: "Pour les sites plus sensibles, e-commerce, applications ou projets nécessitant un accompagnement plus actif.",
-    monthlyPrice: 249,
-    yearlyPrice: 199,
+    monthlyPrice: 149,
+    yearlyPrice: 149,
     badge: "Suivi avancé",
     features: [
       "Suivi technique renforcé",
@@ -311,7 +311,7 @@ const offers: MaintenanceOffer[] = [
       "Rapport mensuel synthétique",
       "Canal de communication dédié selon besoin",
     ],
-    ctaText: "Choisir Premium",
+    ctaText: "Choisir Sérénité",
   },
 ];
 
