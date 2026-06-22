@@ -49,7 +49,7 @@ export function Footer() {
               />
             </Link>
 
-            <p className="mt-5 max-w-sm text-sm leading-7 text-slate-400">
+            <p className="mt-5 max-w-sm text-sm leading-7 text-slate-300">
               Création de sites internet, SEO, Google Ads, applications web,
               cloud et automatisation pour PME, artisans, commerçants et
               entreprises de services.
@@ -59,7 +59,7 @@ export function Footer() {
               <p className="text-sm font-semibold text-white">
                 Agence web & solutions digitales
               </p>
-              <p className="mt-1 text-xs leading-6 text-slate-400">
+              <p className="mt-1 text-xs leading-6 text-slate-300">
                 Une approche technique, claire et orientée résultats.
               </p>
             </div>
@@ -71,7 +71,7 @@ export function Footer() {
               Services
             </h3>
 
-            <ul className="grid gap-3 text-sm text-slate-400 sm:grid-cols-2">
+            <ul className="grid gap-3 text-sm text-slate-300 sm:grid-cols-2">
               {servicesLinks.map((item) => (
                 <li key={item.path}>
                   <Link
@@ -91,7 +91,7 @@ export function Footer() {
               Entreprise
             </h3>
 
-            <ul className="space-y-3 text-sm text-slate-400">
+            <ul className="space-y-3 text-sm text-slate-300">
               {companyLinks.map((item) => (
                 <li key={item.path}>
                   <Link
@@ -111,7 +111,7 @@ export function Footer() {
               Contact
             </h3>
 
-            <div className="space-y-4 text-sm text-slate-400">
+            <div className="space-y-4 text-sm text-slate-300">
               <a
                 href="mailto:contact@vsw-digital.fr"
                 className="flex items-start gap-3 transition-colors hover:text-[#3b82f6]"
