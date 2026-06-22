@@ -43,6 +43,8 @@ export function Footer() {
               <img
                 src="/images/logo-vsw.webp"
                 alt="VSW Digital"
+                width="770"
+                height="200"
                 className="h-10 w-auto object-contain brightness-0 invert"
               />
             </Link>
@@ -140,14 +142,14 @@ export function Footer() {
       {/* Bas du footer */}
       <div className="border-t border-white/10">
         <div className="container mx-auto flex flex-col gap-4 px-6 py-6 text-sm text-slate-500 md:flex-row md:items-center md:justify-between">
-          <p>© 2026 VSW Digital. Tous droits réservés.</p>
+          <p className="text-slate-300">© 2026 VSW Digital. Tous droits réservés.</p>
 
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             {legalLinks.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className="transition-colors hover:text-[#3b82f6]"
+                className="text-slate-300 transition-colors hover:text-[#3b82f6]"
               >
                 {item.label}
               </Link>

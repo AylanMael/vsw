@@ -441,9 +441,10 @@ Sitemap: https://vsw-digital.fr/sitemap.xml
       fallthrough: false
     }));
 
-    // 2. Servir les autres fichiers statiques de la racine (robots.txt, sitemap.xml, favicon.ico, etc.)
+    // 2. Servir les images et autres fichiers statiques de la racine (robots.txt, sitemap.xml, favicon.ico, etc.)
+    // Utiliser un cache plus long pour les images
     app.use(express.static(distPath, {
-      maxAge: "1h",
+      maxAge: "1y", // 1 an pour les images et assets non-versionnés
       index: false
     }));
 

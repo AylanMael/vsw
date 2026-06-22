@@ -48,6 +48,8 @@ export function MobileMenu({
                 <img
                   src="/images/logo-vsw.webp"
                   alt="VSW Digital"
+                  width="770"
+                  height="200"
                   className="h-9 w-auto object-contain"
                   referrerPolicy="no-referrer"
                 />

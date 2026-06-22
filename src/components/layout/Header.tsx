@@ -27,6 +27,8 @@ export function Header() {
             <img
               src="/images/logo-vsw.webp"
               alt="VSW Digital"
+              width="770"
+              height="200"
               className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03] md:h-10"
               referrerPolicy="no-referrer"
             />

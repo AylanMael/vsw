@@ -226,7 +226,7 @@ export function Services() {
             <div className="mt-10">
               <Link
                 to="/contact"
-                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#3b82f6] px-8 py-4 font-semibold text-white shadow-2xl shadow-blue-500/30 transition-all hover:-translate-y-0.5 hover:bg-blue-400 hover:shadow-blue-400/40"
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-700 px-8 py-4 font-semibold text-white shadow-2xl shadow-blue-700/30 transition-all hover:-translate-y-0.5 hover:bg-blue-800 hover:shadow-blue-800/40"
               >
                 Demander un audit gratuit
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
